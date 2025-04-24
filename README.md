@@ -8,5 +8,6 @@ Feito para o gerenciamento de consumo e de hospedia de pessoas sem suporte ou se
 - Felipe
 - Kayann
 
-### Apoio:
-- Universidade do Oeste Paulista
+### Apoio educacional:
+- Universidade do Oeste Paulista - Unoeste
+
