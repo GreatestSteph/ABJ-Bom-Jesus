@@ -2,6 +2,6 @@
 Sistema de Administração da Associação Bom Jesus
 
 ### Desenvolvedores:
-- Stephanie;
-- Felipe;
-- Kayann.
+- Stephanie
+- Felipe
+- Kayann
