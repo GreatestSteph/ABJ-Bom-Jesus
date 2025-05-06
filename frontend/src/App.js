@@ -37,7 +37,7 @@ function App() {
           }>
           </Route>
 
-          <Route path='/editouadicionarperfis' element={
+          <Route path='/editaradicionarperfis' element={
             <>
               <Headerlogado/>
               <EditProfiles/>
