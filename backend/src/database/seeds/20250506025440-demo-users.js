@@ -8,12 +8,16 @@ module.exports = {
         funcao: 'Administrador',
         usuario: 'suporte_abj',
         senha: '123456',
+        created_at: new Date(),
+        updated_at: new Date(),
       },
       {
         nome: 'Kelly',
         funcao: 'Secretária',
         usuario: 'kelly_bomjesus',
         senha: '123456',
+        created_at: new Date(),
+        updated_at: new Date(),
       }
     ], {});
   },
