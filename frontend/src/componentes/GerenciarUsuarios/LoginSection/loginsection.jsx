@@ -5,16 +5,17 @@ import logoMaior from "../LoginSection/ImagensTelaLogin/logoMaiorLogin.png";
 
 export default function LoginSection() {    
     const styles  = {
-        section: {
+        fundo: {
             backgroundImage: `url(${fundo})`,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
             width: '100%',
             height: '100%',
-            position: 'fixed',
-            padding: '10px 20px',
-            backgroundRepeat: 'no-repeat',
-        },
+            paddingTop: '180px',
+            paddingBottom: '180px',
+            maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)',
+        },        
         logoCircle: {
-            marginTop: '150px',
             marginBottom: "30px",
         },
         button: {
@@ -36,7 +37,7 @@ export default function LoginSection() {
     };
 
     return (
-        <main style={styles.section}>
+        <main style={styles.fundo}>
             <div className='d-flex justify-content-center' style={styles.logoCircle}>
                 <img src={logoMaior} alt="Logo" style={styles.logoImage} />
             </div>

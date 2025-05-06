@@ -20,7 +20,7 @@ export default function Headerdeslogado() {
             paddingLeft: '30px',
             paddingRight: '30px',
             paddingBottom: '22px',
-            borderBottom: '5px solid orange',
+            borderBottom: '5px solid rgb(255, 140, 46)',
         },      
         logo: {
             width: '70px',

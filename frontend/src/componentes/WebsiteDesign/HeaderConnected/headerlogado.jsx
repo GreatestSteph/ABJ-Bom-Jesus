@@ -6,18 +6,33 @@ import iconeAjuda from "../HeaderandFooterImages/iconeAjuda.svg";
 export default function Headerlogado() {
     const estiloHeader = {
         fundodoHeader: {
-            backgroundColor: 'rgb(113, 175, 230)',
+            backgroundColor: 'rgb(255, 255, 255)',
             width: '100%',
             position: 'fixed',
             zIndex: 100,
             padding: '10px 20px',
             height: '70px', 
         },
-        Entrar: {
-            color: 'white',
+        navItem: {
+            color: 'rgb(21, 75, 122)',
             textDecoration: 'none',
             fontWeight: 'bold',
-        },        
+            paddingLeft: '30px',
+            paddingRight: '30px',
+            paddingBottom: '22px',
+            borderBottom: '5px solid rgb(255, 140, 46)',
+        },      
+        logo: {
+            width: '70px',
+            marginRight: '30px',
+        },  
+        ajudaeicone: {
+            color: 'rgb(21, 75, 122)',
+            textDecoration: 'none',
+            fontWeight: 'bold',
+            paddingLeft: '5px',
+            paddingRight: '5px',
+        }
     };
 
     return (
@@ -27,18 +42,18 @@ export default function Headerlogado() {
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
             <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100..900&display=swap" rel="stylesheet" />
             
-            <div className="d-flex justify-content-between flex-row">
-                <div>
-                    <img src={logoABL}></img>
-                    <Link to="/perfil" style={estiloHeader.Entrar}>Perfil</Link>
-                </div>
-                <Link to="/blah" style={estiloHeader.Entrar}>blah</Link>
-                <Link to="/blah" style={estiloHeader.Entrar}>blah</Link>
-                <Link to="/blah" style={estiloHeader.Entrar}>blah</Link>
-                <div>
-                    <img src={iconeAjuda}></img>
-                    <p>Ajuda</p>
-                </div>
+            <div>
+                <img src={logoABL} alt="Logo ABL" style={estiloHeader.logo} />
+                <Link to="/Perfil" style={estiloHeader.navItem}>Perfil </Link>
+                <Link to="/Perfil" style={estiloHeader.navItem}>Gerenciar Hospédes </Link>
+                <Link to="/Perfil" style={estiloHeader.navItem}>Gerenciar Consumo </Link>
+                <Link to="/Perfil" style={estiloHeader.navItem}>Relatórios e Estatísticas </Link>
+            </div>
+
+            <div className="d-flex align-items-center">
+                <img src={iconeAjuda} alt="Ajuda" style={estiloHeader.icone} />
+                <Link to="/ajuda" style={estiloHeader.ajudaeicone}> Ajuda
+                </Link>
             </div>
         </header>
     );
