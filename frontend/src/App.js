@@ -7,7 +7,8 @@ import LoginSection from "./componentes/GerenciarUsuarios/LoginSection/loginsect
 import LoginSection2 from "./componentes/GerenciarUsuarios/LoginSection/loginsection2.jsx"
 import EditProfiles from "./componentes/GerenciarUsuarios/EditProfile/editarperfis.jsx"
 import UserList from "./componentes/GerenciarUsuarios/ListUsers/listarusuarios.jsx"
-
+import ListHospedes from "./componentes/GerenciarHospedes/ListHospedes/ListarHospedes.jsx"
+import EditarHospede from "./componentes/GerenciarHospedes/EditarHospede/EditarHospede.jsx"
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -57,7 +58,32 @@ function App() {
           }>
           </Route>
 
-        
+          <Route path='/hospedes' element={
+            <>
+              <Headerlogado/>
+              <ListHospedes/>
+              <Footer/>
+              <Footer2/>
+            </>
+          }></Route>
+
+          <Route path='/hospedes/cadastrar' element={
+            <>
+              <Headerlogado/>
+              <EditarHospede/>
+              <Footer/>
+              <Footer2/>
+            </>
+          }></Route>
+
+          <Route path='/hospedes/:id' element={
+            <>
+              <Headerlogado/>
+              <EditarHospede/>
+              <Footer/>
+              <Footer2/>
+            </>
+          }></Route>
         </Routes>
       </BrowserRouter>
     </div>
