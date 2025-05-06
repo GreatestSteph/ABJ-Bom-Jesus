@@ -4,7 +4,8 @@ import dbConfig from './config.js';
 import Models from '../models/index.js';
 
 const config = dbConfig[process.env.NODE_ENV];
-const models = [Models.Guests];
+const models = [Models.Guests, Models.Users];
+
 
 class Database {
   constructor() {

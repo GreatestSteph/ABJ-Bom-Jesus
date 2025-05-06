@@ -1,9 +1,45 @@
-import React from "react"; 
-import { Link } from "react-router-dom"; 
-import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png"; 
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
+import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import api from "../../../services/api";
 
-export default function EditProfiles() {    
-    const styles  = {
+export default function EditProfiles() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState({
+    nome: '',
+    funcao: '',
+    usuario: '',
+    senha: '',
+  });
+
+  useEffect(() => {
+    if (id) {
+      api.get(`/users/${id}`)
+        .then(res => setForm(res.data))
+        .catch(err => console.error(err));
+    }
+  }, [id]);
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const salvar = async (e) => {
+    e.preventDefault();
+    try {
+      if (id) {
+        await api.put(`/users/${id}`, form);
+      } else {
+        await api.post('/users', form);
+      }
+      navigate('/listadeusuarios');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const styles  = {
         fundo: {
             backgroundImage: `url(${fundo})`,
             backgroundSize: 'cover',
@@ -17,57 +53,35 @@ export default function EditProfiles() {
             alignItems: 'center',
             maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)',
         },        
-        loginBox: {
-            backgroundColor: '#e77f3c', 
+        aroundListBox: {
+            backgroundColor: 'white', 
             borderRadius: '20px',
             padding: '40px',
-            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-            maxWidth: '750px',
+            boxShadow: '0 10px 30px rgba(0, 0, 0, 0.25)',
+            maxWidth: '1000px',
             width: '100%',
             textAlign: 'center',
             color: 'white',
             fontFamily: "'Raleway', sans-serif",
         },
-        input: {
-            width: '100%',
-            padding: '10px',
-            margin: '10px 0',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '14px',
-        },
-        button: {
-            backgroundColor: '#001b5e',
-            color: 'white',
-            padding: '12px',
-            width: '100%',
-            borderRadius: '8px',
-            border: 'none',
-            fontWeight: 'bold',
-            marginTop: '20px',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease',
-            textDecoration: 'none',
-        },
-    };
+  };
 
-    return (
-        <main style={styles.fundo}>
-            <div class style={styles.loginBox} className="d-flex justify-content-between">
-                <div className="pe-4">
-                  <input type="text" placeholder="Foto" style={styles.input} />
-                  <input type="text" placeholder="Nome" style={styles.input} />
-                </div>
-                <div className="ps-5">
-                  <input type="text" placeholder="Função" style={styles.input} />
-                  <input type="text" placeholder="Usuário" style={styles.input} />
-                  <input type="password" placeholder="Senha" style={styles.input} />
-                  <div className="d-flex justify-content-between">
-                    <Link to="/listadeusuarios" style={styles.button} className="me-3">Cancelar</Link>
-                    <Link to="/listadeusuarios" style={styles.button} className="ms-3">o</Link>
-                  </div>
-                </div>
-            </div>
-        </main>
-    );
+  return (
+    <main style={styles.fundo}>
+      <div className="d-flex justify-content-between" style={styles.loginBox}>
+        <form className="pe-4 w-100" onSubmit={salvar}>
+          <input type="text" name="nome" value={form.nome} onChange={handleChange} placeholder="Nome" style={styles.input} required />
+          <input type="text" name="funcao" value={form.funcao} onChange={handleChange} placeholder="Função" style={styles.input} required />
+          <input type="text" name="usuario" value={form.usuario} onChange={handleChange} placeholder="Usuário" style={styles.input} required />
+          <input type="password" name="senha" value={form.senha} onChange={handleChange} placeholder="Senha" style={styles.input} required />
+          <div className="d-flex justify-content-between">
+            <Link to="/listadeusuarios" style={styles.button} className="me-3">Cancelar</Link>
+            <button type="submit" style={styles.button}>
+              {id ? 'Atualizar' : 'Salvar'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  );
 }

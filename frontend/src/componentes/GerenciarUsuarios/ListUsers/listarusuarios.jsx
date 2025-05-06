@@ -1,9 +1,25 @@
-import React from "react"; 
-import { Link } from "react-router-dom"; 
-import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png"; 
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import api from "../../../services/api"; // <- OK!
 
-export default function UserList() {    
-    const styles  = {
+export default function UserList() {
+  const [usuarios, setUsuarios] = useState([]);
+
+  useEffect(() => {
+    api.get('/users')
+      .then(res => setUsuarios(res.data))
+      .catch(err => console.error(err));
+  }, []);
+
+  const deletarUsuario = async (id) => {
+    if (window.confirm("Tem certeza que deseja excluir este usuário?")) {
+      await api.delete(`/users/${id}`); // <- usar API configurada
+      setUsuarios(usuarios.filter(u => u.id !== id));
+    }
+  };
+
+  const styles  = {
         fundo: {
             backgroundImage: `url(${fundo})`,
             backgroundSize: 'cover',
@@ -25,48 +41,36 @@ export default function UserList() {
             maxWidth: '1000px',
             width: '100%',
             textAlign: 'center',
-            color: 'white',
+            color: 'black',
             fontFamily: "'Raleway', sans-serif",
         },
     };
 
     return (
-        <main style={styles.fundo}>
-            <div class style={styles.aroundListBox} className="d-flex justify-content-between">
-                <div className="d-flex flex-row px-4 py-3">
-
-                  `Labels da tabela`
-                    <div className="d-flex flex-row justify-content-between">
-                      <div className="d-flex flex-row justify-content-between">
-                        <p>ID</p> 
-                        <p>Nome:</p>
-                        <p>Função:</p>
-                        <p>Usuário:</p>
-                        <p>Senha:</p>
-                      </div>
-                      <div>
-                        <p>Ações:</p> 
-                      </div>
-                    </div>
-                    <hr className='mb-3'></hr>
-
-                    `Listagem de usuários`
-                    <div className="d-flex flex-row justify-content-between">
-                      <div className="d-flex flex-row justify-content-between">
-                        <p>"Carrega o ID aqui"</p> 
-                        <p>"Carrega o nome aqui"</p>
-                        <p>"Função do funcionario"</p>
-                        <p>"Usuário do funcionario"</p>
-                        <p>"Senha do funcionario"</p>
-                      </div>
-                      <div>
-                        <Link to="/editaradicionarperfis" className="me-3">Editar</Link>
-                        <button className="me-3">Excluir</button>
-                      </div>
-                    </div>
-
-                </div>
+    <main style={styles.fundo}>
+      <div className="d-flex justify-content-between" style={styles.aroundListBox}>
+        <div className="w-100">
+          <h2>Lista de Usuários</h2>
+          <div className="d-flex justify-content-end mb-3">
+            <Link to="/editaradicionarperfis">+ Adicionar Usuário</Link>
+          </div>
+          {usuarios.map((u) => (
+            <div key={u.id} className="d-flex justify-content-between align-items-center border-bottom py-2">
+              <div className="d-flex gap-4">
+                <p>{u.id}</p>
+                <p>{u.nome}</p>
+                <p>{u.funcao}</p>
+                <p>{u.usuario}</p>
+                <p>{u.senha}</p>
+              </div>
+              <div className="d-flex gap-2">
+                <Link to={`/editaradicionarperfis/${u.id}`}>Editar</Link>
+                <button onClick={() => deletarUsuario(u.id)}>Excluir</button>
+              </div>
             </div>
-        </main>
-    );
+          ))}
+        </div>
+      </div>
+    </main>
+  );
 }

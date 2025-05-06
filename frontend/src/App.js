@@ -47,6 +47,16 @@ function App() {
             </>
           }>
           </Route>
+          
+          <Route path='/editaradicionarperfis/:id' element={
+            <>
+              <Headerlogado/>
+              <EditProfiles/>
+              <Footer/>
+              <Footer2/>
+            </>
+          }>
+          </Route>
 
           <Route path='/listadeusuarios' element={
             <>
