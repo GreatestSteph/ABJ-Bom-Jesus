@@ -1,4 +1,4 @@
-import Guests from '../models/Guests';
+import Guests from '../models/guests.js';
 
 class GuestsController {
   async create(req, res) {
