@@ -3,7 +3,7 @@ import cors from 'cors';
 import express from 'express';
 
 import routes from './routes/index.js';
-import './database/index.js'; // Importa a inicialização do banco
+import './database/index.js';
 
 dotenv.config();
 

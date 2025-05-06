@@ -5,10 +5,10 @@ import GuestsController from '../controllers/guests.js';
 const rotas = new Router();
 
 rotas
-  .get('/:id', GuestsController.create)
-  .get('/', GuestsController.create)
+  .get('/:id', GuestsController.get)
+  .get('/', GuestsController.list)
   .post('/', GuestsController.create)
-  .put('/:id', GuestsController.create)
-  .delete('/:id', GuestsController.create);
+  .put('/:id', GuestsController.update)
+  .delete('/:id', GuestsController.delete);
 
 export default rotas;

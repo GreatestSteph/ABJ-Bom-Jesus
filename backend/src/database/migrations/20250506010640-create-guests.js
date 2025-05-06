@@ -11,7 +11,7 @@ module.exports = {
       },
       nome: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
       },
       data_nascimento: {
         type: Sequelize.DATE,
@@ -35,7 +35,8 @@ module.exports = {
       },
       empregado: {
         type: Sequelize.BOOLEAN,
-        allowNull: true,
+        allowNull: false,
+        defaultValue: false,
       },
       biometria: {
         type: Sequelize.STRING,
