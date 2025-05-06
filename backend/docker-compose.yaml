@@ -1,0 +1,13 @@
+version: '3.2'
+services:
+
+  db:
+    image: mysql:8.0
+    container_name: db-hospedaria
+    command: --authentication-policy=mysql_native_password
+    restart: always
+    ports:
+      - 3305:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: hospedaria
