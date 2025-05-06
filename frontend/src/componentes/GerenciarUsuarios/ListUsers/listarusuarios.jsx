@@ -33,11 +33,11 @@ export default function UserList() {
     return (
         <main style={styles.fundo}>
             <div class style={styles.aroundListBox} className="d-flex justify-content-between">
-                <div className="d-flex flex-column px-4 py-3">
+                <div className="d-flex flex-row px-4 py-3">
 
                   `Labels da tabela`
                     <div className="d-flex flex-row justify-content-between">
-                      <div>
+                      <div className="d-flex flex-row justify-content-between">
                         <p>ID</p> 
                         <p>Nome:</p>
                         <p>Função:</p>
@@ -48,11 +48,11 @@ export default function UserList() {
                         <p>Ações:</p> 
                       </div>
                     </div>
-                    <hr className='mb-3'>
+                    <hr className='mb-3'></hr>
 
                     `Listagem de usuários`
                     <div className="d-flex flex-row justify-content-between">
-                      <div>
+                      <div className="d-flex flex-row justify-content-between">
                         <p>"Carrega o ID aqui"</p> 
                         <p>"Carrega o nome aqui"</p>
                         <p>"Função do funcionario"</p>

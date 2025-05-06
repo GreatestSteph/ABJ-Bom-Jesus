@@ -36,17 +36,25 @@ export default function LoginSection2() {
             border: 'none',
             fontSize: '14px',
         },
+        input2: {
+            width: '100%',
+            padding: '10px',
+            margin: '10px 0',
+            borderRadius: '8px',
+            border: 'none',
+            fontSize: '14px',
+            marginBottom: '33px'
+        },
         button: {
             backgroundColor: '#001b5e',
             color: 'white',
-            padding: '12px',
             width: '100%',
             borderRadius: '8px',
             border: 'none',
             fontWeight: 'bold',
-            marginTop: '20px',
             cursor: 'pointer',
             transition: 'background-color 0.3s ease',
+            textDecoration:'none',
         },
     };
 
@@ -56,8 +64,8 @@ export default function LoginSection2() {
                 <h3>Bem-vindo</h3>
                 <p>Entre para continuar</p>
                 <input type="text" placeholder="Usuário" style={styles.input} />
-                <input type="password" placeholder="Senha" style={styles.input} />
-                <Link to="/listadeusuarios" style={styles.button}>Entrar</Link>
+                <input type="password" placeholder="Senha" style={styles.input2}  />
+                <Link to="/listadeusuarios" style={styles.button} className='px-5 py-3' >Entrar</Link>
             </div>
         </main>
     );
