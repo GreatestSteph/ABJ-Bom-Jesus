@@ -4,6 +4,6 @@ import guests from './guests.js';
 
 const routes = new Router();
 
-routes.use('/hospedes', guests);
+routes.use('/guests', guests);
 
 export default routes;
