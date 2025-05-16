@@ -44,10 +44,10 @@ export default function Headerlogado() {
             
             <div>
                 <img src={logoABL} alt="Logo ABL" style={estiloHeader.logo} />
-                <Link to="/Perfil" style={estiloHeader.navItem}>Perfil </Link>
+                <Link to="/listadeusuarios" style={estiloHeader.navItem}>Perfil </Link>
                 <Link to="/hospedes" style={estiloHeader.navItem}>Gerenciar Hospédes </Link>
-                <Link to="/Perfil" style={estiloHeader.navItem}>Gerenciar Consumo </Link>
-                <Link to="/Perfil" style={estiloHeader.navItem}>Relatórios e Estatísticas </Link>
+                <Link to="/listadeusuarios" style={estiloHeader.navItem}>Gerenciar Consumo </Link>
+                <Link to="/listadeusuarios" style={estiloHeader.navItem}>Relatórios e Estatísticas </Link>
             </div>
 
             <div className="d-flex align-items-center">

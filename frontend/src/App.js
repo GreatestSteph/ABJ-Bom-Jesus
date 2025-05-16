@@ -3,12 +3,20 @@ import Headerlogado from "./componentes/WebsiteDesign/HeaderConnected/headerloga
 import Footer from "./componentes/WebsiteDesign/Footer/footer.jsx"
 import Footer2 from "./componentes/WebsiteDesign/Footer/footer2.jsx"
 
+
 import LoginSection from "./componentes/GerenciarUsuarios/LoginSection/loginsection.jsx"
 import LoginSection2 from "./componentes/GerenciarUsuarios/LoginSection/loginsection2.jsx"
+
 import EditProfiles from "./componentes/GerenciarUsuarios/EditProfile/editarperfis.jsx"
 import UserList from "./componentes/GerenciarUsuarios/ListUsers/listarusuarios.jsx"
+
+
 import ListHospedes from "./componentes/GerenciarHospedes/ListHospedes/ListarHospedes.jsx"
 import EditarHospede from "./componentes/GerenciarHospedes/EditarHospede/EditarHospede.jsx"
+
+import EditProducts from "./componentes/GerenciarProdutos/EditProducts/editarprodutos.jsx"
+import ProdutosLista from "./componentes/GerenciarProdutos/ListProducts/listarprodutos.jsx"
+
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
@@ -68,6 +76,42 @@ function App() {
           }>
           </Route>
 
+
+
+          {/* Gerenciar Produtos */}
+          <Route path='/editaradicionarprodutos' element={
+            <>
+              <Headerlogado/>
+              <EditProducts/>
+              <Footer/>
+              <Footer2/>
+            </>
+          }>
+          </Route>
+          
+          <Route path='/editaradicionarprodutos/:id' element={
+            <>
+              <Headerlogado/>
+              <EditProducts/>
+              <Footer/>
+              <Footer2/>
+            </>
+          }>
+          </Route>
+
+          <Route path='/listarprodutos' element={
+            <>
+              <Headerlogado/>
+              <ProdutosLista/>
+              <Footer/>
+              <Footer2/>
+            </>
+          }>
+          </Route>
+
+
+
+          {/* Gerenciar Hóspedes */}
           <Route path='/hospedes' element={
             <>
               <Headerlogado/>
