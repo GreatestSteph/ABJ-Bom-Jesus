@@ -44,6 +44,36 @@ export default function UserList() {
             color: 'black',
             fontFamily: "'Raleway', sans-serif",
         },
+        addButton: {
+          backgroundColor: '#001b5e',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '8px',
+          textDecoration: 'none',
+          fontWeight: 'bold',
+          transition: 'background-color 0.3s ease',
+        },
+        actionButton: {
+          backgroundColor: '#e77f3c',
+          color: 'white',
+          padding: '6px 12px',
+          borderRadius: '6px',
+          border: 'none',
+          cursor: 'pointer',
+          textDecoration: 'none',
+          fontSize: '14px',
+          transition: 'background-color 0.3s ease',
+        },
+        deleteButton: {
+          backgroundColor: '#dc3545',
+          color: 'white',
+          padding: '6px 12px',
+          borderRadius: '6px',
+          border: 'none',
+          cursor: 'pointer',
+          fontSize: '14px',
+          transition: 'background-color 0.3s ease',
+        }
     };
 
     return (
@@ -52,7 +82,7 @@ export default function UserList() {
         <div className="w-100">
           <h2>Lista de Usuários</h2>
           <div className="d-flex justify-content-end mb-3">
-            <Link to="/editaradicionarperfis">+ Adicionar Usuário</Link>
+            <Link to="/editaradicionarperfis" style={styles.addButton}>+ Adicionar Usuário</Link>
           </div>
           {usuarios.map((u) => (
             <div key={u.id} className="d-flex justify-content-between align-items-center border-bottom py-2">
@@ -64,8 +94,8 @@ export default function UserList() {
                 <p>{u.senha}</p>
               </div>
               <div className="d-flex gap-2">
-                <Link to={`/editaradicionarperfis/${u.id}`}>Editar</Link>
-                <button onClick={() => deletarUsuario(u.id)}>Excluir</button>
+                <Link to={`/editaradicionarperfis/${u.id}`} style={styles.actionButton}>Editar</Link>
+                <button style={styles.deleteButton} onClick={() => deletarUsuario(u.id)}>Excluir</button>
               </div>
             </div>
           ))}
