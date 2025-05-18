@@ -4,7 +4,7 @@ import dbConfig from './config.js';
 import Models from '../models/index.js';
 
 const config = dbConfig[process.env.NODE_ENV];
-const models = [Models.Guests, Models.Users];
+const models = [Models.Guests, Models.Users, Models.Produtos];
 
 
 class Database {
