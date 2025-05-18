@@ -71,25 +71,34 @@ export default function EditGuest() {
       alignItems: "center",
     },
     formBox: {
-      backgroundColor: "#e77f3c",
+      backgroundColor: "#fff", // fundo branco
       borderRadius: "20px",
-      padding: "40px",
-      boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
+      boxShadow: "0 10px 30px rgba(0, 27, 94, 0.3)", // sombra azul suave
       maxWidth: "900px",
       width: "100%",
-      color: "white",
+      color: "#001b5e", // azul escuro para texto
       fontFamily: "'Raleway', sans-serif",
+    },
+    formBox2: {
+      padding: "40px",
     },
     input: {
       width: "100%",
-      padding: "10px",
-      margin: "2px 0 15px 0",
+      padding: "12px",
+      margin: "6px 0 18px 0",
       borderRadius: "8px",
-      border: "none",
+      border: "2px solid #e77f3c", // borda laranja
       fontSize: "14px",
+      color: "#001b5e",
+      outline: "none",
+      transition: "border-color 0.3s ease",
+    },
+    inputFocus: {
+      borderColor: "#004aad", // azul mais vivo no foco
+      boxShadow: "0 0 5px #004aad",
     },
     button: {
-      backgroundColor: "#001b5e",
+      backgroundColor: "#e77f3c", // laranja vibrante
       color: "white",
       padding: "12px",
       width: "100%",
@@ -99,121 +108,223 @@ export default function EditGuest() {
       marginTop: "20px",
       cursor: "pointer",
       textDecoration: "none",
+      transition: "background-color 0.3s ease",
+    },
+    buttonCancel: {
+      backgroundColor: "#001b5e", // azul escuro para cancelar
+      color: "white",
+      padding: "12px",
+      width: "100%",
+      borderRadius: "8px",
+      border: "none",
+      fontWeight: "bold",
+      marginTop: "20px",
+      cursor: "pointer",
+      textDecoration: "none",
+      transition: "background-color 0.3s ease",
     },
     label: {
-      display: "block"
-    }
+      display: "block",
+      fontWeight: "600",
+      marginBottom: "6px",
+      color: "#001b5e",
+    },
+    checkboxLabel: {
+      color: "#001b5e",
+      fontWeight: "600",
+      marginLeft: "8px",
+    },
+    functionNotSelected: {
+      color: 'rgb(42, 135, 211)',
+      borderTopLeftRadius: '20px',
+      padding: '25px 30px',
+      textDecoration: 'none',
+      fontWeight: 'bold',
+      fontSize: '16px',
+    },
+    functionSelected: {
+      backgroundColor: 'rgb(60, 162, 245)',
+      color: 'white',
+      padding: '25px 30px',
+      textDecoration: 'none',
+      fontWeight: 'bold',
+      fontSize: '16px',
+      borderTopLeftRadius: '20px',
+      marginLeft: '-11px',
+    },
+    hr: {
+      border: 'none',
+      height: '3px',
+      backgroundColor: 'rgb(60, 162, 245)',
+      opacity: '100%',
+      width: '100%',
+      margin: 0 
+    },
   };
+
+  // Estado para controlar foco dos inputs (pra adicionar efeito azul no foco)
+  const [focusedInput, setFocusedInput] = useState(null);
 
   return (
     <main style={styles.fundo}>
-      <form onSubmit={handleSubmit} style={styles.formBox} className="row g-4">
-        <h2 className="text-center w-100 mb-4">{id ? "Editar Hóspede" : "Cadastrar Hóspede"}</h2>
+      <div style={styles.formBox} className="row">
+          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
+              <Link to="/hospedes/cadastrar" style={styles.functionSelected}>
+                Registrar Hóspedes
+              </Link>
 
-        <div className="col-md-6">
-          <div>
-            <label htmlFor="nome" style={styles.label}>Nome</label>
-            <input
-              type="text"
-              name="nome"
-              id="nome"
-              value={form.nome}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
-          <div>
-            <label htmlFor="data_nascimento" style={styles.label}>Data de Nascimento</label>
-            <input
-              type="date"
-              name="data_nascimento"
-              id="data_nascimento"
-              value={form.data_nascimento}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
-          <div>
-            <label htmlFor="rg" style={styles.label}>RG</label>
-            <input
-              type="text"
-              name="rg"
-              id="rg"
-              value={form.rg}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
-          <div className="form-check mt-2">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id="empregado"
-              name="empregado"
-              checked={form.empregado}
-              onChange={handleChange}
-              style={{ marginRight: "10px" }}
-            />
-            <label className="form-check-label" htmlFor="empregado">
-              Está empregado?
-            </label>
-          </div>
-        </div>
+              <Link to="/hospedes-comportamento" style={styles.functionNotSelected}>
+                Relatar Comportamento
+              </Link>
 
-        <div className="col-md-6">
-          <div>
-            <label htmlFor="data_contato_familia" style={styles.label}>Data de Contato com a Família</label>
-            <input
-              type="date"
-              name="data_contato_familia"
-              id="data_contato_familia"
-              value={form.data_contato_familia}
-              onChange={handleChange}
-              style={styles.input}
-            />
+              <Link to="/hospedes" style={styles.functionNotSelected}>
+                Pesquisar Hóspedes
+              </Link>
           </div>
-          <div>
-            <label htmlFor="escolaridade" style={styles.label}>Escolaridade</label>
-            <select
-              name="escolaridade"
-              id="escolaridade"
-              value={form.escolaridade}
-              onChange={handleChange}
-              style={styles.input}
-            >
-              <option value="">Selecione a Escolaridade</option>
-              <option value="Analfabeto">Analfabeto</option>
-              <option value="Fundamental Incompleto">Fundamental Incompleto</option>
-              <option value="Fundamental Completo">Fundamental Completo</option>
-              <option value="Médio Incompleto">Médio Incompleto</option>
-              <option value="Médio Completo">Médio Completo</option>
-              <option value="Superior Incompleto">Superior Incompleto</option>
-              <option value="Superior Completo">Superior Completo</option>
-            </select>
-          </div>
-          <div>
-            <label htmlFor="cpf" style={styles.label}>CPF</label>
-            <input
-              type="text"
-              name="cpf"
-              id="cpf"
-              value={form.cpf}
-              onChange={handleChange}
-              style={styles.input}
-            />
-          </div>
-          
-        </div>
+            <hr style={styles.hr}/>
+            
+          <form onSubmit={handleSubmit} style={styles.formBox2} className="row" noValidate>
+            <h2 className="text-center w-100 mb-4" style={{ color: "#001b5e" }}>
+              {id ? "Editar Hóspede" : "Cadastrar Hóspede"}
+            </h2>
 
-        <div className="col-12 d-flex justify-content-between mt-4">
-          <Link to="/hospedes" style={{ ...styles.button, maxWidth: "200px" }}>
-            Cancelar
-          </Link>
-          <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
-            Salvar
-          </button>
-        </div>
-      </form>
+            <div className="col-md-6">
+              <div>
+                <label htmlFor="nome" style={styles.label}>Nome</label>
+                <input
+                  type="text"
+                  name="nome"
+                  id="nome"
+                  value={form.nome}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.input,
+                    ...(focusedInput === "nome" ? styles.inputFocus : {})
+                  }}
+                  onFocus={() => setFocusedInput("nome")}
+                  onBlur={() => setFocusedInput(null)}
+                />
+              </div>
+            <div>
+              <label htmlFor="data_nascimento" style={styles.label}>Data de Nascimento</label>
+              <input
+                type="date"
+                name="data_nascimento"
+                id="data_nascimento"
+                value={form.data_nascimento}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "data_nascimento" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("data_nascimento")}
+                onBlur={() => setFocusedInput(null)}
+              />
+            </div>
+            <div>
+              <label htmlFor="rg" style={styles.label}>RG</label>
+              <input
+                type="text"
+                name="rg"
+                id="rg"
+                value={form.rg}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "rg" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("rg")}
+                onBlur={() => setFocusedInput(null)}
+              />
+            </div>
+            <div className="form-check mt-2 d-flex align-items-center">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                id="empregado"
+                name="empregado"
+                checked={form.empregado}
+                onChange={handleChange}
+                style={{ width: 18, height: 18, cursor: "pointer" }}
+              />
+              <label className="form-check-label" htmlFor="empregado" style={styles.checkboxLabel}>
+                Está empregado?
+              </label>
+            </div>
+          </div>
+
+          <div className="col-md-6">
+            <div>
+              <label htmlFor="data_contato_familia" style={styles.label}>Data de Contato com a Família</label>
+              <input
+                type="date"
+                name="data_contato_familia"
+                id="data_contato_familia"
+                value={form.data_contato_familia}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "data_contato_familia" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("data_contato_familia")}
+                onBlur={() => setFocusedInput(null)}
+              />
+            </div>
+            <div>
+              <label htmlFor="escolaridade" style={styles.label}>Escolaridade</label>
+              <select
+                name="escolaridade"
+                id="escolaridade"
+                value={form.escolaridade}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  appearance: "none",
+                  backgroundColor: "white",
+                  cursor: "pointer",
+                  ...(focusedInput === "escolaridade" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("escolaridade")}
+                onBlur={() => setFocusedInput(null)}
+              >
+                <option value="">Selecione a Escolaridade</option>
+                <option value="Analfabeto">Analfabeto</option>
+                <option value="Fundamental Incompleto">Fundamental Incompleto</option>
+                <option value="Fundamental Completo">Fundamental Completo</option>
+                <option value="Médio Incompleto">Médio Incompleto</option>
+                <option value="Médio Completo">Médio Completo</option>
+                <option value="Superior Incompleto">Superior Incompleto</option>
+                <option value="Superior Completo">Superior Completo</option>
+              </select>
+            </div>
+            <div>
+              <label htmlFor="cpf" style={styles.label}>CPF</label>
+              <input
+                type="text"
+                name="cpf"
+                id="cpf"
+                value={form.cpf}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "cpf" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("cpf")}
+                onBlur={() => setFocusedInput(null)}
+              />
+            </div>
+          </div>
+
+          <div className="col-12 d-flex justify-content-between mt-4 gap-3 flex-wrap">
+            <Link to="/hospedes" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
+              Cancelar
+            </Link>
+            <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
+              Salvar
+            </button>
+          </div>
+        </form>  
+      </div>
     </main>
   );
 }

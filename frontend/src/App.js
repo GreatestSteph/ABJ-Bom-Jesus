@@ -46,7 +46,7 @@ function App() {
           }>
           </Route>
 
-          <Route path='/editaradicionarperfis' element={
+          <Route path='/registrousuarios' element={
             <>
               <Headerlogado/>
               <EditProfiles/>
@@ -56,7 +56,7 @@ function App() {
           }>
           </Route>
           
-          <Route path='/editaradicionarperfis/:id' element={
+          <Route path='/registrousuarios/:id' element={
             <>
               <Headerlogado/>
               <EditProfiles/>
@@ -79,7 +79,7 @@ function App() {
 
 
           {/* Gerenciar Produtos */}
-          <Route path='/editaradicionarprodutos' element={
+          <Route path='/registroprodutos' element={
             <>
               <Headerlogado/>
               <EditProducts/>
@@ -89,7 +89,7 @@ function App() {
           }>
           </Route>
           
-          <Route path='/editaradicionarprodutos/:id' element={
+          <Route path='/registroprodutos/:id' element={
             <>
               <Headerlogado/>
               <EditProducts/>
