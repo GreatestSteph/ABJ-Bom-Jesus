@@ -141,6 +141,11 @@ export default function UserList() {
     setShowModal(true);
   };
 
+  const maskPassword = (senha) => {
+    return '*'.repeat(senha.length);
+  };
+
+
   const handleDelete = () => {
     if (!userToDelete) return;
 
@@ -211,9 +216,9 @@ export default function UserList() {
                   <td style={styles.td}>{user.nome}</td>
                   <td style={styles.td}>{user.funcao}</td>
                   <td style={styles.td}>{user.usuario}</td>
-                  <td style={styles.td}>{user.senha}</td>
+                  <td style={styles.td}>{maskPassword(user.senha)}</td>
                   <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link to={`/users/${user.id}`} className="btn btn-sm btn-primary">Editar</Link>
+                    <Link to={`/registrousuarios/${user.id}`} className="btn btn-sm btn-primary">Editar</Link>
                     <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(user)}>Excluir</button>
                   </td>
                 </tr>

@@ -157,7 +157,7 @@ export default function ProdutosLista() {
   };
 
   const filteredProdutos = produtos.filter(produto =>
-    produto.nome.toLowerCase().includes(searchTerm.toLowerCase())
+    produto.nomeDoProduto?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -223,7 +223,7 @@ export default function ProdutosLista() {
                   <td style={styles.td}>{produto.custoTotal}</td>
                   <td style={styles.td}>{produto.descricao}</td>
                   <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link to={`/produtos/${produto.id}`} className="btn btn-sm btn-primary">Editar</Link>
+                    <Link to={`/registroprodutos/${produto.id}`} className="btn btn-sm btn-primary">Editar</Link>
                     <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(produto)}>Excluir</button>
                   </td>
                 </tr>

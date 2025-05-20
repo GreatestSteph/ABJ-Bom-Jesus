@@ -5,6 +5,7 @@ import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 export default function EditGuest() {
   const { id } = useParams(); // se houver id, é edição
   const navigate = useNavigate();
+  const [errors, setErrors] = useState({});
 
   const [form, setForm] = useState({
     nome: "",
@@ -42,20 +43,71 @@ export default function EditGuest() {
 
   function handleSubmit(e) {
     e.preventDefault();
+
+    const newErrors = {};
+
+    // Validação do nome
+    if (!form.nome) {
+      newErrors.nome = "O nome é obrigatório.";
+    } else if (form.nome.trim().length < 16) {
+      newErrors.nome = "Você não digitou o nome completo";
+    }
+
+    if (!form.escolaridade || form.escolaridade === "selecione") {
+      newErrors.escolaridade = "Por favor, selecione a escolaridade.";
+    }
+
+
+    // Validação de idade mínima (18 anos)
+    const nascimento = new Date(form.data_nascimento);
+    const hoje = new Date();
+    const idade = hoje.getFullYear() - nascimento.getFullYear();
+    const mes = hoje.getMonth() - nascimento.getMonth();
+    const dia = hoje.getDate() - nascimento.getDate();
+    const idadeCompleta = mes < 0 || (mes === 0 && dia < 0) ? idade - 1 : idade;
+
+    if (isNaN(nascimento.getTime())) {
+      newErrors.data_nascimento = "Data de nascimento inválida.";
+    } else if (idadeCompleta < 18) {
+      newErrors.data_nascimento = "Hóspedes menores de 18 anos não podem ser cadastrados.";
+    }
+
+    // Validação do CPF se não for vazio
+    if (form.cpf && !/^\d{11}$/.test(form.cpf)) {
+      newErrors.cpf = "O CPF deve conter exatamente 11 números.";
+    }
+
+    // Validação do RG se não for vazio
+    if (form.rg && !/^\d{7,9}$/.test(form.rg)) {
+      newErrors.rg = "O RG deve conter entre 7 e 9 números.";
+    }
+
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // Se passou por todas as validações, limpar erros e continuar
+    setErrors({});
+
     const method = id ? "PUT" : "POST";
-    const url = id ? `http://localhost:3001/guests/${id}` : "http://localhost:3001/guests";
+    const url = id
+      ? `http://localhost:3001/guests/${id}`
+      : "http://localhost:3001/guests";
 
     fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     })
-      .then(res => {
+      .then((res) => {
         if (!res.ok) throw new Error("Erro ao salvar");
         navigate("/hospedes");
       })
-      .catch(err => alert("Erro ao salvar hóspede."));
+      .catch((err) => alert("Erro ao salvar hóspede."));
   }
+
 
   const styles = {
     fundo: {
@@ -150,7 +202,7 @@ export default function EditGuest() {
       fontWeight: 'bold',
       fontSize: '16px',
       borderTopLeftRadius: '20px',
-      marginLeft: '-11px',
+      marginLeft: '-12px',
     },
     hr: {
       border: 'none',
@@ -164,6 +216,8 @@ export default function EditGuest() {
 
   // Estado para controlar foco dos inputs (pra adicionar efeito azul no foco)
   const [focusedInput, setFocusedInput] = useState(null);
+
+  
 
   return (
     <main style={styles.fundo}>
@@ -204,126 +258,139 @@ export default function EditGuest() {
                   onFocus={() => setFocusedInput("nome")}
                   onBlur={() => setFocusedInput(null)}
                 />
+                {errors.nome && <div style={{ color: 'red', fontSize: '13px' }}>{errors.nome}</div>}
               </div>
-            <div>
-              <label htmlFor="data_nascimento" style={styles.label}>Data de Nascimento</label>
-              <input
-                type="date"
-                name="data_nascimento"
-                id="data_nascimento"
-                value={form.data_nascimento}
-                onChange={handleChange}
-                style={{
-                  ...styles.input,
-                  ...(focusedInput === "data_nascimento" ? styles.inputFocus : {})
-                }}
-                onFocus={() => setFocusedInput("data_nascimento")}
-                onBlur={() => setFocusedInput(null)}
-              />
-            </div>
-            <div>
-              <label htmlFor="rg" style={styles.label}>RG</label>
-              <input
-                type="text"
-                name="rg"
-                id="rg"
-                value={form.rg}
-                onChange={handleChange}
-                style={{
-                  ...styles.input,
-                  ...(focusedInput === "rg" ? styles.inputFocus : {})
-                }}
-                onFocus={() => setFocusedInput("rg")}
-                onBlur={() => setFocusedInput(null)}
-              />
-            </div>
-            <div className="form-check mt-2 d-flex align-items-center">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="empregado"
-                name="empregado"
-                checked={form.empregado}
-                onChange={handleChange}
-                style={{ width: 18, height: 18, cursor: "pointer" }}
-              />
-              <label className="form-check-label" htmlFor="empregado" style={styles.checkboxLabel}>
-                Está empregado?
-              </label>
-            </div>
-          </div>
 
-          <div className="col-md-6">
-            <div>
-              <label htmlFor="data_contato_familia" style={styles.label}>Data de Contato com a Família</label>
-              <input
-                type="date"
-                name="data_contato_familia"
-                id="data_contato_familia"
-                value={form.data_contato_familia}
-                onChange={handleChange}
-                style={{
-                  ...styles.input,
-                  ...(focusedInput === "data_contato_familia" ? styles.inputFocus : {})
-                }}
-                onFocus={() => setFocusedInput("data_contato_familia")}
-                onBlur={() => setFocusedInput(null)}
-              />
-            </div>
-            <div>
-              <label htmlFor="escolaridade" style={styles.label}>Escolaridade</label>
-              <select
-                name="escolaridade"
-                id="escolaridade"
-                value={form.escolaridade}
-                onChange={handleChange}
-                style={{
-                  ...styles.input,
-                  appearance: "none",
-                  backgroundColor: "white",
-                  cursor: "pointer",
-                  ...(focusedInput === "escolaridade" ? styles.inputFocus : {})
-                }}
-                onFocus={() => setFocusedInput("escolaridade")}
-                onBlur={() => setFocusedInput(null)}
-              >
-                <option value="">Selecione a Escolaridade</option>
-                <option value="Analfabeto">Analfabeto</option>
-                <option value="Fundamental Incompleto">Fundamental Incompleto</option>
-                <option value="Fundamental Completo">Fundamental Completo</option>
-                <option value="Médio Incompleto">Médio Incompleto</option>
-                <option value="Médio Completo">Médio Completo</option>
-                <option value="Superior Incompleto">Superior Incompleto</option>
-                <option value="Superior Completo">Superior Completo</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="cpf" style={styles.label}>CPF</label>
-              <input
-                type="text"
-                name="cpf"
-                id="cpf"
-                value={form.cpf}
-                onChange={handleChange}
-                style={{
-                  ...styles.input,
-                  ...(focusedInput === "cpf" ? styles.inputFocus : {})
-                }}
-                onFocus={() => setFocusedInput("cpf")}
-                onBlur={() => setFocusedInput(null)}
-              />
-            </div>
-          </div>
+              <div>
+                <label htmlFor="data_nascimento" style={styles.label}>Data de Nascimento</label>
+                <input
+                  type="date"
+                  name="data_nascimento"
+                  id="data_nascimento"
+                  value={form.data_nascimento}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.input,
+                    ...(focusedInput === "data_nascimento" ? styles.inputFocus : {})
+                  }}
+                  onFocus={() => setFocusedInput("data_nascimento")}
+                  onBlur={() => setFocusedInput(null)}
+                />
+                {errors.data_nascimento && <div style={{ color: 'red', fontSize: '13px' }}>{errors.data_nascimento}</div>}
+              </div>
 
-          <div className="col-12 d-flex justify-content-between mt-4 gap-3 flex-wrap">
-            <Link to="/hospedes" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
-              Cancelar
-            </Link>
-            <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
-              Salvar
-            </button>
-          </div>
-        </form>  
+              <div>
+                <label htmlFor="rg" style={styles.label}>RG</label>
+                <input
+                  type="text"
+                  name="rg"
+                  id="rg"
+                  value={form.rg}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.input,
+                    ...(focusedInput === "rg" ? styles.inputFocus : {})
+                  }}
+                  onFocus={() => setFocusedInput("rg")}
+                  onBlur={() => setFocusedInput(null)}
+                />
+                {errors.rg && <div style={{ color: 'red', fontSize: '13px' }}>{errors.rg}</div>}
+              </div>
+
+              <div className="form-check mt-2 d-flex align-items-center">
+                <input
+                  type="checkbox"
+                  className="form-check-input"
+                  id="empregado"
+                  name="empregado"
+                  checked={form.empregado}
+                  onChange={handleChange}
+                  style={{ width: 18, height: 18, cursor: "pointer" }}
+                />
+                <label className="form-check-label" htmlFor="empregado" style={styles.checkboxLabel}>
+                  Está empregado?
+                </label>
+                {errors.empregado && <div style={{ color: 'red', fontSize: '13px' }}>{errors.empregado}</div>}
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <div>
+                <label htmlFor="data_contato_familia" style={styles.label}>Data de Contato com a Família</label>
+                <input
+                  type="date"
+                  name="data_contato_familia"
+                  id="data_contato_familia"
+                  value={form.data_contato_familia}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.input,
+                    ...(focusedInput === "data_contato_familia" ? styles.inputFocus : {})
+                  }}
+                  onFocus={() => setFocusedInput("data_contato_familia")}
+                  onBlur={() => setFocusedInput(null)}
+                />
+                {errors.data_contato_familia && <div style={{ color: 'red', fontSize: '13px' }}>{errors.data_contato_familia}</div>}
+              </div>
+
+              <div>
+                <label htmlFor="escolaridade" style={styles.label}>Escolaridade</label>
+                <select
+                  name="escolaridade"
+                  id="escolaridade"
+                  value={form.escolaridade}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.input,
+                    appearance: "none",
+                    backgroundColor: "white",
+                    cursor: "pointer",
+                    ...(focusedInput === "escolaridade" ? styles.inputFocus : {})
+                  }}
+                  onFocus={() => setFocusedInput("escolaridade")}
+                  onBlur={() => setFocusedInput(null)}
+                >
+                  <option value="">Selecione a Escolaridade</option>
+                  <option value="Analfabeto">Analfabeto</option>
+                  <option value="Fundamental Incompleto">Fundamental Incompleto</option>
+                  <option value="Fundamental Completo">Fundamental Completo</option>
+                  <option value="Médio Incompleto">Médio Incompleto</option>
+                  <option value="Médio Completo">Médio Completo</option>
+                  <option value="Superior Incompleto">Superior Incompleto</option>
+                  <option value="Superior Completo">Superior Completo</option>
+                </select>
+                {errors.escolaridade && <div style={{ color: 'red', fontSize: '13px' }}>{errors.escolaridade}</div>}
+              </div>
+
+              <div>
+                <label htmlFor="cpf" style={styles.label}>CPF</label>
+                <input
+                  type="text"
+                  name="cpf"
+                  id="cpf"
+                  value={form.cpf}
+                  onChange={handleChange}
+                  style={{
+                    ...styles.input,
+                    ...(focusedInput === "cpf" ? styles.inputFocus : {})
+                  }}
+                  onFocus={() => setFocusedInput("cpf")}
+                  onBlur={() => setFocusedInput(null)}
+                />
+                {errors.cpf && <div style={{ color: 'red', fontSize: '13px' }}>{errors.cpf}</div>}
+              </div>
+            </div>
+
+            <div className="col-12 d-flex justify-content-between mt-4 gap-3 flex-wrap">
+              <Link to="/hospedes" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
+                Cancelar
+              </Link>
+              <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
+                Salvar
+              </button>
+            </div>
+          </form>
+
       </div>
     </main>
   );

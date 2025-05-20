@@ -10,7 +10,7 @@ class Produtos extends Model {
         quantidade: Sequelize.INTEGER,
         marca: Sequelize.STRING,
         descricao: Sequelize.STRING,
-        custoTotal: Sequelize.DECIMAL(10, 2),
+        custoTotal: Sequelize.INTEGER,
       },
       { sequelize },
     );

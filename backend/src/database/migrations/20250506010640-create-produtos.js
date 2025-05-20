@@ -34,7 +34,7 @@ module.exports = {
         allowNull: false,
       },
       custoTotal: {
-        type: Sequelize.DECIMAL(10, 2),
+        type: Sequelize.INTEGER,
         allowNull: false,
       },
       created_at: {
