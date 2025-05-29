@@ -114,10 +114,6 @@ export default function EditGuest() {
       newErrors.cpf = "O CPF deve conter exatamente 11 números.";
     }
 
-    // Validação do RG se não for vazio
-    if (form.rg && !/^\d{7,9}$/.test(form.rg)) {
-      newErrors.rg = "O RG deve conter entre 7 e 9 números.";
-    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
