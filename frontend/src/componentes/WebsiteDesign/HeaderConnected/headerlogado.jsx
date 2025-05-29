@@ -1,9 +1,12 @@
-import React from "react"; 
-import { Link } from "react-router-dom"; 
-import logoABL from "../HeaderandFooterImages/logoABL.png"; 
-import iconeAjuda from "../HeaderandFooterImages/iconeAjuda.svg"; 
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+import logoABL from "../HeaderandFooterImages/logoABL.png";
+import iconeAjuda from "../HeaderandFooterImages/iconeAjuda.svg";
 
 export default function Headerlogado() {
+    const location = useLocation();
+    const currentPath = location.pathname;
+
     const estiloHeader = {
         fundodoHeader: {
             backgroundColor: 'rgb(255, 255, 255)',
@@ -11,7 +14,7 @@ export default function Headerlogado() {
             position: 'fixed',
             zIndex: 100,
             padding: '10px 20px',
-            height: '70px', 
+            height: '70px',
         },
         navItem: {
             color: 'rgb(21, 75, 122)',
@@ -21,11 +24,11 @@ export default function Headerlogado() {
             paddingRight: '30px',
             paddingBottom: '22px',
             borderBottom: '5px solid rgb(255, 140, 46)',
-        },      
+        },
         logo: {
             width: '70px',
             marginRight: '30px',
-        },  
+        },
         ajudaeicone: {
             color: 'rgb(21, 75, 122)',
             textDecoration: 'none',
@@ -35,19 +38,36 @@ export default function Headerlogado() {
         }
     };
 
+    const navStyle = (paths) => ({
+        ...estiloHeader.navItem,
+        borderBottomColor: paths.includes(currentPath) ? 'rgb(255, 140, 46)' : 'white'
+    });
+
     return (
         <header className="d-flex justify-content-between align-items-center" style={estiloHeader.fundodoHeader}>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
             <link rel="preconnect" href="https://fonts.googleapis.com" />
             <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
             <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100..900&display=swap" rel="stylesheet" />
-            
+
             <div>
                 <img src={logoABL} alt="Logo ABL" style={estiloHeader.logo} />
-                <Link to="/listadeusuarios" style={estiloHeader.navItem}>Perfis </Link>
-                <Link to="/hospedes" style={estiloHeader.navItem}>Gerenciar Hospédes </Link>
-                <Link to="/listarprodutos" style={estiloHeader.navItem}>Gerenciar Consumo </Link>
-                <Link to="/listadeusuarios" style={estiloHeader.navItem}>Relatórios e Estatísticas </Link>
+
+                <Link to="/listadeusuarios"  style={navStyle(["/listadeusuarios", "/registrousuarios"])}>
+                    Perfis
+                </Link>
+
+                <Link to="/hospedes" style={navStyle(["/hospedes", "/hospedes/cadastrar"])}>
+                    Gerenciar Hóspedes
+                </Link>
+
+                <Link to="/listarprodutos" style={navStyle(["/listarprodutos", "/registroprodutos"])}>
+                    Gerenciar Consumo
+                </Link>
+
+                <Link to="/relatorios" style={navStyle(["/relatorios"])}>
+                    Relatórios e Estatísticas
+                </Link>
             </div>
 
             <div className="d-flex align-items-center">

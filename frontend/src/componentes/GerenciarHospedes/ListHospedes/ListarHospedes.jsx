@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
-import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
-import digital from "../../WebsiteDesign/RegisterImages/digital.svg";
+// import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
+// import digital from "../../WebsiteDesign/RegisterImages/digital.svg";
 
 const styles = {
   fundo: {

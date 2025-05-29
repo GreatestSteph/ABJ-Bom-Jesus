@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
 
@@ -63,7 +63,8 @@ const styles = {
     padding: '20px',
     borderRadius: '8px',
     width: '400px',
-    textAlign: 'center'
+    textAlign: 'center',
+    boxShadow: '0 0 10px rgba(0,0,0,0.3)'
   },
   modalButtons: {
     marginTop: '20px',
@@ -71,17 +72,35 @@ const styles = {
     justifyContent: 'center',
     gap: '10px'
   },
+  inputSenha: {
+    width: '80%',
+    padding: '8px',
+    fontSize: '16px',
+    marginTop: '15px',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+  },
   searchContainer: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: '20px'
   },
-  searchInput: {
-    padding: '8px',
-    borderRadius: '4px',
-    border: '1px solid #ddd',
-    width: '300px'
+  barraPesquisa: {
+    width: '100%',
+    padding: '12px 120px 12px 16px',
+    borderRadius: '8px',
+    border: '1px solid #ccc',
+    fontSize: '16px',
+    height: '60px',
+  },
+  posicaoBotoes: {
+    position: 'absolute',
+    top: '50%',
+    right: '12px',
+    transform: 'translateY(-50%)',
+    display: 'flex',
+    gap: '8px'
   },
   functionNotSelected: {
     color: 'rgb(42, 135, 211)',
@@ -105,60 +124,67 @@ const styles = {
     width: '100%',
     margin: 0 
   },
-  barraPesquisa: {
-    width: '100%',
-    padding: '12px 120px 12px 16px',
-    borderRadius: '8px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-    height: '60px',
-  },
-  posicaoBotoes: {
-    position: 'absolute',
-    top: '50%',
-    right: '12px',
-    transform: 'translateY(-50%)',
-    display: 'flex',
-    gap: '8px'
-  },
 };
 
 export default function UserList() {
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [userToDelete, setUserToDelete] = useState(null);
+  const [userSelected, setUserSelected] = useState(null);
+  const [actionType, setActionType] = useState(null); // "edit" ou "delete"
+  const [passwordInput, setPasswordInput] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:3001/users")
       .then((res) => res.json())
-      .then((data) => setUsers(data))
+      .then((data) => {
+        const sortedData = data.sort((a, b) => a.nome.localeCompare(b.nome));
+        setUsers(sortedData);
+      })
       .catch((err) => console.error("Erro ao buscar usuários:", err));
   }, []);
 
-  const handleDeleteClick = (user) => {
-    setUserToDelete(user);
+  const openPasswordModal = (user, action) => {
+    setUserSelected(user);
+    setActionType(action);
+    setPasswordInput("");
+    setErrorMessage("");
     setShowModal(true);
   };
 
-  const maskPassword = (senha) => {
-    return '*'.repeat(senha.length);
+  const closeModal = () => {
+    setShowModal(false);
+    setUserSelected(null);
+    setActionType(null);
+    setPasswordInput("");
+    setErrorMessage("");
   };
 
+  const handleConfirm = () => {
+    if (!userSelected) return;
 
-  const handleDelete = () => {
-    if (!userToDelete) return;
-
-    fetch(`http://localhost:3001/users/${userToDelete.id}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setUsers(users.filter((user) => user.id !== userToDelete.id));
-        setShowModal(false);
-        setUserToDelete(null);
-        console.log(data);
-      });
+    // Valida se a senha digitada confere com a senha do usuário
+    if (passwordInput === userSelected.senha) {
+      if (actionType === "edit") {
+        // Redireciona para página de edição
+        navigate(`/registrousuarios/${userSelected.id}`);
+      } else if (actionType === "delete") {
+        // Executa exclusão
+        fetch(`http://localhost:3001/users/${userSelected.id}`, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then(() => {
+            setUsers(users.filter((u) => u.id !== userSelected.id));
+          });
+      }
+      closeModal();
+    } else {
+      setErrorMessage("Senha incorreta. Tente novamente.");
+    }
   };
 
   const filteredUsers = users.filter(user =>
@@ -167,19 +193,17 @@ export default function UserList() {
 
   return (
     <main style={styles.fundo}>
-
-      
       <div style={styles.aroundListBox}>
-         <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-              <Link to="/registrousuarios" style={styles.functionNotSelected}>
-                Registrar Usuários
-              </Link>
+        <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
+          <Link to="/registrousuarios" style={styles.functionNotSelected}>
+            Registrar Usuários
+          </Link>
 
-              <Link to="/listadeusuarios" style={styles.functionSelected}>
-                Pesquisar Usuários
-              </Link>
-            </div>
-            <hr style={styles.hr}/>
+          <Link to="/listadeusuarios" style={styles.functionSelected}>
+            Pesquisar Usuários
+          </Link>
+        </div>
+        <hr style={styles.hr}/>
 
         <div style={styles.searchContainer} className="mt-4 pt-3 mb-5 mx-5 px-2">
           <div style={{ position: 'relative', width: '100%' }}>
@@ -192,13 +216,17 @@ export default function UserList() {
             />
 
             <div style={styles.posicaoBotoes}>
-            <button style={{ backgroundColor: 'rgba(231, 127, 60, 1)', padding: '10px 12px'}} className="btn" onClick={() => setSearchTerm(searchTerm + ' ')}>
-              <img src={lupa} alt="Ícone de lupa" />
-            </button>              
+              <button
+                style={{ backgroundColor: 'rgba(231, 127, 60, 1)', padding: '10px 12px' }}
+                className="btn"
+                onClick={() => setSearchTerm(searchTerm + ' ')}
+              >
+                <img src={lupa} alt="Ícone de lupa" />
+              </button>              
             </div>
           </div>
         </div>
-        
+
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <table style={styles.table} className='mb-5'>
             <thead>
@@ -206,7 +234,7 @@ export default function UserList() {
                 <th style={styles.th}>Nome</th>
                 <th style={styles.th}>Função</th>
                 <th style={styles.th}>Usuário</th>
-                <th style={styles.th}>Senha</th>               
+                <th style={{ ...styles.td, display: "none" }}>Senha</th>               
                 <th style={styles.th}>Ações</th>
               </tr>
             </thead>
@@ -216,10 +244,20 @@ export default function UserList() {
                   <td style={styles.td}>{user.nome}</td>
                   <td style={styles.td}>{user.funcao}</td>
                   <td style={styles.td}>{user.usuario}</td>
-                  <td style={styles.td}>{maskPassword(user.senha)}</td>
+                  <td style={{ ...styles.td, display: "none" }}>{user.senha}</td>
                   <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link to={`/registrousuarios/${user.id}`} className="btn btn-sm btn-primary">Editar</Link>
-                    <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(user)}>Excluir</button>
+                    <button
+                      className="btn btn-sm btn-primary"
+                      onClick={() => openPasswordModal(user, "edit")}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      className="btn btn-sm btn-danger"
+                      onClick={() => openPasswordModal(user, "delete")}
+                    >
+                      Excluir
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -228,17 +266,39 @@ export default function UserList() {
         </div>
 
         {showModal && (
-          <div style={styles.modal}>
-            <div style={styles.modalContent}>
-              <h4>Confirmar Exclusão</h4>
-              <p>Tem certeza que deseja excluir o usuário {userToDelete?.nome}?</p>
+          <div style={styles.modal} onClick={closeModal}>
+            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+              <h4>
+                {actionType === "edit"
+                  ? "Confirmar edição"
+                  : "Confirmar exclusão"}
+              </h4>
+              <p>
+                Para {actionType === "edit" ? "ir para a página de edição" : "excluir o usuário"} <b>{userSelected?.nome}</b>, digite a senha dele:
+              </p>
+              <input
+                type="password"
+                placeholder="Digite a senha"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                style={styles.inputSenha}
+                autoFocus
+              />
+              {errorMessage && (
+                <p style={{ color: "red", marginTop: "10px" }}>{errorMessage}</p>
+              )}
               <div style={styles.modalButtons}>
-                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-                <button className="btn btn-danger" onClick={handleDelete}>Confirmar</button>
+                <button className="btn btn-secondary" onClick={closeModal}>
+                  Cancelar
+                </button>
+                <button className="btn btn-primary" onClick={handleConfirm}>
+                  Confirmar
+                </button>
               </div>
             </div>
           </div>
         )}
+
       </div>
     </main>
   );

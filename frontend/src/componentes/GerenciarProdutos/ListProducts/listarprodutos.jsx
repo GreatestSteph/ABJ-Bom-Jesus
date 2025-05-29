@@ -132,7 +132,11 @@ export default function ProdutosLista() {
   useEffect(() => {
     fetch("http://localhost:3001/produtos")
       .then((res) => res.json())
-      .then((data) => setProdutos(data))
+      .then((data) => {
+        const sortedData = data.sort((a, b) => a.nomeDoProduto.localeCompare(b.nomeDoProduto));
+        setProdutos(sortedData);
+      })
+
       .catch((err) => console.error("Erro ao buscar produtos:", err));
   }, []);
 

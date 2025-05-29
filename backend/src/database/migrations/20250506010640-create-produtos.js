@@ -15,7 +15,7 @@ module.exports = {
       },
       tamanho: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       cor: {
         type: Sequelize.STRING,
