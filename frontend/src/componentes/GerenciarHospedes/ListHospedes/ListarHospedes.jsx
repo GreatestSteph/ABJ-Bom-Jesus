@@ -4,7 +4,6 @@ import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
 import digital from "../../WebsiteDesign/RegisterImages/digital.svg";
 
-
 const styles = {
   fundo: {
     backgroundImage: `url(${fundo})`,
@@ -123,13 +122,104 @@ const styles = {
     display: 'flex',
     gap: '8px'
   },
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '24px 0 12px 0',
+    gap: '8px'
+  },
+  paginationButton: {
+    padding: '6px 14px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    background: 'white',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  paginationButtonActive: {
+    padding: '6px 14px',
+    border: '1px solid rgb(60, 162, 245)',
+    borderRadius: '4px',
+    background: 'rgb(60, 162, 245)',
+    color: 'white',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  paginationButtonDisabled: {
+    padding: '6px 14px',
+    border: '1px solid #eee',
+    borderRadius: '4px',
+    background: '#f5f5f5',
+    color: '#aaa',
+    cursor: 'not-allowed',
+    fontWeight: 'bold'
+  }
 };
+
+// Componente de Paginação
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  // Mostra no máximo 5 páginas (com ... se necessário)
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1,2,3,4,'...',totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1,'...',totalPages-3,totalPages-2,totalPages-1,totalPages);
+      } else {
+        pages.push(1,'...',currentPage-1,currentPage,currentPage+1,'...',totalPages);
+      }
+    }
+    return pages;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div style={styles.paginationContainer}>
+      <button
+        style={currentPage === 1 ? styles.paginationButtonDisabled : styles.paginationButton}
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        &lt;
+      </button>
+      {getPageNumbers().map((page, idx) =>
+        page === "..." ? (
+          <span key={idx} style={{ padding: '0 6px', color: '#888' }}>...</span>
+        ) : (
+          <button
+            key={page}
+            style={currentPage === page ? styles.paginationButtonActive : styles.paginationButton}
+            onClick={() => onPageChange(page)}
+            disabled={currentPage === page}
+          >
+            {page}
+          </button>
+        )
+      )}
+      <button
+        style={currentPage === totalPages ? styles.paginationButtonDisabled : styles.paginationButton}
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &gt;
+      </button>
+    </div>
+  );
+}
 
 export default function GuestList() {
   const [guests, setGuests] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [guestToDelete, setGuestToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const GUESTS_PER_PAGE = 10;
 
   useEffect(() => {
     fetch("http://localhost:3001/guests")
@@ -169,6 +259,18 @@ export default function GuestList() {
     const cpfMatch = cpfNumeros.includes(termNumeros) && termNumeros.length > 0;
     return nomeMatch || cpfMatch;
   });
+
+  // Paginação apenas no frontend
+  const totalPages = Math.ceil(filteredGuests.length / GUESTS_PER_PAGE) || 1;
+  const paginatedGuests = filteredGuests.slice(
+    (currentPage - 1) * GUESTS_PER_PAGE,
+    currentPage * GUESTS_PER_PAGE
+  );
+
+  // Se searchTerm mudar, volta para página 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   return (
     <main style={styles.fundo}>
@@ -214,7 +316,7 @@ export default function GuestList() {
               </tr>
             </thead>
             <tbody>
-              {filteredGuests.map((guest) => (
+              {paginatedGuests.map((guest) => (
                 <tr key={guest.id}>
                   <td style={styles.td}>#{guest.id}</td>
                   <td style={styles.td}>{guest.nome}</td>
@@ -230,9 +332,22 @@ export default function GuestList() {
                   </td>
                 </tr>
               ))}
+              {paginatedGuests.length === 0 && (
+                <tr>
+                  <td style={styles.td} colSpan={7} className="text-center">
+                    Nenhum hóspede encontrado.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         {showModal && (
           <div style={styles.modal}>
