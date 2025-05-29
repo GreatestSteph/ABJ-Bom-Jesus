@@ -15,7 +15,7 @@ class GuestsController {
 
   async list(req, res) {
     try {
-      const guests = await Guests.findAll();
+      const guests = await Guests.findAll({ order: [['nome', 'ASC']] });
       return res.status(200).json(guests);
     } catch (error) {
       console.error(error);

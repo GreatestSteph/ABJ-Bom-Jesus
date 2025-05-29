@@ -2,6 +2,32 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 
+function maskCPF(value) {
+  value = value.replace(/\D/g, "");
+  value = value.slice(0, 11);
+  if (value.length > 9) {
+    value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, "$1.$2.$3-$4");
+  } else if (value.length > 6) {
+    value = value.replace(/(\d{3})(\d{3})(\d{1,3})/, "$1.$2.$3");
+  } else if (value.length > 3) {
+    value = value.replace(/(\d{3})(\d{1,3})/, "$1.$2");
+  }
+  return value;
+}
+
+function InputGroup({ children, error }) {
+  return (
+    <div style={{ marginBottom: "6px", minHeight: error ? 70 : 52 }}>
+      {children}
+      <div style={{ minHeight: "18px" }}>
+        {error && (
+          <div style={{ color: 'red', fontSize: '13px', minHeight: "18px", marginTop: "2px" }}>{error}</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function EditGuest() {
   const { id } = useParams(); // se houver id, é edição
   const navigate = useNavigate();
@@ -27,6 +53,7 @@ export default function EditGuest() {
             ...data,
             data_nascimento: data.data_nascimento?.slice(0, 10) || "",
             data_contato_familia: data.data_contato_familia?.slice(0, 10) || "",
+            cpf: data.cpf ? maskCPF(data.cpf) : "",
           });
         })
         .catch(err => console.error("Erro ao carregar hóspede:", err));
@@ -35,10 +62,19 @@ export default function EditGuest() {
 
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
-    setForm(prev => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    if (name === "cpf") {
+      // Aplica a máscara ao digitar
+      const masked = maskCPF(value);
+      setForm(prev => ({
+        ...prev,
+        [name]: masked,
+      }));
+    } else {
+      setForm(prev => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
   }
 
   function handleSubmit(e) {
@@ -49,14 +85,13 @@ export default function EditGuest() {
     // Validação do nome
     if (!form.nome) {
       newErrors.nome = "O nome é obrigatório.";
-    } else if (form.nome.trim().length < 16) {
+    } else if (form.nome.trim().length < 2) {
       newErrors.nome = "Você não digitou o nome completo";
     }
 
     if (!form.escolaridade || form.escolaridade === "selecione") {
       newErrors.escolaridade = "Por favor, selecione a escolaridade.";
     }
-
 
     // Validação de idade mínima (18 anos)
     const nascimento = new Date(form.data_nascimento);
@@ -73,7 +108,9 @@ export default function EditGuest() {
     }
 
     // Validação do CPF se não for vazio
-    if (form.cpf && !/^\d{11}$/.test(form.cpf)) {
+    // Remove máscara para validar só os números
+    const cpfNumeros = form.cpf.replace(/\D/g, "");
+    if (form.cpf && !/^\d{11}$/.test(cpfNumeros)) {
       newErrors.cpf = "O CPF deve conter exatamente 11 números.";
     }
 
@@ -81,7 +118,6 @@ export default function EditGuest() {
     if (form.rg && !/^\d{7,9}$/.test(form.rg)) {
       newErrors.rg = "O RG deve conter entre 7 e 9 números.";
     }
-
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -96,10 +132,26 @@ export default function EditGuest() {
       ? `http://localhost:3001/guests/${id}`
       : "http://localhost:3001/guests";
 
+    // Remove máscara do CPF antes de enviar para o backend
+    // Corrigir data_contato_familia: se for string vazia ou inválida, enviar como null
+    let dataContatoFamiliaToSend = form.data_contato_familia;
+    if (
+      !dataContatoFamiliaToSend ||
+      isNaN(new Date(dataContatoFamiliaToSend).getTime())
+    ) {
+      dataContatoFamiliaToSend = null;
+    }
+
+    const formToSend = {
+      ...form,
+      cpf: form.cpf.replace(/\D/g, ""),
+      data_contato_familia: dataContatoFamiliaToSend,
+    };
+
     fetch(url, {
       method,
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify(formToSend),
     })
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao salvar");
@@ -107,7 +159,6 @@ export default function EditGuest() {
       })
       .catch((err) => alert("Erro ao salvar hóspede."));
   }
-
 
   const styles = {
     fundo: {
@@ -137,7 +188,7 @@ export default function EditGuest() {
     input: {
       width: "100%",
       padding: "12px",
-      margin: "6px 0 18px 0",
+      margin: "6px 0 0 0", // removido margin-bottom, controlado pelo InputGroup
       borderRadius: "8px",
       border: "2px solid #e77f3c", // borda laranja
       fontSize: "14px",
@@ -217,8 +268,6 @@ export default function EditGuest() {
   // Estado para controlar foco dos inputs (pra adicionar efeito azul no foco)
   const [focusedInput, setFocusedInput] = useState(null);
 
-  
-
   return (
     <main style={styles.fundo}>
       <div style={styles.formBox} className="row">
@@ -243,7 +292,7 @@ export default function EditGuest() {
             </h2>
 
             <div className="col-md-6">
-              <div>
+              <InputGroup error={errors.nome}>
                 <label htmlFor="nome" style={styles.label}>Nome</label>
                 <input
                   type="text"
@@ -258,10 +307,9 @@ export default function EditGuest() {
                   onFocus={() => setFocusedInput("nome")}
                   onBlur={() => setFocusedInput(null)}
                 />
-                {errors.nome && <div style={{ color: 'red', fontSize: '13px' }}>{errors.nome}</div>}
-              </div>
+              </InputGroup>
 
-              <div>
+              <InputGroup error={errors.data_nascimento}>
                 <label htmlFor="data_nascimento" style={styles.label}>Data de Nascimento</label>
                 <input
                   type="date"
@@ -276,10 +324,9 @@ export default function EditGuest() {
                   onFocus={() => setFocusedInput("data_nascimento")}
                   onBlur={() => setFocusedInput(null)}
                 />
-                {errors.data_nascimento && <div style={{ color: 'red', fontSize: '13px' }}>{errors.data_nascimento}</div>}
-              </div>
+              </InputGroup>
 
-              <div>
+              <InputGroup error={errors.rg}>
                 <label htmlFor="rg" style={styles.label}>RG</label>
                 <input
                   type="text"
@@ -294,10 +341,9 @@ export default function EditGuest() {
                   onFocus={() => setFocusedInput("rg")}
                   onBlur={() => setFocusedInput(null)}
                 />
-                {errors.rg && <div style={{ color: 'red', fontSize: '13px' }}>{errors.rg}</div>}
-              </div>
+              </InputGroup>
 
-              <div className="form-check mt-2 d-flex align-items-center">
+              <div className="form-check mt-2 d-flex align-items-center" style={{ minHeight: 52 }}>
                 <input
                   type="checkbox"
                   className="form-check-input"
@@ -310,12 +356,13 @@ export default function EditGuest() {
                 <label className="form-check-label" htmlFor="empregado" style={styles.checkboxLabel}>
                   Está empregado?
                 </label>
-                {errors.empregado && <div style={{ color: 'red', fontSize: '13px' }}>{errors.empregado}</div>}
+                {/* Se quiser alinhar erro do checkbox, pode usar InputGroup também */}
+                {/* {errors.empregado && <div style={{ color: 'red', fontSize: '13px' }}>{errors.empregado}</div>} */}
               </div>
             </div>
 
             <div className="col-md-6">
-              <div>
+              <InputGroup error={errors.data_contato_familia}>
                 <label htmlFor="data_contato_familia" style={styles.label}>Data de Contato com a Família</label>
                 <input
                   type="date"
@@ -330,10 +377,9 @@ export default function EditGuest() {
                   onFocus={() => setFocusedInput("data_contato_familia")}
                   onBlur={() => setFocusedInput(null)}
                 />
-                {errors.data_contato_familia && <div style={{ color: 'red', fontSize: '13px' }}>{errors.data_contato_familia}</div>}
-              </div>
+              </InputGroup>
 
-              <div>
+              <InputGroup error={errors.escolaridade}>
                 <label htmlFor="escolaridade" style={styles.label}>Escolaridade</label>
                 <select
                   name="escolaridade"
@@ -359,10 +405,9 @@ export default function EditGuest() {
                   <option value="Superior Incompleto">Superior Incompleto</option>
                   <option value="Superior Completo">Superior Completo</option>
                 </select>
-                {errors.escolaridade && <div style={{ color: 'red', fontSize: '13px' }}>{errors.escolaridade}</div>}
-              </div>
+              </InputGroup>
 
-              <div>
+              <InputGroup error={errors.cpf}>
                 <label htmlFor="cpf" style={styles.label}>CPF</label>
                 <input
                   type="text"
@@ -370,15 +415,18 @@ export default function EditGuest() {
                   id="cpf"
                   value={form.cpf}
                   onChange={handleChange}
+                  maxLength={14} // 000.000.000-00
+                  inputMode="numeric"
+                  pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
                   style={{
                     ...styles.input,
                     ...(focusedInput === "cpf" ? styles.inputFocus : {})
                   }}
                   onFocus={() => setFocusedInput("cpf")}
                   onBlur={() => setFocusedInput(null)}
+                  placeholder="000.000.000-00"
                 />
-                {errors.cpf && <div style={{ color: 'red', fontSize: '13px' }}>{errors.cpf}</div>}
-              </div>
+              </InputGroup>
             </div>
 
             <div className="col-12 d-flex justify-content-between mt-4 gap-3 flex-wrap">
@@ -390,7 +438,6 @@ export default function EditGuest() {
               </button>
             </div>
           </form>
-
       </div>
     </main>
   );

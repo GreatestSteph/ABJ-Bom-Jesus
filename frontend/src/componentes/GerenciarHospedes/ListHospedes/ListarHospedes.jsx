@@ -158,14 +158,20 @@ export default function GuestList() {
       });
   };
 
-  const filteredGuests = guests.filter(guest =>
-    guest.nome.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Busca por nome OU CPF (ignorando máscara do CPF)
+  const filteredGuests = guests.filter(guest => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
+    const nomeMatch = guest.nome?.toLowerCase().includes(term);
+    // Remove máscara do CPF para busca
+    const cpfNumeros = (guest.cpf || "").replace(/\D/g, "");
+    const termNumeros = term.replace(/\D/g, "");
+    const cpfMatch = cpfNumeros.includes(termNumeros) && termNumeros.length > 0;
+    return nomeMatch || cpfMatch;
+  });
 
   return (
     <main style={styles.fundo}>
-
-      
       <div style={styles.aroundListBox}>
          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
               <Link to="/hospedes/cadastrar" style={styles.functionNotSelected}>
@@ -191,15 +197,6 @@ export default function GuestList() {
               onChange={(e) => setSearchTerm(e.target.value)}
               style={styles.barraPesquisa}
             />
-
-            <div style={styles.posicaoBotoes}>
-            <button style={{ backgroundColor: 'rgba(231, 127, 60, 1)'}} className="btn py-0 px-3" onClick={() => setSearchTerm(searchTerm + ' ')}>
-              <img src={lupa} alt="Ícone de lupa" />
-            </button>              
-            <button style={{backgroundColor: 'rgb(40, 88, 150)'}} className="btn py-0 px-0">
-              <img src={digital} alt="Ícone de digital" />
-            </button>
-            </div>
           </div>
         </div>
         
