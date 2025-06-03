@@ -18,6 +18,8 @@ import EditProducts from "./componentes/GerenciarProdutos/EditProducts/editarpro
 import ProdutosLista from "./componentes/GerenciarProdutos/ListProducts/listarprodutos.jsx"
 
 
+
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
@@ -75,7 +77,7 @@ function App() {
             </>
           }>
           </Route>
-
+         
 
 
           {/* Gerenciar Produtos */}
