@@ -11,3 +11,7 @@ Feito para o gerenciamento de consumo e de hospedagem de pessoas sem suporte ou 
 ### Apoio educacional:
 - Universidade do Oeste Paulista - Unoeste
 
+comando chato cd C:\Users\kayan\Downloads\ABJ-Bom-Jesus-main-clone\ABJ-Bom-Jesus\frontend
+cd .\frontend
+
+

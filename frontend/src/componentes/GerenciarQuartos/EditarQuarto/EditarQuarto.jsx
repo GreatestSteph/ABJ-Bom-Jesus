@@ -125,9 +125,10 @@ export default function EditarQuarto() {
         <h2 style={styles.title}>
           {id ? "Editar Quarto" : "Cadastrar Quarto"}
         </h2>
-        
+
         <form onSubmit={salvar}>
           {/* Campo: Número do quarto */}
+          <p1>Número do quarto:</p1>
           <input
             type="text"
             name="numero"
@@ -139,6 +140,7 @@ export default function EditarQuarto() {
           />
 
           {/* Campo: Tipo de cama (dropdown) */}
+          <p1>Tipo de cama do quarto:</p1>
           <select
             name="tipo"
             value={form.tipo}
@@ -152,19 +154,9 @@ export default function EditarQuarto() {
             <option value="Beliche">Beliche</option>
           </select>
 
-          {/* Campo: Ocupação máxima (número) */}
-          <input
-            type="number"
-            name="ocupacao_max"
-            value={form.ocupacao_max}
-            onChange={handleChange}
-            placeholder="Ocupação Máxima"
-            min="1"
-            style={styles.input}
-            required
-          />
 
           {/* Campo: Status (dropdown) */}
+            <p1>Status do quarto:</p1>
           <select
             name="status"
             value={form.status}
@@ -183,7 +175,7 @@ export default function EditarQuarto() {
             <Link to="/listarquartos" style={styles.button}>
               Cancelar
             </Link>
-            
+
             {/* Botão de submissão (dinâmico) */}
             <button type="submit" style={styles.button}>
               {id ? "Atualizar" : "Salvar"}

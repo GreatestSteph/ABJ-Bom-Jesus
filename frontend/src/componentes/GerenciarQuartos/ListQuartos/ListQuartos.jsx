@@ -19,7 +19,7 @@ export default function ListQuartos() {
   const deletarQuarto = async (id) => {
     // Confirmação antes de excluir
     if (!window.confirm("Tem certeza que deseja excluir este quarto?")) return;
-    
+
     try {
       await api.delete(`/quartos/${id}`);
       // Remove o quarto deletado do estado local
@@ -42,7 +42,8 @@ export default function ListQuartos() {
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
-      maskImage: "linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)",
+      maskImage:
+        "linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)",
     },
     aroundListBox: {
       backgroundColor: "white",
@@ -130,7 +131,6 @@ export default function ListQuartos() {
         <div style={styles.columnHeader}>
           <span>Número</span>
           <span>Tipo</span>
-          <span>Ocupação Máx.</span>
           <span>Status</span>
           <span style={{ width: "120px", textAlign: "center" }}>Ações</span>
         </div>
@@ -142,10 +142,9 @@ export default function ListQuartos() {
             <div style={styles.cellGroup}>
               <p>{q.numero}</p>
               <p>{q.tipo}</p>
-              <p>{q.ocupacao_max}</p>
               <p>{q.status}</p>
             </div>
-            
+
             {/* Botões de ação */}
             <div style={{ display: "flex", gap: "8px" }}>
               {/* Botão Editar */}
@@ -155,7 +154,7 @@ export default function ListQuartos() {
               >
                 Editar
               </Link>
-              
+
               {/* Botão Excluir */}
               <button
                 style={styles.deleteButton}
