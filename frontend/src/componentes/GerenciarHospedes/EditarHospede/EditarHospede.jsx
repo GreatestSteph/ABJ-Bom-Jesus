@@ -29,7 +29,7 @@ function InputGroup({ children, error }) {
 }
 
 export default function EditGuest() {
-  const { id } = useParams(); // se houver id, é edição
+  const { id } = useParams();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
 
@@ -42,6 +42,8 @@ export default function EditGuest() {
     escolaridade: "",
     empregado: false,
     biometria: "",
+    genero: "",
+    estado_civil: "",
   });
 
   useEffect(() => {
@@ -54,6 +56,8 @@ export default function EditGuest() {
             data_nascimento: data.data_nascimento?.slice(0, 10) || "",
             data_contato_familia: data.data_contato_familia?.slice(0, 10) || "",
             cpf: data.cpf ? maskCPF(data.cpf) : "",
+            genero: data.genero || "",
+            estado_civil: data.estado_civil || "",
           });
         })
         .catch(err => console.error("Erro ao carregar hóspede:", err));
@@ -63,7 +67,6 @@ export default function EditGuest() {
   function handleChange(e) {
     const { name, value, type, checked } = e.target;
     if (name === "cpf") {
-      // Aplica a máscara ao digitar
       const masked = maskCPF(value);
       setForm(prev => ({
         ...prev,
@@ -82,7 +85,6 @@ export default function EditGuest() {
 
     const newErrors = {};
 
-    // Validação do nome
     if (!form.nome) {
       newErrors.nome = "O nome é obrigatório.";
     } else if (form.nome.trim().length < 2) {
@@ -93,7 +95,14 @@ export default function EditGuest() {
       newErrors.escolaridade = "Por favor, selecione a escolaridade.";
     }
 
-    // Validação de idade mínima (18 anos)
+    if (!form.genero) {
+      newErrors.genero = "Por favor, selecione o gênero.";
+    }
+
+    if (!form.estado_civil) {
+      newErrors.estado_civil = "Por favor, selecione o estado civil.";
+    }
+
     const nascimento = new Date(form.data_nascimento);
     const hoje = new Date();
     const idade = hoje.getFullYear() - nascimento.getFullYear();
@@ -107,20 +116,16 @@ export default function EditGuest() {
       newErrors.data_nascimento = "Hóspedes menores de 18 anos não podem ser cadastrados.";
     }
 
-    // Validação do CPF se não for vazio
-    // Remove máscara para validar só os números
     const cpfNumeros = form.cpf.replace(/\D/g, "");
     if (form.cpf && !/^\d{11}$/.test(cpfNumeros)) {
       newErrors.cpf = "O CPF deve conter exatamente 11 números.";
     }
-
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    // Se passou por todas as validações, limpar erros e continuar
     setErrors({});
 
     const method = id ? "PUT" : "POST";
@@ -128,8 +133,6 @@ export default function EditGuest() {
       ? `http://localhost:3001/guests/${id}`
       : "http://localhost:3001/guests";
 
-    // Remove máscara do CPF antes de enviar para o backend
-    // Corrigir data_contato_familia: se for string vazia ou inválida, enviar como null
     let dataContatoFamiliaToSend = form.data_contato_familia;
     if (
       !dataContatoFamiliaToSend ||
@@ -170,12 +173,12 @@ export default function EditGuest() {
       alignItems: "center",
     },
     formBox: {
-      backgroundColor: "#fff", // fundo branco
+      backgroundColor: "#fff",
       borderRadius: "20px",
-      boxShadow: "0 10px 30px rgba(0, 27, 94, 0.3)", // sombra azul suave
+      boxShadow: "0 10px 30px rgba(0, 27, 94, 0.3)",
       maxWidth: "900px",
       width: "100%",
-      color: "#001b5e", // azul escuro para texto
+      color: "#001b5e",
       fontFamily: "'Raleway', sans-serif",
     },
     formBox2: {
@@ -184,20 +187,20 @@ export default function EditGuest() {
     input: {
       width: "100%",
       padding: "12px",
-      margin: "6px 0 0 0", // removido margin-bottom, controlado pelo InputGroup
+      margin: "6px 0 0 0",
       borderRadius: "8px",
-      border: "2px solid #e77f3c", // borda laranja
+      border: "2px solid #e77f3c",
       fontSize: "14px",
       color: "#001b5e",
       outline: "none",
       transition: "border-color 0.3s ease",
     },
     inputFocus: {
-      borderColor: "#004aad", // azul mais vivo no foco
+      borderColor: "#004aad",
       boxShadow: "0 0 5px #004aad",
     },
     button: {
-      backgroundColor: "#e77f3c", // laranja vibrante
+      backgroundColor: "#e77f3c",
       color: "white",
       padding: "12px",
       width: "100%",
@@ -210,7 +213,7 @@ export default function EditGuest() {
       transition: "background-color 0.3s ease",
     },
     buttonCancel: {
-      backgroundColor: "#001b5e", // azul escuro para cancelar
+      backgroundColor: "#001b5e",
       color: "white",
       padding: "12px",
       width: "100%",
@@ -261,179 +264,246 @@ export default function EditGuest() {
     },
   };
 
-  // Estado para controlar foco dos inputs (pra adicionar efeito azul no foco)
   const [focusedInput, setFocusedInput] = useState(null);
 
   return (
     <main style={styles.fundo}>
       <div style={styles.formBox} className="row">
-          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-              <Link to="/hospedes/cadastrar" style={styles.functionSelected}>
-                Registrar Hóspedes
-              </Link>
+        <div style={{ borderRadius: '12px' }} className='d-flex flex-start'>
+          <Link to="/hospedes/cadastrar" style={styles.functionSelected}>
+            Registrar Hóspedes
+          </Link>
+          <Link to="/hospedes-comportamento" style={styles.functionNotSelected}>
+            Relatar Comportamento
+          </Link>
+          <Link to="/hospedes" style={styles.functionNotSelected}>
+            Pesquisar Hóspedes
+          </Link>
+        </div>
+        <hr style={styles.hr} />
 
-              <Link to="/hospedes-comportamento" style={styles.functionNotSelected}>
-                Relatar Comportamento
-              </Link>
+        <form onSubmit={handleSubmit} style={styles.formBox2} className="row" noValidate>
+          <h2 className="text-center w-100 mb-4" style={{ color: "#001b5e" }}>
+            {id ? "Editar Hóspede" : "Cadastrar Hóspede"}
+          </h2>
 
-              <Link to="/hospedes" style={styles.functionNotSelected}>
-                Pesquisar Hóspedes
-              </Link>
+          {/* Nome */}
+          <div className="col-md-6">
+            <InputGroup error={errors.nome}>
+              <label htmlFor="nome" style={styles.label}>Nome</label>
+              <input
+                type="text"
+                name="nome"
+                id="nome"
+                value={form.nome}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "nome" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("nome")}
+                onBlur={() => setFocusedInput(null)}
+              />
+            </InputGroup>
           </div>
-            <hr style={styles.hr}/>
-            
-          <form onSubmit={handleSubmit} style={styles.formBox2} className="row" noValidate>
-            <h2 className="text-center w-100 mb-4" style={{ color: "#001b5e" }}>
-              {id ? "Editar Hóspede" : "Cadastrar Hóspede"}
-            </h2>
 
-            <div className="col-md-6">
-              <InputGroup error={errors.nome}>
-                <label htmlFor="nome" style={styles.label}>Nome</label>
-                <input
-                  type="text"
-                  name="nome"
-                  id="nome"
-                  value={form.nome}
-                  onChange={handleChange}
-                  style={{
-                    ...styles.input,
-                    ...(focusedInput === "nome" ? styles.inputFocus : {})
-                  }}
-                  onFocus={() => setFocusedInput("nome")}
-                  onBlur={() => setFocusedInput(null)}
-                />
-              </InputGroup>
+          {/* Data de Nascimento */}
+          <div className="col-md-6">
+            <InputGroup error={errors.data_nascimento}>
+              <label htmlFor="data_nascimento" style={styles.label}>Data de Nascimento</label>
+              <input
+                type="date"
+                name="data_nascimento"
+                id="data_nascimento"
+                value={form.data_nascimento}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "data_nascimento" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("data_nascimento")}
+                onBlur={() => setFocusedInput(null)}
+              />
+            </InputGroup>
+          </div>
 
-              <InputGroup error={errors.data_nascimento}>
-                <label htmlFor="data_nascimento" style={styles.label}>Data de Nascimento</label>
-                <input
-                  type="date"
-                  name="data_nascimento"
-                  id="data_nascimento"
-                  value={form.data_nascimento}
-                  onChange={handleChange}
-                  style={{
-                    ...styles.input,
-                    ...(focusedInput === "data_nascimento" ? styles.inputFocus : {})
-                  }}
-                  onFocus={() => setFocusedInput("data_nascimento")}
-                  onBlur={() => setFocusedInput(null)}
-                />
-              </InputGroup>
+          {/* CPF */}
+          <div className="col-md-6">
+            <InputGroup error={errors.cpf}>
+              <label htmlFor="cpf" style={styles.label}>CPF</label>
+              <input
+                type="text"
+                name="cpf"
+                id="cpf"
+                value={form.cpf}
+                onChange={handleChange}
+                maxLength={14}
+                inputMode="numeric"
+                pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "cpf" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("cpf")}
+                onBlur={() => setFocusedInput(null)}
+                placeholder="000.000.000-00"
+              />
+            </InputGroup>
+          </div>
 
-              <InputGroup error={errors.rg}>
-                <label htmlFor="rg" style={styles.label}>RG</label>
-                <input
-                  type="text"
-                  name="rg"
-                  id="rg"
-                  value={form.rg}
-                  onChange={handleChange}
-                  style={{
-                    ...styles.input,
-                    ...(focusedInput === "rg" ? styles.inputFocus : {})
-                  }}
-                  onFocus={() => setFocusedInput("rg")}
-                  onBlur={() => setFocusedInput(null)}
-                />
-              </InputGroup>
+          {/* RG */}
+          <div className="col-md-6">
+            <InputGroup error={errors.rg}>
+              <label htmlFor="rg" style={styles.label}>RG</label>
+              <input
+                type="text"
+                name="rg"
+                id="rg"
+                value={form.rg}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "rg" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("rg")}
+                onBlur={() => setFocusedInput(null)}
+              />
+            </InputGroup>
+          </div>
 
-              <div className="form-check mt-2 d-flex align-items-center" style={{ minHeight: 52 }}>
-                <input
-                  type="checkbox"
-                  className="form-check-input"
-                  id="empregado"
-                  name="empregado"
-                  checked={form.empregado}
-                  onChange={handleChange}
-                  style={{ width: 18, height: 18, cursor: "pointer" }}
-                />
-                <label className="form-check-label" htmlFor="empregado" style={styles.checkboxLabel}>
-                  Está empregado?
-                </label>
-                {/* Se quiser alinhar erro do checkbox, pode usar InputGroup também */}
-                {/* {errors.empregado && <div style={{ color: 'red', fontSize: '13px' }}>{errors.empregado}</div>} */}
-              </div>
-            </div>
+          {/* Gênero */}
+          <div className="col-md-6">
+            <InputGroup error={errors.genero}>
+              <label htmlFor="genero" style={styles.label}>Gênero</label>
+              <select
+                name="genero"
+                id="genero"
+                value={form.genero}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  appearance: "none",
+                  backgroundColor: "white",
+                  cursor: "pointer",
+                  ...(focusedInput === "genero" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("genero")}
+                onBlur={() => setFocusedInput(null)}
+              >
+                <option value="">Selecione o Gênero</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </InputGroup>
+          </div>
 
-            <div className="col-md-6">
-              <InputGroup error={errors.data_contato_familia}>
-                <label htmlFor="data_contato_familia" style={styles.label}>Data de Contato com a Família</label>
-                <input
-                  type="date"
-                  name="data_contato_familia"
-                  id="data_contato_familia"
-                  value={form.data_contato_familia}
-                  onChange={handleChange}
-                  style={{
-                    ...styles.input,
-                    ...(focusedInput === "data_contato_familia" ? styles.inputFocus : {})
-                  }}
-                  onFocus={() => setFocusedInput("data_contato_familia")}
-                  onBlur={() => setFocusedInput(null)}
-                />
-              </InputGroup>
+          {/* Estado Civil */}
+          <div className="col-md-6">
+            <InputGroup error={errors.estado_civil}>
+              <label htmlFor="estado_civil" style={styles.label}>Estado Civil</label>
+              <select
+                name="estado_civil"
+                id="estado_civil"
+                value={form.estado_civil}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  appearance: "none",
+                  backgroundColor: "white",
+                  cursor: "pointer",
+                  ...(focusedInput === "estado_civil" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("estado_civil")}
+                onBlur={() => setFocusedInput(null)}
+              >
+                <option value="">Selecione o Estado Civil</option>
+                <option value="Solteiro(a)">Solteiro(a)</option>
+                <option value="Casado(a)">Casado(a)</option>
+                <option value="Divorciado(a)">Divorciado(a)</option>
+                <option value="Viúvo(a)">Viúvo(a)</option>
+                <option value="Separado(a)">Separado(a)</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </InputGroup>
+          </div>
 
-              <InputGroup error={errors.escolaridade}>
-                <label htmlFor="escolaridade" style={styles.label}>Escolaridade</label>
-                <select
-                  name="escolaridade"
-                  id="escolaridade"
-                  value={form.escolaridade}
-                  onChange={handleChange}
-                  style={{
-                    ...styles.input,
-                    appearance: "none",
-                    backgroundColor: "white",
-                    cursor: "pointer",
-                    ...(focusedInput === "escolaridade" ? styles.inputFocus : {})
-                  }}
-                  onFocus={() => setFocusedInput("escolaridade")}
-                  onBlur={() => setFocusedInput(null)}
-                >
-                  <option value="">Selecione a Escolaridade</option>
-                  <option value="Analfabeto">Analfabeto</option>
-                  <option value="Fundamental Incompleto">Fundamental Incompleto</option>
-                  <option value="Fundamental Completo">Fundamental Completo</option>
-                  <option value="Médio Incompleto">Médio Incompleto</option>
-                  <option value="Médio Completo">Médio Completo</option>
-                  <option value="Superior Incompleto">Superior Incompleto</option>
-                  <option value="Superior Completo">Superior Completo</option>
-                </select>
-              </InputGroup>
+          {/* Escolaridade */}
+          <div className="col-md-6">
+            <InputGroup error={errors.escolaridade}>
+              <label htmlFor="escolaridade" style={styles.label}>Escolaridade</label>
+              <select
+                name="escolaridade"
+                id="escolaridade"
+                value={form.escolaridade}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  appearance: "none",
+                  backgroundColor: "white",
+                  cursor: "pointer",
+                  ...(focusedInput === "escolaridade" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("escolaridade")}
+                onBlur={() => setFocusedInput(null)}
+              >
+                <option value="">Selecione a Escolaridade</option>
+                <option value="Analfabeto">Analfabeto</option>
+                <option value="Fundamental Incompleto">Fundamental Incompleto</option>
+                <option value="Fundamental Completo">Fundamental Completo</option>
+                <option value="Médio Incompleto">Médio Incompleto</option>
+                <option value="Médio Completo">Médio Completo</option>
+                <option value="Superior Incompleto">Superior Incompleto</option>
+                <option value="Superior Completo">Superior Completo</option>
+              </select>
+            </InputGroup>
+          </div>
 
-              <InputGroup error={errors.cpf}>
-                <label htmlFor="cpf" style={styles.label}>CPF</label>
-                <input
-                  type="text"
-                  name="cpf"
-                  id="cpf"
-                  value={form.cpf}
-                  onChange={handleChange}
-                  maxLength={14} // 000.000.000-00
-                  inputMode="numeric"
-                  pattern="\d{3}\.\d{3}\.\d{3}-\d{2}"
-                  style={{
-                    ...styles.input,
-                    ...(focusedInput === "cpf" ? styles.inputFocus : {})
-                  }}
-                  onFocus={() => setFocusedInput("cpf")}
-                  onBlur={() => setFocusedInput(null)}
-                  placeholder="000.000.000-00"
-                />
-              </InputGroup>
-            </div>
+          {/* Data de Contato com a Família */}
+          <div className="col-md-6">
+            <InputGroup error={errors.data_contato_familia}>
+              <label htmlFor="data_contato_familia" style={styles.label}>Data de Contato com a Família</label>
+              <input
+                type="date"
+                name="data_contato_familia"
+                id="data_contato_familia"
+                value={form.data_contato_familia}
+                onChange={handleChange}
+                style={{
+                  ...styles.input,
+                  ...(focusedInput === "data_contato_familia" ? styles.inputFocus : {})
+                }}
+                onFocus={() => setFocusedInput("data_contato_familia")}
+                onBlur={() => setFocusedInput(null)}
+              />
+            </InputGroup>
+          </div>
 
-            <div className="col-12 d-flex justify-content-between mt-4 gap-3 flex-wrap">
-              <Link to="/hospedes" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
-                Cancelar
-              </Link>
-              <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
-                Salvar
-              </button>
-            </div>
-          </form>
+          {/* Está empregado? */}
+          <div className="col-md-6 d-flex align-items-center" style={{ minHeight: 52 }}>
+            <input
+              type="checkbox"
+              className="form-check-input"
+              id="empregado"
+              name="empregado"
+              checked={form.empregado}
+              onChange={handleChange}
+              style={{ width: 18, height: 18, cursor: "pointer" }}
+            />
+            <label className="form-check-label" htmlFor="empregado" style={styles.checkboxLabel}>
+              Está empregado?
+            </label>
+          </div>
+
+          <div className="col-12 d-flex justify-content-between mt-4 gap-3 flex-wrap">
+            <Link to="/hospedes" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
+              Cancelar
+            </Link>
+            <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
+              Salvar
+            </button>
+          </div>
+        </form>
       </div>
     </main>
   );

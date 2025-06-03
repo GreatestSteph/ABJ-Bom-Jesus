@@ -12,6 +12,8 @@ class Guests extends Model {
         escolaridade: Sequelize.STRING,
         empregado: Sequelize.BOOLEAN,
         biometria: Sequelize.STRING,
+        genero: Sequelize.STRING,
+        estado_civil: Sequelize.STRING,
       },
       { sequelize },
     );

@@ -294,7 +294,7 @@ export default function GuestList() {
           <div style={{ position: 'relative', width: '100%' }}>
             <input
               type="text"
-              placeholder="Digite aqui o nome do hóspede ou documento a ser pesquisado"
+              placeholder="Digite aqui o nome do hóspede ou CPF"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={styles.barraPesquisa}

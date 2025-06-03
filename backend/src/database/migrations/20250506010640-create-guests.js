@@ -42,6 +42,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: true,
       },
+      genero: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      estado_civil: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
