@@ -9,6 +9,14 @@ export default function EditarQuarto() {
   // Hook para navegação programática
   const navigate = useNavigate();
 
+  // cria as mensagens de erro ou validação]
+  const [errors, setErrors] = useState({
+    numero: "",
+    tipo: "",
+    status: "",
+  });
+
+
   // Estado para armazenar os dados do formulário
   const [form, setForm] = useState({
     numero: "",
@@ -37,15 +45,49 @@ export default function EditarQuarto() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
+
+
   // Submissão do formulário (criação ou atualização)
   const salvar = async (e) => {
     e.preventDefault();
+    
+    // Limpa mensagens antigas
+    setErrors({
+      numero: "",
+      tipo: "",
+      status: "",
+    });
+
+    let hasError = false;
+    const newErrors = {};
+
+    // Validações personalizadas
+    if (!form.numero.trim()) {
+      newErrors.numero = "O número do quarto não pode ficar em branco.";
+      hasError = true;
+    }
+
+    if (!form.tipo) {
+      newErrors.tipo = "Por favor selecione o tipo de cama.";
+      hasError = true;
+    }
+
+    if (!form.status) {
+      newErrors.status = "Por favor selecione o status do quarto.";
+      hasError = true;
+    }
+
+    if (hasError) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
       if (id) {
-        // Requisição PUT para atualizar quarto existente
+      // Requisição PUT para atualizar quarto existente
         await api.put(`/quartos/${id}`, form);
       } else {
-        // Requisição POST para criar novo quarto
+      // Requisição POST para criar novo quarto
         await api.post("/quartos", form);
       }
       // Redireciona para lista de quartos após sucesso
@@ -138,36 +180,39 @@ export default function EditarQuarto() {
             style={styles.input}
             required
           />
+          {errors.numero && <div style={{ color: "red", marginBottom: "10px" }}>{errors.numero}</div>}
+
 
           {/* Campo: Tipo de cama (dropdown) */}
-          <p1>Tipo de cama do quarto:</p1>
+         <p1>Tipo de cama do quarto:</p1>
           <select
             name="tipo"
             value={form.tipo}
             onChange={handleChange}
             style={styles.input}
-            required
           >
             <option value="">Selecione o tipo de cama...</option>
             <option value="Solteiro">Solteiro</option>
             <option value="Casal">Casal</option>
             <option value="Beliche">Beliche</option>
           </select>
+          {errors.tipo && <div style={{ color: "red", marginBottom: "10px" }}>{errors.tipo}</div>}
+
 
 
           {/* Campo: Status (dropdown) */}
-            <p1>Status do quarto:</p1>
+          <p1>Status do quarto:</p1>
           <select
             name="status"
             value={form.status}
             onChange={handleChange}
             style={styles.input}
-            required
           >
             <option value="disponivel">Disponível</option>
             <option value="ocupado">Ocupado</option>
             <option value="manutencao">Manutenção</option>
           </select>
+          {errors.status && <div style={{ color: "red", marginBottom: "10px" }}>{errors.status}</div>}
 
           {/* Botões de ação */}
           <div style={styles.buttonContainer}>
