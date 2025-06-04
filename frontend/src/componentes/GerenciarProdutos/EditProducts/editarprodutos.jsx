@@ -17,6 +17,8 @@ export default function EditProducts() {
   });
 
   const [errors, setErrors] = useState({});
+  const [mostrarTamanho, setMostrarTamanho] = useState(true);
+
 
   useEffect(() => {
     if (id) {
@@ -44,11 +46,7 @@ export default function EditProducts() {
     } else if (form.nomeDoProduto.length > 100) {
       newErrors.nomeDoProduto = "Nome do produto deve ter no máximo 100 caracteres.";
     }
-
-    if (!form.tamanho.trim()) {
-      newErrors.tamanho = "Tamanho é obrigatório.";
-    }
-
+    
     if (!form.cor.trim()) {
       newErrors.cor = "Selecione a cor do produto.";
     }
@@ -103,26 +101,26 @@ export default function EditProducts() {
       .catch(() => alert("Erro ao salvar produto."));
   }
 
-  const styles = {
+ const styles = {
     fundo: {
       backgroundImage: `url(${fundo})`,
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      width: "100%",
-      minHeight: "100vh",
-      paddingTop: "100px",
-      paddingBottom: "100px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    formBox: {
-      backgroundColor: "#fff", // fundo branco
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      width: '100%',
+      height: '100%',
+      paddingTop: '120px',
+      paddingBottom: '180px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)',
+    }, 
+    aroundListBox: {
+      backgroundColor: "white",
       borderRadius: "20px",
-      boxShadow: "0 10px 30px rgba(0, 27, 94, 0.3)", // sombra azul suave
-      maxWidth: "900px",
+      boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25)",
       width: "100%",
-      color: "#001b5e", // azul escuro para texto
+      maxWidth: "1200px",
       fontFamily: "'Raleway', sans-serif",
     },
     formBox2: {
@@ -131,20 +129,20 @@ export default function EditProducts() {
     input: {
       width: "100%",
       padding: "12px",
-      margin: "6px 0 18px 0",
+      margin: "6px 0 4px 0",
       borderRadius: "8px",
-      border: "2px solid #e77f3c", // borda laranja
+      border: "2px solid #e77f3c",
       fontSize: "14px",
       color: "#001b5e",
       outline: "none",
       transition: "border-color 0.3s ease",
     },
     inputFocus: {
-      borderColor: "#004aad", // azul mais vivo no foco
+      borderColor: "#004aad",
       boxShadow: "0 0 5px #004aad",
     },
     button: {
-      backgroundColor: "#e77f3c", // laranja vibrante
+      backgroundColor: "#e77f3c",
       color: "white",
       padding: "12px",
       width: "100%",
@@ -157,7 +155,7 @@ export default function EditProducts() {
       transition: "background-color 0.3s ease",
     },
     buttonCancel: {
-      backgroundColor: "#001b5e", // azul escuro para cancelar
+      backgroundColor: "#001b5e",
       color: "white",
       padding: "12px",
       width: "100%",
@@ -186,7 +184,6 @@ export default function EditProducts() {
       padding: '25px 30px',
       textDecoration: 'none',
       fontWeight: 'bold',
-      fontSize: '16px',
     },
     functionSelected: {
       backgroundColor: 'rgb(60, 162, 245)',
@@ -194,9 +191,7 @@ export default function EditProducts() {
       padding: '25px 30px',
       textDecoration: 'none',
       fontWeight: 'bold',
-      fontSize: '16px',
       borderTopLeftRadius: '20px',
-      marginLeft: '-11px',
     },
     hr: {
       border: 'none',
@@ -204,14 +199,14 @@ export default function EditProducts() {
       backgroundColor: 'rgb(60, 162, 245)',
       opacity: '100%',
       width: '100%',
-      margin: 0 
+      margin: 0
     },
   };
 
+
   return (
     <main style={styles.fundo}>
-      <div className="d-flex justify-content-between" style={styles.loginBox} noValidate>
-        <div style={styles.formBox} className="row">
+      <div style={styles.aroundListBox}>
           <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
             <Link to="/registroprodutos" style={styles.functionSelected}>
               Registrar Produtos
@@ -247,19 +242,35 @@ export default function EditProducts() {
               style={styles.input}
               required
             />
-            {errors.nomeDoProduto && <div style={{ color: "red" }}>{errors.nomeDoProduto}</div>}
+            {errors.nomeDoProduto && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px' }}>{errors.nomeDoProduto}</div>}
 
-            <input
-              type="text"
-              name="tamanho"
-              id='tamanho'
-              value={form.tamanho}
-              onChange={handleChange}
-              placeholder="Tamanho do Produto"
-              style={styles.input}
-              required
-            />
-            {errors.tamanho && <div style={{ color: "red" }}>{errors.tamanho}</div>}
+            <div style={{ marginBottom: '10px', paddingLeft:'5px', marginTop: '10px' }}>
+              <input
+                type="checkbox"
+                id="mostrarTamanho"
+                checked={mostrarTamanho}
+                onChange={(e) => setMostrarTamanho(e.target.checked)}
+              />
+              <label htmlFor="mostrarTamanho" style={styles.checkboxLabel}>
+                Deseja colocar o tamanho do produto?
+              </label>
+            </div>
+
+            {mostrarTamanho && (
+              <>
+                <input
+                  type="text"
+                  name="tamanho"
+                  id="tamanho"
+                  value={form.tamanho}
+                  onChange={handleChange}
+                  placeholder="Tamanho do Produto"
+                  style={styles.input}
+                  required
+                />
+              </>
+            )}
+
 
             <select
               name="cor"
@@ -280,7 +291,7 @@ export default function EditProducts() {
               <option value="Laranja">Laranja</option>
               <option value="Colorido">Colorido</option>
             </select>
-            {errors.cor && <div style={{ color: "red" }}>{errors.cor}</div>}
+            {errors.cor && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.cor}</div>}
 
             <input
               type="number"
@@ -292,7 +303,7 @@ export default function EditProducts() {
               style={styles.input}
               required
             />
-            {errors.quantidade && <div style={{ color: "red" }}>{errors.quantidade}</div>}
+            {errors.quantidade && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.quantidade}</div>}
 
             <input
               type="text"
@@ -304,7 +315,7 @@ export default function EditProducts() {
               style={styles.input}
               required
             />
-            {errors.marca && <div style={{ color: "red" }}>{errors.marca}</div>}
+            {errors.marca && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.marca}</div>}
 
             <input
               type="number"
@@ -316,7 +327,7 @@ export default function EditProducts() {
               style={styles.input}
               required
             />
-            {errors.custoTotal && <div style={{ color: "red" }}>{errors.custoTotal}</div>}
+            {errors.custoTotal && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.custoTotal}</div>}
 
             <input
               type="text"
@@ -328,7 +339,7 @@ export default function EditProducts() {
               style={styles.input}
               required
             />
-            {errors.descricao && <div style={{ color: "red" }}>{errors.descricao}</div>}
+            {errors.descricao && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.descricao}</div>}
 
             <div className="col-12 d-flex justify-content-between mt-2 gap-3 flex-wrap">
               <Link to="/listarprodutos" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
@@ -340,7 +351,6 @@ export default function EditProducts() {
             </div>
           </form>  
         </div>
-      </div>
     </main>
   );
 }

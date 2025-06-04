@@ -231,7 +231,7 @@ export default function EditarQuarto() {
           </h2>
 
           {/* Campo: Número do quarto */}
-          <p1>Número do quarto:</p1>
+          <p1 style={{paddingLeft: '5px'}}>Número do quarto:</p1>
           <input
             type="text"
             name="numero"
@@ -240,11 +240,11 @@ export default function EditarQuarto() {
             placeholder="Número do quarto"
             style={styles.input}
           />
-          {errors.numero && <div style={{ color: "red", marginBottom: "10px" }}>{errors.numero}</div>}
+          {errors.numero && <div style={{ color: "red", marginBottom: "10px", paddingLeft: '5px' }}>{errors.numero}</div>}
 
 
           {/* Campo: Tipo de cama (dropdown) */}
-         <p1>Tipo de cama do quarto:</p1>
+         <p1 style={{paddingLeft: '5px'}}>Tipo de cama do quarto:</p1>
           <select
             name="tipo"
             value={form.tipo}
@@ -256,12 +256,12 @@ export default function EditarQuarto() {
             <option value="Casal">Casal</option>
             <option value="Beliche">Beliche</option>
           </select>
-          {errors.tipo && <div style={{ color: "red", marginBottom: "10px" }}>{errors.tipo}</div>}
+          {errors.tipo && <div style={{ color: "red", marginBottom: "10px", paddingLeft: '5px' }}>{errors.tipo}</div>}
 
 
 
           {/* Campo: Status (dropdown) */}
-          <p1>Status do quarto:</p1>
+          <p1 style={{paddingLeft: '5px'}}>Status do quarto:</p1>
           <select
             name="status"
             value={form.status}
@@ -274,7 +274,7 @@ export default function EditarQuarto() {
             <option value="manutencao">Manutenção</option>
             
           </select>
-          {errors.status && <div style={{ color: "red", marginBottom: "10px" }}>{errors.status}</div>}
+          {errors.status && <div style={{ color: "red", marginBottom: "10px", paddingLeft: '5px' }}>{errors.status}</div>}
 
           {/* Botões de ação */}
          <div className="col-12 d-flex justify-content-between mt-2 gap-3 px-0 flex-wrap">
