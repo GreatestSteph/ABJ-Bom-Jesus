@@ -1,3 +1,8 @@
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import ContextoUsuario from "./services/context.js";
+
+// Seus imports...
 import Headerdeslogado from "./componentes/WebsiteDesign/HeaderDisconnected/headerdeslogado.jsx";
 import Headerlogado from "./componentes/WebsiteDesign/HeaderConnected/headerlogado.jsx";
 import Footer from "./componentes/WebsiteDesign/Footer/footer.jsx";
@@ -18,184 +23,191 @@ import ProdutosLista from "./componentes/GerenciarProdutos/ListProducts/listarpr
 import ListQuartos from "./componentes/GerenciarQuartos/ListQuartos/ListQuartos.jsx";
 import EditarQuarto from "./componentes/GerenciarQuartos/EditarQuarto/EditarQuarto.jsx";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-
 function App() {
+  const [usuario, setUsuario] = useState({
+    nome: '',
+    logado: false,
+  });
+
   return (
-    <div className="App">
+    <ContextoUsuario.Provider value={[usuario, setUsuario]}>
       <BrowserRouter>
         <Routes>
-          {/* Gerenciar Usuários */}
-          <Route
-            path="/"
-            element={
-              <>
-                <Headerdeslogado />
-                <LoginSection />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
-          <Route
-            path="/login"
-            element={
-              <>
-                <Headerdeslogado />
-                <LoginSection2 />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
+          {/* Redirecionar para login se não estiver logado */}
+          {!usuario.logado ? (
+            <>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Headerdeslogado />
+                    <LoginSection />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <>
+                    <Headerdeslogado />
+                    <LoginSection2 />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route path="*" element={<Navigate to="/login" />} />
+            </>
+          ) : (
+            <>
+              {/* Gerenciar Usuários */}
+              <Route
+                path="/registrousuarios"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditProfiles />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/registrousuarios/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditProfiles />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/listadeusuarios"
+                element={
+                  <>
+                    <Headerlogado />
+                    <UserList />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
 
-          <Route
-            path="/registrousuarios"
-            element={
-              <>
-                <Headerlogado />
-                <EditProfiles />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
+              {/* Gerenciar Produtos */}
+              <Route
+                path="/registroprodutos"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditProducts />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/registroprodutos/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditProducts />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/listarprodutos"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ProdutosLista />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
 
-          <Route
-            path="/registrousuarios/:id"
-            element={
-              <>
-                <Headerlogado />
-                <EditProfiles />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
+              {/* Gerenciar Hóspedes */}
+              <Route
+                path="/hospedes"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListHospedes />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/hospedes/cadastrar"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarHospede />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/hospedes/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarHospede />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
 
-          <Route
-            path="/listadeusuarios"
-            element={
-              <>
-                <Headerlogado />
-                <UserList />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
-
-          {/* Gerenciar Produtos */}
-          <Route
-            path="/registroprodutos"
-            element={
-              <>
-                <Headerlogado />
-                <EditProducts />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
-
-          <Route
-            path="/registroprodutos/:id"
-            element={
-              <>
-                <Headerlogado />
-                <EditProducts />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
-
-          <Route
-            path="/listarprodutos"
-            element={
-              <>
-                <Headerlogado />
-                <ProdutosLista />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
-
-          {/* Gerenciar Hóspedes */}
-          <Route
-            path="/hospedes"
-            element={
-              <>
-                <Headerlogado />
-                <ListHospedes />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
-
-          <Route
-            path="/hospedes/cadastrar"
-            element={
-              <>
-                <Headerlogado />
-                <EditarHospede />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
-
-          <Route
-            path="/hospedes/:id"
-            element={
-              <>
-                <Headerlogado />
-                <EditarHospede />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          ></Route>
-
-          {/* GERENCIAR QUARTOS */}
-          <Route
-            path="/gerenciarquartos"
-            element={
-              <>
-                <Headerlogado />
-                <ListQuartos />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          />
-          <Route
-            path="/gerenciarquartos/novo"
-            element={
-              <>
-                <Headerlogado />
-                <EditarQuarto />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          />
-          <Route
-            path="/gerenciarquartos/:id"
-            element={
-              <>
-                <Headerlogado />
-                <EditarQuarto />
-                <Footer />
-                <Footer2 />
-              </>
-            }
-          />
+              {/* Gerenciar Quartos */}
+              <Route
+                path="/gerenciarquartos"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListQuartos />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/gerenciarquartos/novo"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarQuarto />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/gerenciarquartos/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarQuarto />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              {/* Redirecionamento padrão para rota inicial logada */}
+              <Route path="*" element={<Navigate to="/registrousuarios" />} />
+            </>
+          )}
         </Routes>
       </BrowserRouter>
-    </div>
+    </ContextoUsuario.Provider>
   );
 }
 

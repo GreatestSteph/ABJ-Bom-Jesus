@@ -1,34 +1,44 @@
-import React, { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import ContextoUsuario from "../../../services/context"; // Caminho correto conforme sua estrutura
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 
+
 export default function LoginSection2() {
-  const [usuario, setUsuario] = useState("");
+  const [usuarioInput, setUsuarioInput] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
+  const [usuarioGlobal, setUsuarioGlobal] = useContext(ContextoUsuario); // <- AQUI ESTÁ O CONTEXTO GLOBAL
+
   useEffect(() => {
     fetch("http://localhost:3001/users")
-      .then(res => res.json())
-      .then(data => setUsers(data))
-      .catch(err => console.error("Erro ao buscar usuários:", err));
+      .then((res) => res.json())
+      .then((data) => setUsers(data))
+      .catch((err) => console.error("Erro ao buscar usuários:", err));
   }, []);
 
   const handleLogin = () => {
-    // Primeiro, verifica o usuário de recuperação 'ti'
-    if (usuario === "ti" && senha === "12345") {
+    if (usuarioInput === "ti" && senha === "12345") {
+      setUsuarioGlobal({
+        nome: usuarioInput,
+        logado: true
+      });
       navigate("/listadeusuarios");
       return;
     }
 
-    // Depois, busca na lista carregada
     const userFound = users.find(
-      (user) => user.usuario === usuario && user.senha === senha
+      (user) => user.usuario === usuarioInput && user.senha === senha
     );
 
     if (userFound) {
+      setUsuarioGlobal({
+        nome: usuarioInput,
+        logado: true
+      });
       navigate("/listadeusuarios");
     } else {
       setErro("Usuário ou senha inválidos.");
@@ -99,8 +109,8 @@ export default function LoginSection2() {
         <input
           type="text"
           placeholder="Usuário"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
+          value={usuarioInput}
+          onChange={(e) => setUsuarioInput(e.target.value)}
           style={styles.input}
         />
         <input

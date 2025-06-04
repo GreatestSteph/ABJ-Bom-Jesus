@@ -1,11 +1,18 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useRef, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logoABL from "../HeaderandFooterImages/logoABL.png";
 import iconeAjuda from "../HeaderandFooterImages/iconeAjuda.svg";
+import ContextoUsuario from "../../../services/context";
+import { useContext } from "react";
+
 
 export default function Headerlogado() {
+    const [usuarioGlobal, setUsuarioGlobal] = useContext(ContextoUsuario);
     const location = useLocation();
+    const navigate = useNavigate();
     const currentPath = location.pathname;
+    const [mostrarMenuAjuda, setMostrarMenuAjuda] = useState(false);
+    const ajudaRef = useRef(null);
 
     const estiloHeader = {
         fundodoHeader: {
@@ -43,6 +50,24 @@ export default function Headerlogado() {
         borderBottomColor: paths.includes(currentPath) ? 'rgb(255, 140, 46)' : 'white'
     });
 
+    // Fechar o menu se clicar fora
+    useEffect(() => {
+        const handleClickFora = (e) => {
+            if (ajudaRef.current && !ajudaRef.current.contains(e.target)) {
+                setMostrarMenuAjuda(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickFora);
+        return () => {
+            document.removeEventListener("mousedown", handleClickFora);
+        };
+    }, []);
+
+    const handleLogout = () => {
+        setUsuarioGlobal({ nome: "", logado: false }); // Desloga
+        navigate("/login");
+    };
+
     return (
         <header className="d-flex justify-content-between align-items-center" style={estiloHeader.fundodoHeader}>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -53,7 +78,7 @@ export default function Headerlogado() {
             <div>
                 <img src={logoABL} alt="Logo ABL" style={estiloHeader.logo} />
 
-                <Link to="/listadeusuarios"  style={navStyle(["/listadeusuarios", "/registrousuarios"])}>
+                <Link to="/listadeusuarios" style={navStyle(["/listadeusuarios", "/registrousuarios"])}>
                     Perfis
                 </Link>
 
@@ -70,10 +95,52 @@ export default function Headerlogado() {
                 </Link>
             </div>
 
-            <div className="d-flex align-items-center">
-                <img src={iconeAjuda} alt="Ajuda" style={estiloHeader.icone} />
-                <Link to="/ajuda" style={estiloHeader.ajudaeicone}> Ajuda
-                </Link>
+            <div className="position-relative" ref={ajudaRef}>
+                <div
+                    className="d-flex align-items-center"
+                    onClick={() => setMostrarMenuAjuda(!mostrarMenuAjuda)}
+                    style={{ cursor: 'pointer' }}
+                >
+                    <img src={iconeAjuda} alt="Ajuda" style={estiloHeader.icone} />
+                    <span style={estiloHeader.ajudaeicone}>Ajuda</span>
+                </div>
+
+                {mostrarMenuAjuda && (
+                    <div style={{
+                        position: 'absolute',
+                        top: '100%',
+                        right: 0,
+                        backgroundColor: 'white',
+                        boxShadow: '0px 2px 5px rgba(0,0,0,0.15)',
+                        borderRadius: '4px',
+                        padding: '8px 0',
+                        marginTop: '8px',
+                        zIndex: 200,
+                        minWidth: '140px'
+                    }}>
+                        <div
+                            style={{
+                                padding: '10px 20px',
+                                color: '#154B7A',
+                                fontWeight: 'bold',
+                                cursor: 'default'
+                            }}
+                        >
+                            Tutorial
+                        </div>
+                        <div
+                            onClick={handleLogout}
+                            style={{
+                                padding: '10px 20px',
+                                color: '#154B7A',
+                                fontWeight: 'bold',
+                                cursor: 'pointer'
+                            }}
+                        >
+                            Deslogar
+                        </div>
+                    </div>
+                )}
             </div>
         </header>
     );
