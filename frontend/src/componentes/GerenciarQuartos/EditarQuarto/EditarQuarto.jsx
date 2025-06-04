@@ -22,7 +22,7 @@ export default function EditarQuarto() {
     numero: "",
     tipo: "",
     ocupacao_max: 1,
-    status: "disponivel",
+    status: "",
   });
 
   // Efeito para carregar dados do quarto quando houver ID (modo edição)
@@ -102,23 +102,23 @@ export default function EditarQuarto() {
  const styles = {
     fundo: {
       backgroundImage: `url(${fundo})`,
-      backgroundSize: "cover",
-      backgroundRepeat: "no-repeat",
-      width: "100%",
-      minHeight: "100vh",
-      paddingTop: "100px",
-      paddingBottom: "100px",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    formBox: {
-      backgroundColor: "#fff", // fundo branco
+      backgroundSize: 'cover',
+      backgroundRepeat: 'no-repeat',
+      width: '100%',
+      height: '100%',
+      paddingTop: '120px',
+      paddingBottom: '180px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)',
+    }, 
+    aroundListBox: {
+      backgroundColor: "white",
       borderRadius: "20px",
-      boxShadow: "0 10px 30px rgba(0, 27, 94, 0.3)", // sombra azul suave
-      maxWidth: "900px",
+      boxShadow: "0 10px 30px rgba(0, 0, 0, 0.25)",
       width: "100%",
-      color: "#001b5e", // azul escuro para texto
+      maxWidth: "1200px",
       fontFamily: "'Raleway', sans-serif",
     },
     formBox2: {
@@ -127,20 +127,20 @@ export default function EditarQuarto() {
     input: {
       width: "100%",
       padding: "12px",
-      margin: "6px 0 18px 0",
+      margin: "6px 0 4px 0",
       borderRadius: "8px",
-      border: "2px solid #e77f3c", // borda laranja
+      border: "2px solid #e77f3c",
       fontSize: "14px",
       color: "#001b5e",
       outline: "none",
       transition: "border-color 0.3s ease",
     },
     inputFocus: {
-      borderColor: "#004aad", // azul mais vivo no foco
+      borderColor: "#004aad",
       boxShadow: "0 0 5px #004aad",
     },
     button: {
-      backgroundColor: "#e77f3c", // laranja vibrante
+      backgroundColor: "#e77f3c",
       color: "white",
       padding: "12px",
       width: "100%",
@@ -153,7 +153,7 @@ export default function EditarQuarto() {
       transition: "background-color 0.3s ease",
     },
     buttonCancel: {
-      backgroundColor: "#001b5e", // azul escuro para cancelar
+      backgroundColor: "#001b5e",
       color: "white",
       padding: "12px",
       width: "100%",
@@ -182,17 +182,13 @@ export default function EditarQuarto() {
       padding: '25px 30px',
       textDecoration: 'none',
       fontWeight: 'bold',
-      fontSize: '16px',
     },
     functionSelected: {
       backgroundColor: 'rgb(60, 162, 245)',
       color: 'white',
       padding: '25px 30px',
       textDecoration: 'none',
-      fontWeight: 'bold',
-      fontSize: '16px',
-      borderTopLeftRadius: '20px',
-      marginLeft: '-11px',
+      fontWeight: 'bold'
     },
     hr: {
       border: 'none',
@@ -200,15 +196,16 @@ export default function EditarQuarto() {
       backgroundColor: 'rgb(60, 162, 245)',
       opacity: '100%',
       width: '100%',
-      margin: 0 
+      margin: 0
     },
   };
 
+
+
   return (
     <main style={styles.fundo}>
-      <div className="d-flex justify-content-between" style={styles.loginBox} noValidate>
-        <div style={styles.formBox} className="row">
-          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
+      <div style={styles.aroundListBox}>
+         <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
             <Link to="/registroprodutos" style={styles.functionNotSelected}>
               Registrar Produtos
             </Link>
@@ -271,28 +268,28 @@ export default function EditarQuarto() {
             onChange={handleChange}
             style={styles.input}
           >
-            <option value="">Selecione o estado do quarto...</option>
+            <option value="">Selecione o status do quarto...</option>
             <option value="disponivel">Disponível</option>
             <option value="ocupado">Ocupado</option>
             <option value="manutencao">Manutenção</option>
+            
           </select>
           {errors.status && <div style={{ color: "red", marginBottom: "10px" }}>{errors.status}</div>}
 
           {/* Botões de ação */}
-          <div style={styles.buttonContainer}>
+         <div className="col-12 d-flex justify-content-between mt-2 gap-3 px-0 flex-wrap">
             {/* Botão Cancelar (volta para lista) */}
-            <Link to="/listarquartos" style={styles.button}>
+            <Link to="/listarquartos" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
               Cancelar
             </Link>
 
             {/* Botão de submissão (dinâmico) */}
-            <button type="submit" style={styles.button}>
+            <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
               {id ? "Atualizar" : "Salvar"}
             </button>
           </div>
-        <</form>  
+         </form>  
         </div>
-      </div>
     </main>
   );
 }
