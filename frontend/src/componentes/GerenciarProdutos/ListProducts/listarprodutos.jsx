@@ -181,6 +181,14 @@ export default function ProdutosLista() {
               <Link to="/listarprodutos" style={styles.functionSelected}>
                 Pesquisar Produtos
               </Link>
+
+              <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
+              Adicionar Quartos
+              </Link>
+
+              <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
+              Listar Quartos
+              </Link>
             </div>
             <hr style={styles.hr}/>
 

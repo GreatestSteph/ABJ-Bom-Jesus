@@ -99,7 +99,7 @@ export default function EditarQuarto() {
   };
 
   // Estilos para o componente
-  const styles = {
+ const styles = {
     fundo: {
       backgroundImage: `url(${fundo})`,
       backgroundSize: "cover",
@@ -112,63 +112,127 @@ export default function EditarQuarto() {
       justifyContent: "center",
       alignItems: "center",
     },
-    formContainer: {
-      backgroundColor: "#e77f3c",
+    formBox: {
+      backgroundColor: "#fff", // fundo branco
       borderRadius: "20px",
-      padding: "40px",
-      boxShadow: "0 10px 30px rgba(0, 0, 0, 0.2)",
-      maxWidth: "600px",
+      boxShadow: "0 10px 30px rgba(0, 27, 94, 0.3)", // sombra azul suave
+      maxWidth: "900px",
       width: "100%",
-      color: "white",
+      color: "#001b5e", // azul escuro para texto
       fontFamily: "'Raleway', sans-serif",
     },
-    title: {
-      fontSize: "24px",
-      marginBottom: "30px",
-      textAlign: "center",
-      color: "white",
+    formBox2: {
+      padding: "40px",
     },
     input: {
       width: "100%",
       padding: "12px",
-      margin: "10px 0",
+      margin: "6px 0 18px 0",
       borderRadius: "8px",
-      border: "none",
-      fontSize: "16px",
-      backgroundColor: "white",
-      color: "#333",
+      border: "2px solid #e77f3c", // borda laranja
+      fontSize: "14px",
+      color: "#001b5e",
+      outline: "none",
+      transition: "border-color 0.3s ease",
     },
-    buttonContainer: {
-      display: "flex",
-      justifyContent: "space-between",
-      marginTop: "20px",
-      gap: "20px",
+    inputFocus: {
+      borderColor: "#004aad", // azul mais vivo no foco
+      boxShadow: "0 0 5px #004aad",
     },
     button: {
-      flex: 1,
-      backgroundColor: "#001b5e",
+      backgroundColor: "#e77f3c", // laranja vibrante
       color: "white",
-      padding: "12px 24px",
+      padding: "12px",
+      width: "100%",
       borderRadius: "8px",
       border: "none",
-      fontSize: "16px",
       fontWeight: "bold",
+      marginTop: "20px",
       cursor: "pointer",
       textDecoration: "none",
-      textAlign: "center",
       transition: "background-color 0.3s ease",
+    },
+    buttonCancel: {
+      backgroundColor: "#001b5e", // azul escuro para cancelar
+      color: "white",
+      padding: "12px",
+      width: "100%",
+      borderRadius: "8px",
+      border: "none",
+      fontWeight: "bold",
+      marginTop: "20px",
+      cursor: "pointer",
+      textDecoration: "none",
+      transition: "background-color 0.3s ease",
+    },
+    label: {
+      display: "block",
+      fontWeight: "600",
+      marginBottom: "6px",
+      color: "#001b5e",
+    },
+    checkboxLabel: {
+      color: "#001b5e",
+      fontWeight: "600",
+      marginLeft: "8px",
+    },
+    functionNotSelected: {
+      color: 'rgb(42, 135, 211)',
+      borderTopLeftRadius: '20px',
+      padding: '25px 30px',
+      textDecoration: 'none',
+      fontWeight: 'bold',
+      fontSize: '16px',
+    },
+    functionSelected: {
+      backgroundColor: 'rgb(60, 162, 245)',
+      color: 'white',
+      padding: '25px 30px',
+      textDecoration: 'none',
+      fontWeight: 'bold',
+      fontSize: '16px',
+      borderTopLeftRadius: '20px',
+      marginLeft: '-11px',
+    },
+    hr: {
+      border: 'none',
+      height: '3px',
+      backgroundColor: 'rgb(60, 162, 245)',
+      opacity: '100%',
+      width: '100%',
+      margin: 0 
     },
   };
 
   return (
     <main style={styles.fundo}>
-      <div style={styles.formContainer}>
-        {/* Título dinâmico (editar/cadastrar) */}
-        <h2 style={styles.title}>
-          {id ? "Editar Quarto" : "Cadastrar Quarto"}
-        </h2>
+      <div className="d-flex justify-content-between" style={styles.loginBox} noValidate>
+        <div style={styles.formBox} className="row">
+          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
+            <Link to="/registroprodutos" style={styles.functionNotSelected}>
+              Registrar Produtos
+            </Link>
+            <Link to="/registroconsumos" style={styles.functionNotSelected}>
+              Registrar Consumos
+            </Link>
+            <Link to="/listarprodutos" style={styles.functionNotSelected}>
+              Pesquisar Produtos
+            </Link>
+            <Link to="/gerenciarquartos/novo" style={styles.functionSelected}>
+              Adicionar Quartos
+            </Link>
+            <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
+              Listar Quartos
+            </Link>
+          </div>  
+        <hr style={styles.hr}/>
 
-        <form onSubmit={salvar}>
+        <form onSubmit={salvar} style={styles.formBox2} className="row" noValidate>
+
+          <h2 className="text-center w-100 mb-4" style={{ color: "#001b5e" }}>
+            {id ? "Editar Quarto" : "Adicionar Quarto"}
+          </h2>
+
           {/* Campo: Número do quarto */}
           <p1>Número do quarto:</p1>
           <input
@@ -178,7 +242,6 @@ export default function EditarQuarto() {
             onChange={handleChange}
             placeholder="Número do quarto"
             style={styles.input}
-            required
           />
           {errors.numero && <div style={{ color: "red", marginBottom: "10px" }}>{errors.numero}</div>}
 
@@ -208,6 +271,7 @@ export default function EditarQuarto() {
             onChange={handleChange}
             style={styles.input}
           >
+            <option value="">Selecione o estado do quarto...</option>
             <option value="disponivel">Disponível</option>
             <option value="ocupado">Ocupado</option>
             <option value="manutencao">Manutenção</option>
@@ -226,7 +290,8 @@ export default function EditarQuarto() {
               {id ? "Atualizar" : "Salvar"}
             </button>
           </div>
-        </form>
+        <</form>  
+        </div>
       </div>
     </main>
   );

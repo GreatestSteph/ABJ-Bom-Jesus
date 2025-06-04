@@ -222,6 +222,12 @@ export default function EditProducts() {
             <Link to="/listarprodutos" style={styles.functionNotSelected}>
               Pesquisar Produtos
             </Link>
+            <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
+              Adicionar Quartos
+            </Link>
+            <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
+              Listar Quartos
+            </Link>
           </div>  
           <hr style={styles.hr}/>
 
