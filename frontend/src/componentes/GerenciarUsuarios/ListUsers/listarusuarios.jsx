@@ -128,11 +128,6 @@ const styles = {
 
 export default function UserList() {
   const [users, setUsers] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [userSelected, setUserSelected] = useState(null);
-  const [actionType, setActionType] = useState(null); // "edit" ou "delete"
-  const [passwordInput, setPasswordInput] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
@@ -147,43 +142,20 @@ export default function UserList() {
       .catch((err) => console.error("Erro ao buscar usuários:", err));
   }, []);
 
-  const openPasswordModal = (user, action) => {
-    setUserSelected(user);
-    setActionType(action);
-    setPasswordInput("");
-    setErrorMessage("");
-    setShowModal(true);
+  const handleEdit = (userId) => {
+    navigate(`/registrousuarios/${userId}`);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-    setUserSelected(null);
-    setActionType(null);
-    setPasswordInput("");
-    setErrorMessage("");
-  };
-
-  const handleConfirm = () => {
-    if (!userSelected) return;
-
-    // Valida se a senha digitada confere com a senha do usuário
-    if (passwordInput === userSelected.senha) {
-      if (actionType === "edit") {
-        // Redireciona para página de edição
-        navigate(`/registrousuarios/${userSelected.id}`);
-      } else if (actionType === "delete") {
-        // Executa exclusão
-        fetch(`http://localhost:3001/users/${userSelected.id}`, {
-          method: "DELETE",
+  const handleDelete = (userId) => {
+    if (window.confirm("Tem certeza que deseja excluir este usuário?")) {
+      fetch(`http://localhost:3001/users/${userId}`, {
+        method: "DELETE",
+      })
+        .then((res) => res.json())
+        .then(() => {
+          setUsers(users.filter((u) => u.id !== userId));
         })
-          .then((res) => res.json())
-          .then(() => {
-            setUsers(users.filter((u) => u.id !== userSelected.id));
-          });
-      }
-      closeModal();
-    } else {
-      setErrorMessage("Senha incorreta. Tente novamente.");
+        .catch((err) => console.error("Erro ao excluir usuário:", err));
     }
   };
 
@@ -246,59 +218,28 @@ export default function UserList() {
                   <td style={styles.td}>{user.usuario}</td>
                   <td style={{ ...styles.td, display: "none" }}>{user.senha}</td>
                   <td style={{ ...styles.td, ...styles.actions }}>
-                    <button
-                      className="btn btn-sm btn-primary"
-                      onClick={() => openPasswordModal(user, "edit")}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => openPasswordModal(user, "delete")}
-                    >
-                      Excluir
-                    </button>
+                    <td style={{ ...styles.td, ...styles.actions }}>
+                      <button
+                        className="btn btn-sm btn-primary"
+                        onClick={() => handleEdit(user.id)}
+                      >
+                        Editar
+                      </button>
+                      {!(["Administrador", "Admin", "TI"].includes(user.funcao)) && (
+                        <button
+                          className="btn btn-sm btn-danger"
+                          onClick={() => handleDelete(user.id)}
+                        >
+                          Excluir
+                        </button>
+                      )}
+                    </td>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-
-        {showModal && (
-          <div style={styles.modal} onClick={closeModal}>
-            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
-              <h4>
-                {actionType === "edit"
-                  ? "Confirmar edição"
-                  : "Confirmar exclusão"}
-              </h4>
-              <p>
-                Para {actionType === "edit" ? "ir para a página de edição" : "excluir o usuário"} <b>{userSelected?.nome}</b>, digite a senha dele:
-              </p>
-              <input
-                type="password"
-                placeholder="Digite a senha"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                style={styles.inputSenha}
-                autoFocus
-              />
-              {errorMessage && (
-                <p style={{ color: "red", marginTop: "10px" }}>{errorMessage}</p>
-              )}
-              <div style={styles.modalButtons}>
-                <button className="btn btn-secondary" onClick={closeModal}>
-                  Cancelar
-                </button>
-                <button className="btn btn-primary" onClick={handleConfirm}>
-                  Confirmar
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-
       </div>
     </main>
   );

@@ -231,7 +231,7 @@ async function handleSubmit(e) {
             />
             {errors.nome && <div style={{ color: 'red', fontSize: '13px' }}>{errors.nome}</div>}
 
-            <input
+            <select
               type="text"
               name="funcao"
               value={form.funcao}
@@ -239,7 +239,15 @@ async function handleSubmit(e) {
               placeholder="Função"
               style={styles.input}
               required
-            />
+            >
+              <option value="">Selecione o cargo</option>
+              <option value="Administrador">Administrador</option>
+              <option value="TI">TI</option>
+              <option value="Secretária">Secretária</option>
+              <option value="Recepcionista">Recepcionista</option>
+              <option value="Presidente">Presidente</option>
+              <option value="Temporário">Temporário</option>
+            </select>
             {errors.funcao && <div style={{ color: 'red', fontSize: '13px' }}>{errors.funcao}</div>}
 
             <input

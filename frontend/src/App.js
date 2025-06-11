@@ -32,6 +32,13 @@ function App() {
     logado: false,
   });
 
+  const podeVerUsuarios = () => {
+    const cargosPermitidos = ["TI", "ADMIN", "Administrador"];
+    return cargosPermitidos.includes(usuario.cargo?.toUpperCase());
+  };
+
+
+
   return (
     <ContextoUsuario.Provider value={[usuario, setUsuario]}>
       <BrowserRouter>
@@ -65,40 +72,45 @@ function App() {
             </>
           ) : (
             <>
-              {/* Gerenciar Usuários */}
-              <Route
-                path="/registrousuarios"
-                element={
-                  <>
-                    <Headerlogado />
-                    <EditProfiles />
-                    <Footer />
-                    <Footer2 />
-                  </>
-                }
-              />
-              <Route
-                path="/registrousuarios/:id"
-                element={
-                  <>
-                    <Headerlogado />
-                    <EditProfiles />
-                    <Footer />
-                    <Footer2 />
-                  </>
-                }
-              />
-              <Route
-                path="/listadeusuarios"
-                element={
-                  <>
-                    <Headerlogado />
-                    <UserList />
-                    <Footer />
-                    <Footer2 />
-                  </>
-                }
-              />
+              {podeVerUsuarios() && (
+                <>
+                  <Route
+                    path="/registrousuarios"
+                    element={
+                      <>
+                        <Headerlogado />
+                        <EditProfiles />
+                        <Footer />
+                        <Footer2 />
+                      </>
+                    }
+                  />
+                  <Route
+                    path="/registrousuarios/:id"
+                    element={
+                      <>
+                        <Headerlogado />
+                        <EditProfiles />
+                        <Footer />
+                        <Footer2 />
+                      </>
+                    }
+                  />
+                  <Route
+                    path="/listadeusuarios"
+                    element={
+                      <>
+                        <Headerlogado />
+                        <UserList />
+                        <Footer />
+                        <Footer2 />
+                      </>
+                    }
+                  />
+                </>
+              )}
+
+              <Route path="*" element={<Navigate to="/hospedes" />} />
 
               {/* Gerenciar Produtos */}
               <Route

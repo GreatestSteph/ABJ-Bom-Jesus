@@ -11,7 +11,7 @@ export default function LoginSection2() {
   const [users, setUsers] = useState([]);
   const navigate = useNavigate();
 
-  const [usuarioGlobal, setUsuarioGlobal] = useContext(ContextoUsuario); // <- AQUI ESTÁ O CONTEXTO GLOBAL
+  const [usuarioGlobal, setUsuarioGlobal] = useContext(ContextoUsuario); 
 
   useEffect(() => {
     fetch("http://localhost:3001/users")
@@ -24,6 +24,7 @@ export default function LoginSection2() {
     if (usuarioInput === "ti" && senha === "12345") {
       setUsuarioGlobal({
         nome: usuarioInput,
+        cargo: "TI",
         logado: true
       });
       navigate("/listadeusuarios");
@@ -36,7 +37,8 @@ export default function LoginSection2() {
 
     if (userFound) {
       setUsuarioGlobal({
-        nome: usuarioInput,
+        nome: userFound.usuario,
+        cargo: userFound.cargo, 
         logado: true
       });
       navigate("/listadeusuarios");
@@ -44,6 +46,7 @@ export default function LoginSection2() {
       setErro("Usuário ou senha inválidos.");
     }
   };
+
 
   const styles = {
     fundo: {
