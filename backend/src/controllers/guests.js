@@ -5,6 +5,16 @@ class GuestsController {
     const data = req.body;
 
     try {
+      if (data.cpf) {
+        const existingGuest = await Guests.findOne({ where: { cpf: data.cpf } });
+        if (existingGuest) {
+          return res.status(400).json({ 
+            error: 'CPF já cadastrado',
+            message: 'Este CPF já está cadastrado no sistema.'
+          });
+        }
+      }
+
       const guest = await Guests.create(data);
       return res.status(201).json(guest);
     } catch (error) {
@@ -49,6 +59,16 @@ class GuestsController {
 
       if (!guest) {
         return res.status(404).json({ error: 'Not found.' });
+      }
+
+      if (data.cpf && data.cpf !== guest.cpf) {
+        const existingGuest = await Guests.findOne({ where: { cpf: data.cpf } });
+        if (existingGuest) {
+          return res.status(400).json({ 
+            error: 'CPF já cadastrado',
+            message: 'Este CPF já está cadastrado no sistema.'
+          });
+        }
       }
 
       await guest.update(data);

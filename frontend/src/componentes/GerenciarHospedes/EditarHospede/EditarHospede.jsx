@@ -32,6 +32,8 @@ export default function EditGuest() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [errors, setErrors] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
 
   const [form, setForm] = useState({
     nome: "",
@@ -152,11 +154,23 @@ export default function EditGuest() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formToSend),
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Erro ao salvar");
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json();
+          if (res.status === 400 && errorData.error === "CPF já cadastrado") {
+            setModalMessage(errorData.message);
+            setShowModal(true);
+            return;
+          }
+          throw new Error("Erro ao salvar");
+        }
         navigate("/hospedes");
       })
-      .catch((err) => alert("Erro ao salvar hóspede."));
+      .catch((err) => {
+        if (!showModal) {
+          alert("Erro ao salvar hóspede.");
+        }
+      });
   }
 
   const styles = {
@@ -262,12 +276,69 @@ export default function EditGuest() {
       width: '100%',
       margin: 0 
     },
+    modal: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+    },
+    modalContent: {
+      backgroundColor: 'white',
+      padding: '30px',
+      borderRadius: '15px',
+      maxWidth: '400px',
+      width: '90%',
+      textAlign: 'center',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.3)',
+    },
+    modalTitle: {
+      color: '#001b5e',
+      marginBottom: '15px',
+      fontSize: '20px',
+      fontWeight: 'bold',
+    },
+    modalMessage: {
+      color: '#666',
+      marginBottom: '25px',
+      fontSize: '16px',
+      lineHeight: '1.5',
+    },
+    modalButton: {
+      backgroundColor: '#e77f3c',
+      color: 'white',
+      padding: '12px 30px',
+      borderRadius: '8px',
+      border: 'none',
+      fontWeight: 'bold',
+      cursor: 'pointer',
+      fontSize: '16px',
+    },
   };
 
   const [focusedInput, setFocusedInput] = useState(null);
 
   return (
     <main style={styles.fundo}>
+      {showModal && (
+        <div style={styles.modal} onClick={() => setShowModal(false)}>
+          <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+            <h3 style={styles.modalTitle}>CPF Duplicado</h3>
+            <p style={styles.modalMessage}>{modalMessage}</p>
+            <button 
+              style={styles.modalButton}
+              onClick={() => setShowModal(false)}
+            >
+              OK
+            </button>
+          </div>
+        </div>
+      )}
       <div style={styles.formBox} className="row">
         <div style={{ borderRadius: '12px' }} className='d-flex flex-start'>
           <Link to="/hospedes/cadastrar" style={styles.functionSelected}>

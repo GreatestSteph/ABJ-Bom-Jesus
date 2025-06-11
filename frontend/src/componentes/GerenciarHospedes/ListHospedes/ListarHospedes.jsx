@@ -4,6 +4,13 @@ import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 // import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
 // import digital from "../../WebsiteDesign/RegisterImages/digital.svg";
 
+function formatCPF(cpf) {
+  if (!cpf) return "";
+  const numbers = cpf.replace(/\D/g, "");
+  if (numbers.length !== 11) return cpf; // Se não tem 11 dígitos, retorna como está
+  return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+}
+
 const styles = {
   fundo: {
     backgroundImage: `url(${fundo})`,
@@ -324,7 +331,7 @@ export default function GuestList() {
                     {new Date(guest.data_nascimento).toLocaleDateString()}
                   </td>
                   <td style={styles.td}>{guest.rg}</td>
-                  <td style={styles.td}>{guest.cpf}</td>
+                  <td style={styles.td}>{formatCPF(guest.cpf)}</td>
                   <td style={styles.td}>{guest.empregado ? "Sim" : "Não"}</td>
                   <td style={{ ...styles.td, ...styles.actions }}>
                     <Link to={`/hospedes/${guest.id}`} className="btn btn-sm btn-primary">Editar</Link>
