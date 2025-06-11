@@ -23,6 +23,9 @@ import ProdutosLista from "./componentes/GerenciarProdutos/ListProducts/listarpr
 import ListQuartos from "./componentes/GerenciarQuartos/ListQuartos/ListQuartos.jsx";
 import EditarQuarto from "./componentes/GerenciarQuartos/EditarQuarto/EditarQuarto.jsx";
 
+import ListarOcorrencias from "./componentes/GerenciarOcorrencias/ListOcorrencias/ListarOcorrencias.jsx";
+import EditarOcorrencia from "./componentes/GerenciarOcorrencias/EditarOcorrencia/EditarOcorrencia.jsx";
+
 function App() {
   const [usuario, setUsuario] = useState({
     nome: '',
@@ -201,6 +204,42 @@ function App() {
                   </>
                 }
               />
+
+              {/* Gerenciar Tipos de Ocorrências */}
+              <Route
+                path="/ocorrencias"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListarOcorrencias />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/cadastrar"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+
               {/* Redirecionamento padrão para rota inicial logada */}
               <Route path="*" element={<Navigate to="/registrousuarios" />} />
             </>

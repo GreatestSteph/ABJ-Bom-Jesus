@@ -90,6 +90,10 @@ export default function Headerlogado() {
                     Gerenciar Consumo
                 </Link>
 
+                <Link to="/ocorrencias" style={navStyle(["/ocorrencias", "/ocorrencias/cadastrar"])}>
+                    Gerenciar Ocorrências
+                </Link>
+
                 <Link to="/relatorios" style={navStyle(["/relatorios"])}>
                     Relatórios e Estatísticas
                 </Link>
