@@ -190,7 +190,7 @@ export default function ListQuartos() {
               {quartos.map((q) => (
                 <tr key={q.id}>
                   <td style={styles.td}>{q.numero}</td>
-                  <td style={styles.td}>{q.tipo}</td>
+                  <td style={styles.td}>{q.tipo_cama}</td>
                   <td style={styles.td}>{q.status}</td>
                   <td style={{ ...styles.td, ...styles.actions }}>
                     <Link to={`/gerenciarquartos/${q.id}`} className="btn btn-sm btn-primary">Editar</Link>
