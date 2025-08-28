@@ -124,4 +124,4 @@ class QuartosController {
 }
 
 // Exporta uma instância do controlador para uso nas rotas
-export default new QuartosController();
+export default QuartosController;
