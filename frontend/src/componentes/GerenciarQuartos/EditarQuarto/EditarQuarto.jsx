@@ -12,7 +12,7 @@ export default function EditarQuarto() {
   // cria as mensagens de erro ou validação]
   const [errors, setErrors] = useState({
     numero: "",
-    tipo: "",
+    tipo_cama: "",
     status: "",
   });
 
@@ -20,7 +20,7 @@ export default function EditarQuarto() {
   // Estado para armazenar os dados do formulário
   const [form, setForm] = useState({
     numero: "",
-    tipo: "",
+    tipo_cama: "",
     ocupacao_max: 1,
     status: "",
   });
@@ -54,7 +54,7 @@ export default function EditarQuarto() {
     // Limpa mensagens antigas
     setErrors({
       numero: "",
-      tipo: "",
+      tipo_cama: "",
       status: "",
     });
 
@@ -246,8 +246,8 @@ export default function EditarQuarto() {
           {/* Campo: Tipo de cama (dropdown) */}
          <p1 style={{paddingLeft: '5px'}}>Tipo de cama do quarto:</p1>
           <select
-            name="tipo"
-            value={form.tipo}
+            name="tipo_cama"
+            value={form.tipo_cama}
             onChange={handleChange}
             style={styles.input}
           >
