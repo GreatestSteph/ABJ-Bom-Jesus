@@ -67,8 +67,8 @@ export default function EditarQuarto() {
       hasError = true;
     }
 
-    if (!form.tipo) {
-      newErrors.tipo = "Por favor selecione o tipo de cama.";
+    if (!form.tipo_cama) {
+      newErrors.tipo_cama = "Por favor selecione o tipo de cama.";
       hasError = true;
     }
 
@@ -256,7 +256,7 @@ export default function EditarQuarto() {
             <option value="Casal">Casal</option>
             <option value="Beliche">Beliche</option>
           </select>
-          {errors.tipo && <div style={{ color: "red", marginBottom: "10px", paddingLeft: '5px' }}>{errors.tipo}</div>}
+          {errors.tipo_cama && <div style={{ color: "red", marginBottom: "10px", paddingLeft: '5px' }}>{errors.tipo_cama}</div>}
 
 
 
