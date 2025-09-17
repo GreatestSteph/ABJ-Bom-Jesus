@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ContextoUsuario from "../../../services/context.js";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 
@@ -152,8 +152,7 @@ function GuestSearchInput({ value, onChange, hospedes, style, placeholder }) {
   );
 }
 
-export default function EditarOcorrencia() {
-  const { id } = useParams();
+export default function CadastrarOcorrencia() {
   const navigate = useNavigate();
   const [usuario] = useContext(ContextoUsuario);
   const [errors, setErrors] = useState({});
@@ -162,11 +161,23 @@ export default function EditarOcorrencia() {
 
   const [form, setForm] = useState({
     guest_id: "",
-    guest_name: "",
     occurrence_type_id: "",
     description: "",
     registration_date: ""
   });
+
+  // Pré-preencher com data atual
+  useEffect(() => {
+    const now = new Date();
+    const currentDateTime = new Date(now.getTime() - now.getTimezoneOffset() * 60000)
+      .toISOString()
+      .slice(0, 16);
+
+    setForm(prev => ({
+      ...prev,
+      registration_date: currentDateTime
+    }));
+  }, []);
 
   const [hospedes, setHospedes] = useState([]);
   const [tiposOcorrencia, setTiposOcorrencia] = useState([]);
@@ -174,17 +185,10 @@ export default function EditarOcorrencia() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const requests = [
+        const [hospedesRes, tiposRes] = await Promise.all([
           fetch("http://localhost:3001/guests"),
           fetch("http://localhost:3001/tipos-ocorrencia")
-        ];
-
-        if (id) {
-          requests.push(fetch(`http://localhost:3001/occurrences/${id}`));
-        }
-
-        const responses = await Promise.all(requests);
-        const [hospedesRes, tiposRes, occurrenceRes] = responses;
+        ]);
 
         if (hospedesRes.ok) {
           const hospedesData = await hospedesRes.json();
@@ -195,48 +199,13 @@ export default function EditarOcorrencia() {
           const tiposData = await tiposRes.json();
           setTiposOcorrencia(tiposData);
         }
-
-        if (id && occurrenceRes) {
-          if (occurrenceRes.ok) {
-            const occurrenceData = await occurrenceRes.json();
-            console.log('Dados da ocorrência carregados:', occurrenceData);
-            console.log('Data original do banco:', occurrenceData.registration_date);
-
-            // Formatar a data corretamente para o input datetime-local
-            let formattedDate = "";
-            if (occurrenceData.registration_date) {
-              const date = new Date(occurrenceData.registration_date);
-              console.log('Data parseada:', date);
-              // Ajustar para timezone local e formatar para YYYY-MM-DDTHH:MM
-              const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-              formattedDate = localDate.toISOString().slice(0, 16);
-              console.log('Data formatada para o input:', formattedDate);
-            }
-
-            setForm({
-              guest_id: occurrenceData.guest_id || "",
-              guest_name: occurrenceData.guest?.nome || "",
-              occurrence_type_id: occurrenceData.occurrence_type_id || "",
-              description: occurrenceData.description || "",
-              registration_date: formattedDate
-            });
-          } else {
-            console.error('Erro ao carregar ocorrência - Status:', occurrenceRes.status);
-            const errorText = await occurrenceRes.text();
-            console.error('Erro ao carregar ocorrência - Response:', errorText);
-            setModalMessage("Erro ao carregar dados da ocorrência.");
-            setShowModal(true);
-          }
-        }
       } catch (err) {
         console.error("Erro ao buscar dados:", err);
-        setModalMessage("Erro ao carregar dados.");
-        setShowModal(true);
       }
     };
 
     fetchData();
-  }, [id]);
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -250,6 +219,10 @@ export default function EditarOcorrencia() {
     e.preventDefault();
 
     const newErrors = {};
+
+    if (!form.guest_id) {
+      newErrors.guest_id = "Selecione um hóspede.";
+    }
 
     if (!form.occurrence_type_id) {
       newErrors.occurrence_type_id = "Selecione o tipo de ocorrência.";
@@ -282,35 +255,25 @@ export default function EditarOcorrencia() {
       registered_by_user_id: parseInt(userId)
     };
 
-    const url = id
-      ? `http://localhost:3001/occurrences/${id}`
-      : "http://localhost:3001/occurrences";
-    const method = id ? "PUT" : "POST";
+    console.log('Dados enviados para API:', dataToSend);
 
-    console.log('Editando ocorrência:', {
-      id,
-      url,
-      method,
-      dataToSend
-    });
-
-    fetch(url, {
-      method,
+    fetch("http://localhost:3001/occurrences", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataToSend)
     })
       .then(async (res) => {
         if (!res.ok) {
           const errorData = await res.json();
-          setModalMessage(errorData.message || "Erro ao salvar ocorrência.");
+          setModalMessage(errorData.message || "Erro ao cadastrar ocorrência.");
           setShowModal(true);
           return;
         }
         navigate("/ocorrencias/lista");
       })
       .catch((err) => {
-        console.error("Erro ao salvar:", err);
-        setModalMessage("Erro ao salvar ocorrência.");
+        console.error("Erro ao cadastrar:", err);
+        setModalMessage("Erro ao cadastrar ocorrência.");
         setShowModal(true);
       });
   }
@@ -420,20 +383,20 @@ export default function EditarOcorrencia() {
       <div style={styles.formBox}>
         <div style={styles.formBox2}>
           <h2 style={{ color: "#001b5e", marginBottom: "30px", textAlign: "center" }}>
-            {id ? "Editar Ocorrência" : "Cadastrar Nova Ocorrência"}
+            Cadastrar Nova Ocorrência
           </h2>
 
           <form onSubmit={handleSubmit}>
             <div className="row">
               <div className="col-md-6">
-                <InputGroup>
-                  <label style={styles.label}>Hóspede</label>
-                  <input
-                    type="text"
-                    value={form.guest_name}
-                    style={{ ...styles.input, backgroundColor: '#f8f9fa', cursor: 'not-allowed' }}
-                    disabled
-                    readOnly
+                <InputGroup error={errors.guest_id}>
+                  <label style={styles.label}>Hóspede *</label>
+                  <GuestSearchInput
+                    value={form.guest_id}
+                    onChange={handleChange}
+                    hospedes={hospedes}
+                    style={styles.input}
+                    placeholder="Digite o nome do hóspede..."
                   />
                 </InputGroup>
               </div>
@@ -496,7 +459,7 @@ export default function EditarOcorrencia() {
               </div>
               <div className="col-md-6">
                 <button type="submit" style={styles.button}>
-                  {id ? "Atualizar Ocorrência" : "Cadastrar Ocorrência"}
+                  Cadastrar Ocorrência
                 </button>
               </div>
             </div>

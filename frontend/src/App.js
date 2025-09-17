@@ -24,7 +24,11 @@ import ListQuartos from "./componentes/GerenciarQuartos/ListQuartos/ListQuartos.
 import EditarQuarto from "./componentes/GerenciarQuartos/EditarQuarto/EditarQuarto.jsx";
 
 import ListarOcorrencias from "./componentes/GerenciarOcorrencias/ListOcorrencias/ListarOcorrencias.jsx";
+import ListaOcorrencias from "./componentes/GerenciarOcorrencias/ListaOcorrencias/ListaOcorrencias.jsx";
+import DetalhesOcorrencia from "./componentes/GerenciarOcorrencias/DetalhesOcorrencia/DetalhesOcorrencia.jsx";
+import CadastrarOcorrencia from "./componentes/GerenciarOcorrencias/CadastrarOcorrencia/CadastrarOcorrencia.jsx";
 import EditarOcorrencia from "./componentes/GerenciarOcorrencias/EditarOcorrencia/EditarOcorrencia.jsx";
+import EditarTipoOcorrencia from "./componentes/GerenciarTiposOcorrencias/EditarOcorrencia/EditarOcorrencia.jsx";
 
 function App() {
   const [usuario, setUsuario] = useState({
@@ -230,7 +234,29 @@ function App() {
                 }
               />
               <Route
-                path="/ocorrencias/cadastrar"
+                path="/tipo-ocorrencias/cadastrar"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarTipoOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/tipo-ocorrencias/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarTipoOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/:id"
                 element={
                   <>
                     <Headerlogado />
@@ -241,7 +267,40 @@ function App() {
                 }
               />
               <Route
-                path="/ocorrencias/:id"
+                path="/ocorrencias/lista"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListaOcorrencias />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/detalhes/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <DetalhesOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/cadastrar-nova"
+                element={
+                  <>
+                    <Headerlogado />
+                    <CadastrarOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/editar/:id"
                 element={
                   <>
                     <Headerlogado />

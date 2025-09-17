@@ -2,14 +2,35 @@ import Occurrence from '../models/occurrence.js';
 import Guests from '../models/guests.js';
 import TipoOcorrencia from '../models/tipoOcorrencia.js';
 import Users from '../models/users.js';
+import { Op } from 'sequelize';
 
 class OccurrencesController {
   async create(req, res) {
     const data = req.body;
 
     try {
+      // Validate required fields
+      if (!data.guest_id || !data.occurrence_type_id || !data.description || !data.registration_date || !data.registered_by_user_id) {
+        return res.status(400).json({
+          error: 'Missing required fields',
+          message: 'Todos os campos obrigatórios devem ser preenchidos.'
+        });
+      }
+
+      // Validate IDs are numbers
+      const guestId = parseInt(data.guest_id);
+      const occurrenceTypeId = parseInt(data.occurrence_type_id);
+      const registeredByUserId = parseInt(data.registered_by_user_id);
+
+      if (isNaN(guestId) || isNaN(occurrenceTypeId) || isNaN(registeredByUserId)) {
+        return res.status(400).json({
+          error: 'Invalid ID format',
+          message: 'IDs devem ser números válidos.'
+        });
+      }
+
       // Validate guest exists
-      const guest = await Guests.findByPk(data.guest_id);
+      const guest = await Guests.findByPk(guestId);
       if (!guest) {
         return res.status(404).json({
           error: 'Guest not found',
@@ -18,7 +39,7 @@ class OccurrencesController {
       }
 
       // Validate occurrence type exists
-      const occurrenceType = await TipoOcorrencia.findByPk(data.occurrence_type_id);
+      const occurrenceType = await TipoOcorrencia.findByPk(occurrenceTypeId);
       if (!occurrenceType) {
         return res.status(404).json({
           error: 'Occurrence type not found',
@@ -26,7 +47,23 @@ class OccurrencesController {
         });
       }
 
-      const occurrence = await Occurrence.create(data);
+      // Validate user exists
+      const user = await Users.findByPk(registeredByUserId);
+      if (!user) {
+        return res.status(404).json({
+          error: 'User not found',
+          message: 'O usuário especificado não foi encontrado.'
+        });
+      }
+
+      const occurrence = await Occurrence.create({
+        guest_id: guestId,
+        occurrence_type_id: occurrenceTypeId,
+        description: data.description.trim(),
+        registration_date: data.registration_date,
+        registered_by_user_id: registeredByUserId
+      });
+
       return res.status(201).json(occurrence);
     } catch (error) {
       console.error(error);
@@ -36,26 +73,60 @@ class OccurrencesController {
 
   async list(req, res) {
     try {
-      const occurrences = await Occurrence.findAll({
-        include: [
-          {
-            model: Guests,
-            as: 'guest',
-            attributes: ['id', 'nome']
-          },
-          {
-            model: TipoOcorrencia,
-            as: 'occurrenceType',
-            attributes: ['id', 'nome', 'nivel']
-          },
-          {
-            model: Users,
-            as: 'registeredByUser',
-            attributes: ['id', 'username']
+      const { guest_name, nivel } = req.query;
+
+      // Build where conditions
+      const includeConditions = [];
+
+      // Add guest name filter
+      if (guest_name) {
+        includeConditions.push({
+          model: Guests,
+          as: 'guest',
+          attributes: ['id', 'nome'],
+          where: {
+            nome: {
+              [Op.like]: `%${guest_name}%`
+            }
           }
-        ],
+        });
+      } else {
+        includeConditions.push({
+          model: Guests,
+          as: 'guest',
+          attributes: ['id', 'nome']
+        });
+      }
+
+      // Add occurrence type with level filter
+      if (nivel) {
+        includeConditions.push({
+          model: TipoOcorrencia,
+          as: 'occurrenceType',
+          attributes: ['id', 'nome', 'nivel'],
+          where: {
+            nivel: nivel
+          }
+        });
+      } else {
+        includeConditions.push({
+          model: TipoOcorrencia,
+          as: 'occurrenceType',
+          attributes: ['id', 'nome', 'nivel']
+        });
+      }
+
+      includeConditions.push({
+        model: Users,
+        as: 'registeredByUser',
+        attributes: ['id', 'usuario']
+      });
+
+      const occurrences = await Occurrence.findAll({
+        include: includeConditions,
         order: [['registration_date', 'DESC']]
       });
+
       return res.status(200).json(occurrences);
     } catch (error) {
       console.error(error);
@@ -80,7 +151,7 @@ class OccurrencesController {
           {
             model: Users,
             as: 'registeredByUser',
-            attributes: ['id', 'username']
+            attributes: ['id', 'usuario']
           }
         ]
       });
@@ -180,7 +251,7 @@ class OccurrencesController {
           {
             model: Users,
             as: 'registeredByUser',
-            attributes: ['id', 'username']
+            attributes: ['id', 'usuario']
           }
         ],
         order: [['registration_date', 'DESC']]
