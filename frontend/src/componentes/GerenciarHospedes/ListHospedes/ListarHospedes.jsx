@@ -287,12 +287,8 @@ export default function GuestList() {
                 Registrar Hóspedes
               </Link>
 
-              <Link to="/hospedes-comportamento" style={styles.functionNotSelected}>
-                Relatar Comportamento
-              </Link>
-
               <Link to="/hospedes" style={styles.functionSelected}>
-                Pesquisar Hóspedes
+                Hóspedes
               </Link>
             </div>
             <hr style={styles.hr}/>

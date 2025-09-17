@@ -89,9 +89,12 @@ export default function EditOcorrencia() {
     })
       .then((res) => {
         if (!res.ok) throw new Error("Erro ao salvar");
-        navigate("/ocorrencias");
+        navigate("/tipos-ocorrencias");
       })
-      .catch((err) => alert("Erro ao salvar tipo de ocorrência."));
+      .catch((err) => {
+        console.error("Erro ao salvar tipo de ocorrência:", err);
+        alert("Erro ao salvar tipo de ocorrência.");
+      });
   }
 
   const styles = {
@@ -261,7 +264,7 @@ export default function EditOcorrencia() {
           </div>
 
           <div className="col-12 d-flex justify-content-between mt-4 gap-3 flex-wrap">
-            <Link to="/ocorrencias" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
+            <Link to="/tipos-ocorrencias" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
               Cancelar
             </Link>
             <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>

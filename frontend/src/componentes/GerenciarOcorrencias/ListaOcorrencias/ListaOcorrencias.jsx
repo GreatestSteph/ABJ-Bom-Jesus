@@ -350,7 +350,6 @@ export default function ListaOcorrencias() {
         setOcorrencias(ocorrencias.filter((ocorrencia) => ocorrencia.id !== ocorrenciaToDelete.id));
         setShowModal(false);
         setOcorrenciaToDelete(null);
-        console.log(data);
       });
   };
 
@@ -407,11 +406,11 @@ export default function ListaOcorrencias() {
     <main style={styles.fundo}>
       <div style={styles.aroundListBox}>
          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-              <Link to="/ocorrencias/lista" style={styles.functionSelected}>
+              <Link to="/ocorrencias" style={styles.functionSelected}>
                 Ocorrências
               </Link>
 
-              <Link to="/ocorrencias" style={styles.functionNotSelected}>
+              <Link to="/tipos-ocorrencias" style={styles.functionNotSelected}>
                 Tipos de Ocorrências
               </Link>
             </div>

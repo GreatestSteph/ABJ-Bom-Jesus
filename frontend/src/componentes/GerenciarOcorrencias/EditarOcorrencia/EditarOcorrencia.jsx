@@ -199,18 +199,14 @@ export default function EditarOcorrencia() {
         if (id && occurrenceRes) {
           if (occurrenceRes.ok) {
             const occurrenceData = await occurrenceRes.json();
-            console.log('Dados da ocorrência carregados:', occurrenceData);
-            console.log('Data original do banco:', occurrenceData.registration_date);
 
             // Formatar a data corretamente para o input datetime-local
             let formattedDate = "";
             if (occurrenceData.registration_date) {
               const date = new Date(occurrenceData.registration_date);
-              console.log('Data parseada:', date);
               // Ajustar para timezone local e formatar para YYYY-MM-DDTHH:MM
               const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
               formattedDate = localDate.toISOString().slice(0, 16);
-              console.log('Data formatada para o input:', formattedDate);
             }
 
             setForm({
@@ -222,8 +218,6 @@ export default function EditarOcorrencia() {
             });
           } else {
             console.error('Erro ao carregar ocorrência - Status:', occurrenceRes.status);
-            const errorText = await occurrenceRes.text();
-            console.error('Erro ao carregar ocorrência - Response:', errorText);
             setModalMessage("Erro ao carregar dados da ocorrência.");
             setShowModal(true);
           }
@@ -287,12 +281,6 @@ export default function EditarOcorrencia() {
       : "http://localhost:3001/occurrences";
     const method = id ? "PUT" : "POST";
 
-    console.log('Editando ocorrência:', {
-      id,
-      url,
-      method,
-      dataToSend
-    });
 
     fetch(url, {
       method,
@@ -306,7 +294,7 @@ export default function EditarOcorrencia() {
           setShowModal(true);
           return;
         }
-        navigate("/ocorrencias/lista");
+        navigate("/ocorrencias");
       })
       .catch((err) => {
         console.error("Erro ao salvar:", err);
@@ -490,7 +478,7 @@ export default function EditarOcorrencia() {
 
             <div className="row mt-4">
               <div className="col-md-6">
-                <Link to="/ocorrencias/lista" style={styles.buttonCancel} className="text-center d-block">
+                <Link to="/ocorrencias" style={styles.buttonCancel} className="text-center d-block">
                   Cancelar
                 </Link>
               </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FiPlus } from "react-icons/fi";
+import { FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 
 const styles = {
@@ -196,6 +196,39 @@ const styles = {
     backgroundColor: '#f8d7da',
     color: '#721c24',
     border: '1px solid #f5c6cb'
+  },
+  iconButton: {
+    border: '1px solid transparent',
+    cursor: 'pointer',
+    fontSize: '16px',
+    padding: '8px',
+    borderRadius: '0.25rem',
+    transition: 'all 0.15s ease-in-out',
+    margin: '0 2px',
+    width: '36px',
+    height: '36px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textDecoration: 'none'
+  },
+  iconButtonEdit: {
+    backgroundColor: '#007bff',
+    borderColor: '#007bff',
+    color: '#fff'
+  },
+  iconButtonEditHover: {
+    backgroundColor: '#0056b3',
+    borderColor: '#004085'
+  },
+  iconButtonDelete: {
+    backgroundColor: '#dc3545',
+    borderColor: '#dc3545',
+    color: '#fff'
+  },
+  iconButtonDeleteHover: {
+    backgroundColor: '#c82333',
+    borderColor: '#bd2130'
   }
 };
 
@@ -285,8 +318,8 @@ export default function OcorrenciasList() {
         setOcorrencias(ocorrencias.filter((ocorrencia) => ocorrencia.id !== ocorrenciaToDelete.id));
         setShowModal(false);
         setOcorrenciaToDelete(null);
-        console.log(data);
-      });
+      })
+      .catch((err) => console.error("Erro ao excluir tipo de ocorrência:", err));
   };
 
   // Busca por nome
@@ -325,18 +358,18 @@ export default function OcorrenciasList() {
     <main style={styles.fundo}>
       <div style={styles.aroundListBox}>
          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-              <Link to="/ocorrencias/lista" style={styles.functionNotSelected}>
+              <Link to="/ocorrencias" style={styles.functionNotSelected}>
                 Ocorrências
               </Link>
 
-              <Link to="/ocorrencias" style={styles.functionSelected}>
+              <Link to="/tipos-ocorrencias" style={styles.functionSelected}>
                 Tipos de Ocorrências
               </Link>
             </div>
             <hr style={styles.hr}/>
 
         <div style={styles.searchContainer} className="mt-4 pt-3 mb-5 mx-5 px-2">
-          <div style={{ position: 'relative', flex: 1, maxWidth: '400px' }}>
+          <div style={{ position: 'relative', flex: 1, maxWidth: '450px' }}>
             <input
               type="text"
               placeholder="Digite aqui o nome do tipo de ocorrência"
@@ -379,8 +412,20 @@ export default function OcorrenciasList() {
                     </span>
                   </td>
                   <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link to={`/tipo-ocorrencias/${ocorrencia.id}`} className="btn btn-sm btn-primary">Editar</Link>
-                    <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(ocorrencia)}>Excluir</button>
+                    <Link
+                      to={`/tipo-ocorrencias/${ocorrencia.id}`}
+                      title="Editar"
+                      style={{ ...styles.iconButton, ...styles.iconButtonEdit }}
+                    >
+                      <FiEdit2 />
+                    </Link>
+                    <button
+                      title="Excluir"
+                      style={{ ...styles.iconButton, ...styles.iconButtonDelete }}
+                      onClick={() => handleDeleteClick(ocorrencia)}
+                    >
+                      <FiTrash2 />
+                    </button>
                   </td>
                 </tr>
               ))}

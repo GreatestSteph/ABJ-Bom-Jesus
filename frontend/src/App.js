@@ -221,9 +221,20 @@ function App() {
                 }
               />
 
-              {/* Gerenciar Tipos de Ocorrências */}
+              {/* Gerenciar Ocorrências */}
               <Route
                 path="/ocorrencias"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListaOcorrencias />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/tipos-ocorrencias"
                 element={
                   <>
                     <Headerlogado />

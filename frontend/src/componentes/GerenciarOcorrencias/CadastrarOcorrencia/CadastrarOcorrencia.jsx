@@ -255,7 +255,6 @@ export default function CadastrarOcorrencia() {
       registered_by_user_id: parseInt(userId)
     };
 
-    console.log('Dados enviados para API:', dataToSend);
 
     fetch("http://localhost:3001/occurrences", {
       method: "POST",
@@ -269,7 +268,7 @@ export default function CadastrarOcorrencia() {
           setShowModal(true);
           return;
         }
-        navigate("/ocorrencias/lista");
+        navigate("/ocorrencias");
       })
       .catch((err) => {
         console.error("Erro ao cadastrar:", err);
@@ -453,7 +452,7 @@ export default function CadastrarOcorrencia() {
 
             <div className="row mt-4">
               <div className="col-md-6">
-                <Link to="/ocorrencias/lista" style={styles.buttonCancel} className="text-center d-block">
+                <Link to="/ocorrencias" style={styles.buttonCancel} className="text-center d-block">
                   Cancelar
                 </Link>
               </div>
