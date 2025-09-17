@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FiEye, FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
-// import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
-// import digital from "../../WebsiteDesign/RegisterImages/digital.svg";
 
 function formatCPF(cpf) {
   if (!cpf) return "";
@@ -17,13 +16,12 @@ const styles = {
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     width: '100%',
-    height: '100%',
+    minHeight: '100vh',
     paddingTop: '180px',
     paddingBottom: '180px',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
-    maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)',
+    alignItems: 'flex-start',
   },     
   aroundListBox: {
     backgroundColor: "white",
@@ -161,6 +159,51 @@ const styles = {
     color: '#aaa',
     cursor: 'not-allowed',
     fontWeight: 'bold'
+  },
+  iconButton: {
+    border: '1px solid transparent',
+    cursor: 'pointer',
+    fontSize: '16px',
+    padding: '8px',
+    borderRadius: '0.25rem',
+    transition: 'all 0.15s ease-in-out',
+    margin: '0 2px',
+    width: '36px',
+    height: '36px',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textDecoration: 'none'
+  },
+  iconButtonView: {
+    backgroundColor: '#6c757d',
+    borderColor: '#6c757d',
+    color: '#fff'
+  },
+  iconButtonEdit: {
+    backgroundColor: '#007bff',
+    borderColor: '#007bff',
+    color: '#fff'
+  },
+  iconButtonDelete: {
+    backgroundColor: '#dc3545',
+    borderColor: '#dc3545',
+    color: '#fff'
+  },
+  addButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "12px 20px",
+    backgroundColor: "#28a745",
+    color: "white",
+    textDecoration: "none",
+    borderRadius: "8px",
+    fontSize: "16px",
+    fontWeight: "600",
+    transition: "background-color 0.2s",
+    border: "none",
+    cursor: "pointer"
   }
 };
 
@@ -283,25 +326,28 @@ export default function GuestList() {
     <main style={styles.fundo}>
       <div style={styles.aroundListBox}>
          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-              <Link to="/hospedes/cadastrar" style={styles.functionNotSelected}>
-                Registrar Hóspedes
-              </Link>
-
               <Link to="/hospedes" style={styles.functionSelected}>
                 Hóspedes
               </Link>
             </div>
             <hr style={styles.hr}/>
 
-        <div style={styles.searchContainer} className="mt-4 pt-3 mb-5 mx-5 px-2">
-          <div style={{ position: 'relative', width: '100%' }}>
-            <input
-              type="text"
-              placeholder="Digite aqui o nome do hóspede ou CPF"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={styles.barraPesquisa}
-            />
+        <div className="mt-4 pt-3 mb-4 mx-5 px-2">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '15px' }}>
+            <div style={{ position: 'relative', flex: 1, maxWidth: '450px' }}>
+              <input
+                type="text"
+                placeholder="Digite aqui o nome do hóspede ou CPF"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={styles.barraPesquisa}
+              />
+            </div>
+
+            <Link to="/hospedes/cadastrar" style={styles.addButton}>
+              <FiPlus />
+              Novo Hóspede
+            </Link>
           </div>
         </div>
         
@@ -330,8 +376,27 @@ export default function GuestList() {
                   <td style={styles.td}>{formatCPF(guest.cpf)}</td>
                   <td style={styles.td}>{guest.empregado ? "Sim" : "Não"}</td>
                   <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link to={`/hospedes/${guest.id}`} className="btn btn-sm btn-primary">Editar</Link>
-                    <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(guest)}>Excluir</button>
+                    <Link
+                      to={`/hospedes/detalhes/${guest.id}`}
+                      title="Visualizar detalhes"
+                      style={{ ...styles.iconButton, ...styles.iconButtonView }}
+                    >
+                      <FiEye />
+                    </Link>
+                    <Link
+                      to={`/hospedes/${guest.id}`}
+                      title="Editar"
+                      style={{ ...styles.iconButton, ...styles.iconButtonEdit }}
+                    >
+                      <FiEdit2 />
+                    </Link>
+                    <button
+                      title="Excluir"
+                      style={{ ...styles.iconButton, ...styles.iconButtonDelete }}
+                      onClick={() => handleDeleteClick(guest)}
+                    >
+                      <FiTrash2 />
+                    </button>
                   </td>
                 </tr>
               ))}

@@ -16,6 +16,7 @@ import UserList from "./componentes/GerenciarUsuarios/ListUsers/listarusuarios.j
 
 import ListHospedes from "./componentes/GerenciarHospedes/ListHospedes/ListarHospedes.jsx";
 import EditarHospede from "./componentes/GerenciarHospedes/EditarHospede/EditarHospede.jsx";
+import DetalhesHospede from "./componentes/GerenciarHospedes/DetalhesHospede/DetalhesHospede.jsx";
 
 import EditProducts from "./componentes/GerenciarProdutos/EditProducts/editarprodutos.jsx";
 import ProdutosLista from "./componentes/GerenciarProdutos/ListProducts/listarprodutos.jsx";
@@ -169,6 +170,17 @@ function App() {
                   <>
                     <Headerlogado />
                     <EditarHospede />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/hospedes/detalhes/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <DetalhesHospede />
                     <Footer />
                     <Footer2 />
                   </>
