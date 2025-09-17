@@ -4,12 +4,14 @@ import guests from './guests.js';
 import users from './users.js';
 import produtos from './produtos.js';
 import tipoOcorrencia from './tipoOcorrencia.js';
+import occurrences from './occurrences.js';
 
 const routes = new Router();
 
 routes.use('/guests', guests);
 routes.use('/users', users);
 routes.use('/produtos', produtos);
+routes.use('/occurrences', occurrences);
 routes.use(tipoOcorrencia);
 
 export default routes;
