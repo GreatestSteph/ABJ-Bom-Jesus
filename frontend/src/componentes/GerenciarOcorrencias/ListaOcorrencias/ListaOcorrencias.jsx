@@ -71,30 +71,89 @@ const styles = {
     gap: '10px'
   },
   filtersContainer: {
-    display: 'flex',
-    gap: '15px',
-    alignItems: 'center',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '20px',
     marginBottom: '20px',
-    flexWrap: 'wrap'
+    alignItems: 'end'
+  },
+  filterGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px'
+  },
+  filterLabel: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: '#495057',
+    marginBottom: '2px'
   },
   filterInput: {
-    padding: '8px',
-    borderRadius: '4px',
+    padding: '10px 12px',
+    borderRadius: '6px',
     border: '1px solid #ddd',
-    minWidth: '200px'
+    fontSize: '14px',
+    width: '100%',
+    transition: 'border-color 0.2s'
   },
   filterSelect: {
-    padding: '8px',
-    borderRadius: '4px',
+    padding: '10px 12px',
+    borderRadius: '6px',
     border: '1px solid #ddd',
-    minWidth: '150px'
+    fontSize: '14px',
+    width: '100%',
+    transition: 'border-color 0.2s',
+    cursor: 'pointer'
   },
   clearButton: {
-    padding: '8px 16px',
-    borderRadius: '4px',
+    padding: '10px 20px',
+    borderRadius: '6px',
     border: '1px solid #ccc',
     backgroundColor: '#f8f9fa',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    fontSize: '14px',
+    fontWeight: '500',
+    transition: 'all 0.2s',
+    height: 'fit-content'
+  },
+  dateRangeContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '6px'
+  },
+  dateRangeLabel: {
+    fontSize: '13px',
+    fontWeight: '600',
+    color: '#495057',
+    marginBottom: '2px'
+  },
+  dateInputsWrapper: {
+    display: 'flex',
+    gap: '10px',
+    alignItems: 'center'
+  },
+  dateInput: {
+    padding: '10px 12px',
+    borderRadius: '6px',
+    border: '1px solid #ddd',
+    fontSize: '14px',
+    flex: 1,
+    transition: 'border-color 0.2s'
+  },
+  dateInputError: {
+    padding: '10px 12px',
+    borderRadius: '6px',
+    border: '2px solid #dc3545',
+    fontSize: '14px',
+    flex: 1,
+    transition: 'border-color 0.2s',
+    backgroundColor: '#fff5f5'
+  },
+  errorMessage: {
+    fontSize: '12px',
+    color: '#dc3545',
+    marginTop: '4px',
+    fontWeight: '500'
   },
   functionNotSelected: {
     color: 'rgb(42, 135, 211)',
@@ -303,7 +362,9 @@ export default function ListaOcorrencias() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     guestName: "",
-    nivel: ""
+    nivel: "",
+    startDate: "",
+    endDate: ""
   });
 
   const OCORRENCIAS_PER_PAGE = 10;
@@ -315,6 +376,12 @@ export default function ListaOcorrencias() {
     }
     if (filters.nivel) {
       params.append('nivel', filters.nivel);
+    }
+    if (filters.startDate) {
+      params.append('start_date', filters.startDate);
+    }
+    if (filters.endDate) {
+      params.append('end_date', filters.endDate);
     }
 
     const url = `http://localhost:3001/occurrences${params.toString() ? '?' + params.toString() : ''}`;
@@ -353,16 +420,27 @@ export default function ListaOcorrencias() {
   };
 
   const handleFilterChange = (field, value) => {
-    setFilters(prev => ({
-      ...prev,
+    const newFilters = {
+      ...filters,
       [field]: value
-    }));
+    };
+
+    // If start date is changed and it's greater than end date, update end date
+    if (field === 'startDate' && filters.endDate && value) {
+      if (new Date(value) > new Date(filters.endDate)) {
+        newFilters.endDate = value;
+      }
+    }
+
+    setFilters(newFilters);
   };
 
   const clearFilters = () => {
     setFilters({
       guestName: "",
-      nivel: ""
+      nivel: "",
+      startDate: "",
+      endDate: ""
     });
   };
 
@@ -416,8 +494,16 @@ export default function ListaOcorrencias() {
             <hr style={styles.hr}/>
 
         <div className="mt-4 pt-3 mb-4 mx-5 px-2">
-          <div style={styles.filtersHeader}>
-            <div style={styles.filtersContainer}>
+          <div style={{ marginBottom: '20px', display: 'flex', justifyContent: 'flex-end' }}>
+            <Link to="/ocorrencias/cadastrar-nova" style={styles.addButton}>
+              <FiPlus />
+              Nova Ocorrência
+            </Link>
+          </div>
+
+          <div style={styles.filtersContainer}>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Hóspede</label>
               <input
                 type="text"
                 placeholder="Nome do hóspede"
@@ -425,7 +511,10 @@ export default function ListaOcorrencias() {
                 onChange={(e) => handleFilterChange('guestName', e.target.value)}
                 style={styles.filterInput}
               />
+            </div>
 
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Nível de Gravidade</label>
               <select
                 value={filters.nivel}
                 onChange={(e) => handleFilterChange('nivel', e.target.value)}
@@ -436,19 +525,35 @@ export default function ListaOcorrencias() {
                 <option value="Moderado">Moderado</option>
                 <option value="Grave">Grave</option>
               </select>
-
-              <button
-                onClick={clearFilters}
-                style={styles.clearButton}
-              >
-                Limpar Filtros
-              </button>
             </div>
 
-            <Link to="/ocorrencias/cadastrar-nova" style={styles.addButton}>
-              <FiPlus />
-              Nova Ocorrência
-            </Link>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Data Inicial</label>
+              <input
+                type="date"
+                value={filters.startDate}
+                onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                style={styles.dateInput}
+              />
+            </div>
+
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Data Final</label>
+              <input
+                type="date"
+                value={filters.endDate}
+                onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                style={styles.dateInput}
+                min={filters.startDate}
+              />
+            </div>
+
+            <button
+              onClick={clearFilters}
+              style={styles.clearButton}
+            >
+              Limpar Filtros
+            </button>
           </div>
         </div>
 

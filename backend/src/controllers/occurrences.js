@@ -73,10 +73,28 @@ class OccurrencesController {
 
   async list(req, res) {
     try {
-      const { guest_name, nivel } = req.query;
+      const { guest_name, nivel, start_date, end_date } = req.query;
 
       // Build where conditions
+      const whereConditions = {};
       const includeConditions = [];
+
+      // Add date range filter
+      if (start_date || end_date) {
+        whereConditions.registration_date = {};
+
+        if (start_date) {
+          // Parse date as local timezone (start of day)
+          const startDate = new Date(start_date + 'T00:00:00');
+          whereConditions.registration_date[Op.gte] = startDate;
+        }
+
+        if (end_date) {
+          // Parse date as local timezone (end of day)
+          const endDate = new Date(end_date + 'T23:59:59.999');
+          whereConditions.registration_date[Op.lte] = endDate;
+        }
+      }
 
       // Add guest name filter
       if (guest_name) {
@@ -123,6 +141,7 @@ class OccurrencesController {
       });
 
       const occurrences = await Occurrence.findAll({
+        where: whereConditions,
         include: includeConditions,
         order: [['registration_date', 'DESC']]
       });

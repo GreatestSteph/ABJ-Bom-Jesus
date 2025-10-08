@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { FiArrowLeft, FiCalendar, FiUser, FiAlertCircle, FiFileText } from "react-icons/fi";
+import { FiArrowLeft, FiCalendar, FiUser, FiAlertCircle, FiFileText, FiEdit2 } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 
 const styles = {
@@ -53,6 +53,25 @@ const styles = {
     fontSize: "14px",
     fontWeight: "500",
     transition: "background-color 0.2s"
+  },
+  editButton: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "10px 20px",
+    backgroundColor: "#007bff",
+    color: "white",
+    textDecoration: "none",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "500",
+    transition: "background-color 0.2s",
+    border: "none",
+    cursor: "pointer"
+  },
+  buttonGroup: {
+    display: "flex",
+    gap: "10px"
   },
   detailsGrid: {
     display: "grid",
@@ -233,9 +252,14 @@ export default function DetalhesOcorrencia() {
       <div style={styles.container}>
         <div style={styles.header}>
           <h1 style={styles.title}>Detalhes da Ocorrência #{ocorrencia.id}</h1>
-          <Link to="/ocorrencias/lista" style={styles.backButton}>
-            <FiArrowLeft /> Voltar à lista
-          </Link>
+          <div style={styles.buttonGroup}>
+            <Link to={`/ocorrencias/editar/${ocorrencia.id}`} style={styles.editButton}>
+              <FiEdit2 /> Editar
+            </Link>
+            <Link to="/ocorrencias/lista" style={styles.backButton}>
+              <FiArrowLeft /> Voltar à lista
+            </Link>
+          </div>
         </div>
 
         <div style={styles.detailsGrid}>
