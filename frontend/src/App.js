@@ -16,6 +16,7 @@ import UserList from "./componentes/GerenciarUsuarios/ListUsers/listarusuarios.j
 
 import ListHospedes from "./componentes/GerenciarHospedes/ListHospedes/ListarHospedes.jsx";
 import EditarHospede from "./componentes/GerenciarHospedes/EditarHospede/EditarHospede.jsx";
+import DetalhesHospede from "./componentes/GerenciarHospedes/DetalhesHospede/DetalhesHospede.jsx";
 
 import EditProducts from "./componentes/GerenciarProdutos/EditProducts/editarprodutos.jsx";
 import ProdutosLista from "./componentes/GerenciarProdutos/ListProducts/listarprodutos.jsx";
@@ -24,7 +25,14 @@ import ListQuartos from "./componentes/GerenciarQuartos/ListQuartos/ListQuartos.
 import EditarQuarto from "./componentes/GerenciarQuartos/EditarQuarto/EditarQuarto.jsx";
 
 import ListarOcorrencias from "./componentes/GerenciarOcorrencias/ListOcorrencias/ListarOcorrencias.jsx";
+import ListaOcorrencias from "./componentes/GerenciarOcorrencias/ListaOcorrencias/ListaOcorrencias.jsx";
+import DetalhesOcorrencia from "./componentes/GerenciarOcorrencias/DetalhesOcorrencia/DetalhesOcorrencia.jsx";
+import CadastrarOcorrencia from "./componentes/GerenciarOcorrencias/CadastrarOcorrencia/CadastrarOcorrencia.jsx";
 import EditarOcorrencia from "./componentes/GerenciarOcorrencias/EditarOcorrencia/EditarOcorrencia.jsx";
+import EditarTipoOcorrencia from "./componentes/GerenciarTiposOcorrencias/EditarOcorrencia/EditarOcorrencia.jsx";
+
+import ListaBloqueios from "./componentes/GerenciarBloqueios/ListaBloqueios/ListaBloqueios.jsx";
+import DetalhesBloqueio from "./componentes/GerenciarBloqueios/DetalhesBloqueio/DetalhesBloqueio.jsx";
 
 function App() {
   const [usuario, setUsuario] = useState({
@@ -171,6 +179,17 @@ function App() {
                 }
               />
               <Route
+                path="/hospedes/detalhes/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <DetalhesHospede />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
                 path="/hospedes/:id"
                 element={
                   <>
@@ -217,9 +236,20 @@ function App() {
                 }
               />
 
-              {/* Gerenciar Tipos de Ocorrências */}
+              {/* Gerenciar Ocorrências */}
               <Route
                 path="/ocorrencias"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListaOcorrencias />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/tipos-ocorrencias"
                 element={
                   <>
                     <Headerlogado />
@@ -230,11 +260,22 @@ function App() {
                 }
               />
               <Route
-                path="/ocorrencias/cadastrar"
+                path="/tipo-ocorrencias/cadastrar"
                 element={
                   <>
                     <Headerlogado />
-                    <EditarOcorrencia />
+                    <EditarTipoOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/tipo-ocorrencias/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarTipoOcorrencia />
                     <Footer />
                     <Footer2 />
                   </>
@@ -246,6 +287,74 @@ function App() {
                   <>
                     <Headerlogado />
                     <EditarOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/lista"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListaOcorrencias />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/detalhes/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <DetalhesOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/cadastrar-nova"
+                element={
+                  <>
+                    <Headerlogado />
+                    <CadastrarOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/ocorrencias/editar/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EditarOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+
+              {/* Gerenciar Bloqueios */}
+              <Route
+                path="/bloqueios"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListaBloqueios />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/bloqueios/detalhes/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <DetalhesBloqueio />
                     <Footer />
                     <Footer2 />
                   </>

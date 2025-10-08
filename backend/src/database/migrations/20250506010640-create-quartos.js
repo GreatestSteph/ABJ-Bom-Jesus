@@ -7,7 +7,7 @@ module.exports = {
   // Função que é executada quando aplicamos a migration (`sequelize db:migrate`)
   up: async (queryInterface, Sequelize) => {
     // Cria uma tabela chamada 'quartos'
-    await queryInaterface.createTable('quartos', {
+    await queryInterface.createTable('quartos', {
       // Coluna 'id', chave primária da tabela
       id: {
         type: Sequelize.INTEGER,     // Tipo inteiro

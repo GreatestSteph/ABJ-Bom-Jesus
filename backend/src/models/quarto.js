@@ -10,7 +10,7 @@ class Quarto extends Model {
           allowNull: false,            // Não permite valor nulo para este campo
           unique: true,                // Garante valor único na tabela para "numero"
         },
-        tipo: {
+        tipo_cama: {
           type: Sequelize.ENUM('Solteiro', 'Casal', 'Beliche'), // Define um ENUM com as opções 'Solteiro', 'Casal' ou 'Beliche'
           allowNull: false,            // Não permite valor nulo para este campo
         },
@@ -18,10 +18,6 @@ class Quarto extends Model {
           type: Sequelize.INTEGER,    // Define o tipo da coluna como INTEGER (número inteiro)
           allowNull: false,            // Não permite valor nulo para este campo
           defaultValue: 1,            // Valor padrão será 1 se não for informado
-        },
-        preco_diaria: {
-          type: Sequelize.DECIMAL(10, 2), // Define o tipo como DECIMAL com 10 dígitos no total, sendo 2 decimais
-          allowNull: false,            // Não permite valor nulo para este campo
         },
         status: {
           type: Sequelize.ENUM('disponivel', 'ocupado', 'manutencao'), // Define um ENUM com os status possíveis

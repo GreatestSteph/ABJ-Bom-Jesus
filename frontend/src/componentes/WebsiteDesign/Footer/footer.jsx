@@ -7,7 +7,6 @@ const styles = {
     color: 'white',
     fontFamily: "'Raleway', sans-serif",
     backgroundSize: 'cover',
-    maskImage: 'linear-gradient(to top, rgba(255, 255, 255, 0.98) 285px, transparent 125%)',
   },
   column: {
     minWidth: '200px',
