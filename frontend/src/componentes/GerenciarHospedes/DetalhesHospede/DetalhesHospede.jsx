@@ -397,6 +397,7 @@ export default function DetalhesHospede() {
 
       handleCloseBloqueioModal();
       navigate('/bloqueios');
+      window.scrollTo(0, 0);
     } catch (err) {
       setValidationErrors(prev => ({
         ...prev,

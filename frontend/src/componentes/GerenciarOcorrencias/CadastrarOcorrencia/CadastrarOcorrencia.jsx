@@ -158,6 +158,8 @@ export default function CadastrarOcorrencia() {
   const [errors, setErrors] = useState({});
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(null);
 
   const [form, setForm] = useState({
     guest_id: "",
@@ -215,6 +217,28 @@ export default function CadastrarOcorrencia() {
     }));
   }
 
+  const submitOccurrence = (dataToSend) => {
+    fetch("http://localhost:3001/occurrences", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dataToSend)
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          const errorData = await res.json();
+          setModalMessage(errorData.message || "Erro ao cadastrar ocorrência.");
+          setShowModal(true);
+          return;
+        }
+        navigate("/ocorrencias");
+      })
+      .catch((err) => {
+        console.error("Erro ao cadastrar:", err);
+        setModalMessage("Erro ao cadastrar ocorrência.");
+        setShowModal(true);
+      });
+  };
+
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -255,27 +279,28 @@ export default function CadastrarOcorrencia() {
       registered_by_user_id: parseInt(userId)
     };
 
-
-    fetch("http://localhost:3001/occurrences", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(dataToSend)
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          const errorData = await res.json();
-          setModalMessage(errorData.message || "Erro ao cadastrar ocorrência.");
-          setShowModal(true);
-          return;
-        }
-        navigate("/ocorrencias");
-      })
-      .catch((err) => {
-        console.error("Erro ao cadastrar:", err);
-        setModalMessage("Erro ao cadastrar ocorrência.");
-        setShowModal(true);
-      });
+    // Verificar se é ocorrência grave
+    const selectedType = tiposOcorrencia.find(tipo => tipo.id === parseInt(form.occurrence_type_id));
+    if (selectedType && selectedType.nivel === 'Grave') {
+      setPendingSubmit(dataToSend);
+      setShowWarningModal(true);
+    } else {
+      submitOccurrence(dataToSend);
+    }
   }
+
+  const handleConfirmGrave = () => {
+    setShowWarningModal(false);
+    if (pendingSubmit) {
+      submitOccurrence(pendingSubmit);
+      setPendingSubmit(null);
+    }
+  };
+
+  const handleCancelGrave = () => {
+    setShowWarningModal(false);
+    setPendingSubmit(null);
+  };
 
   const styles = {
     fundo: {
@@ -477,6 +502,109 @@ export default function CadastrarOcorrencia() {
             >
               OK
             </button>
+          </div>
+        </div>
+      )}
+
+      {showWarningModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 1000
+        }}>
+          <div style={{
+            backgroundColor: "white",
+            borderRadius: "12px",
+            padding: "30px",
+            maxWidth: "500px",
+            width: "90%",
+            boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+            fontFamily: "'Raleway', sans-serif"
+          }}>
+            <div style={{
+              fontSize: "22px",
+              fontWeight: "bold",
+              color: "#333",
+              marginBottom: "20px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px"
+            }}>
+              <span style={{ fontSize: '28px', color: '#ffc107' }}>⚠️</span>
+              Atenção: Ocorrência Grave
+            </div>
+
+            <div style={{
+              backgroundColor: "#fff3cd",
+              border: "1px solid #ffeaa7",
+              borderRadius: "8px",
+              padding: "15px",
+              marginBottom: "20px"
+            }}>
+              <p style={{
+                color: "#856404",
+                marginBottom: '10px',
+                lineHeight: '1.6',
+                fontSize: '14px',
+                margin: 0
+              }}>
+                Esta é uma ocorrência de nível <strong>GRAVE</strong>.
+              </p>
+              <p style={{
+                color: "#856404",
+                lineHeight: '1.6',
+                fontSize: '14px',
+                margin: '10px 0 0 0'
+              }}>
+                Um <strong>bloqueio automático de 3 meses</strong> será criado para este hóspede.
+              </p>
+            </div>
+
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              justifyContent: 'flex-end'
+            }}>
+              <button
+                onClick={handleCancelGrave}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "#6c757d",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s"
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleConfirmGrave}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "#ffc107",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  fontSize: "14px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  transition: "background-color 0.2s"
+                }}
+              >
+                Confirmar
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -33,8 +33,8 @@ class BloqueiosController {
         });
       }
 
-      const dataInicio = new Date(data.data_inicio);
-      const dataTermino = new Date(data.data_termino);
+      const dataInicio = new Date(data.data_inicio + 'T00:00:00');
+      const dataTermino = new Date(data.data_termino + 'T23:59:59');
 
       if (dataTermino < dataInicio) {
         return res.status(400).json({
@@ -232,8 +232,8 @@ class BloqueiosController {
       }
 
       if (data.data_inicio && data.data_termino) {
-        const dataInicio = new Date(data.data_inicio);
-        const dataTermino = new Date(data.data_termino);
+        const dataInicio = new Date(data.data_inicio + 'T00:00:00');
+        const dataTermino = new Date(data.data_termino + 'T23:59:59');
 
         if (dataTermino < dataInicio) {
           return res.status(400).json({
@@ -241,6 +241,9 @@ class BloqueiosController {
             message: 'A data de término deve ser maior ou igual à data de início.'
           });
         }
+
+        data.data_inicio = dataInicio;
+        data.data_termino = dataTermino;
       }
 
       await bloqueio.update(data);

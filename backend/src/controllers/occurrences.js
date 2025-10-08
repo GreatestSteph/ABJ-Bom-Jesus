@@ -66,8 +66,8 @@ class OccurrencesController {
       });
 
       if (occurrenceType.nivel === 'Grave') {
-        const startDate = new Date();
-        const endDate = new Date();
+        const startDate = new Date(data.registration_date);
+        const endDate = new Date(data.registration_date);
         endDate.setMonth(endDate.getMonth() + 3);
 
         await Bloqueio.create({
@@ -208,7 +208,14 @@ class OccurrencesController {
     const data = req.body;
 
     try {
-      const occurrence = await Occurrence.findByPk(id);
+      const occurrence = await Occurrence.findByPk(id, {
+        include: [
+          {
+            model: TipoOcorrencia,
+            as: 'occurrenceType'
+          }
+        ]
+      });
 
       if (!occurrence) {
         return res.status(404).json({ error: 'Occurrence not found.' });
@@ -225,10 +232,11 @@ class OccurrencesController {
         }
       }
 
+      let newOccurrenceType = null;
       // If updating occurrence_type_id, validate occurrence type exists
       if (data.occurrence_type_id) {
-        const occurrenceType = await TipoOcorrencia.findByPk(data.occurrence_type_id);
-        if (!occurrenceType) {
+        newOccurrenceType = await TipoOcorrencia.findByPk(data.occurrence_type_id);
+        if (!newOccurrenceType) {
           return res.status(404).json({
             error: 'Occurrence type not found',
             message: 'O tipo de ocorrência especificado não foi encontrado.'
@@ -236,7 +244,28 @@ class OccurrencesController {
         }
       }
 
+      const oldOccurrenceType = occurrence.occurrenceType;
+      const wasGrave = oldOccurrenceType && oldOccurrenceType.nivel === 'Grave';
+      const willBeGrave = newOccurrenceType && newOccurrenceType.nivel === 'Grave';
+
       await occurrence.update(data);
+
+      // Se a ocorrência NÃO era grave antes e agora será grave, criar bloqueio automático
+      if (!wasGrave && willBeGrave) {
+        const startDate = new Date(occurrence.registration_date);
+        const endDate = new Date(occurrence.registration_date);
+        endDate.setMonth(endDate.getMonth() + 3);
+
+        await Bloqueio.create({
+          hospede_id: occurrence.guest_id,
+          motivo: `Bloqueio automático por ocorrência grave: ${newOccurrenceType.nome}`,
+          data_inicio: startDate,
+          data_termino: endDate,
+          data_termino_original: endDate,
+          ocorrencia_id: occurrence.id,
+          status: 'ativo'
+        });
+      }
 
       return res.status(200).json(occurrence);
     } catch (error) {
