@@ -204,6 +204,20 @@ const styles = {
     transition: "background-color 0.2s",
     border: "none",
     cursor: "pointer"
+  },
+  functionNotSelected: {
+    color: 'rgb(42, 135, 211)',
+    borderTopLeftRadius: '20px',
+    padding: '25px 30px',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+  },
+  functionSelected: {
+    backgroundColor: 'rgb(60, 162, 245)',
+    color: 'white',
+    padding: '25px 30px',
+    textDecoration: 'none',
+    fontWeight: 'bold'
   }
 };
 
@@ -328,6 +342,10 @@ export default function GuestList() {
          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
               <Link to="/hospedes" style={styles.functionSelected}>
                 Hóspedes
+              </Link>
+
+              <Link to="/bloqueios" style={styles.functionNotSelected}>
+                Bloqueios
               </Link>
             </div>
             <hr style={styles.hr}/>

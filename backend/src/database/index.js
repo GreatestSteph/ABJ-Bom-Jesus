@@ -5,7 +5,7 @@ import Models from '../models/index.js';
 const env = process.env.NODE_ENV || 'development';
 const config = dbConfig[env];
 
-const models = [Models.Guests, Models.Users, Models.Produtos, Models.TipoOcorrencia, Models.Occurrence];
+const models = [Models.Guests, Models.Users, Models.Produtos, Models.TipoOcorrencia, Models.Occurrence, Models.Bloqueio];
 
 class Database {
   constructor() {

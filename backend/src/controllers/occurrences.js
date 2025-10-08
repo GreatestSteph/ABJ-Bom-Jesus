@@ -2,6 +2,7 @@ import Occurrence from '../models/occurrence.js';
 import Guests from '../models/guests.js';
 import TipoOcorrencia from '../models/tipoOcorrencia.js';
 import Users from '../models/users.js';
+import Bloqueio from '../models/bloqueio.js';
 import { Op } from 'sequelize';
 
 class OccurrencesController {
@@ -63,6 +64,22 @@ class OccurrencesController {
         registration_date: data.registration_date,
         registered_by_user_id: registeredByUserId
       });
+
+      if (occurrenceType.nivel === 'Grave') {
+        const startDate = new Date();
+        const endDate = new Date();
+        endDate.setMonth(endDate.getMonth() + 3);
+
+        await Bloqueio.create({
+          hospede_id: guestId,
+          motivo: `Bloqueio automático por ocorrência grave: ${occurrenceType.nome}`,
+          data_inicio: startDate,
+          data_termino: endDate,
+          data_termino_original: endDate,
+          ocorrencia_id: occurrence.id,
+          status: 'ativo'
+        });
+      }
 
       return res.status(201).json(occurrence);
     } catch (error) {

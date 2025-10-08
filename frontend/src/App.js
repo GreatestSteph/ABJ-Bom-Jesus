@@ -31,6 +31,9 @@ import CadastrarOcorrencia from "./componentes/GerenciarOcorrencias/CadastrarOco
 import EditarOcorrencia from "./componentes/GerenciarOcorrencias/EditarOcorrencia/EditarOcorrencia.jsx";
 import EditarTipoOcorrencia from "./componentes/GerenciarTiposOcorrencias/EditarOcorrencia/EditarOcorrencia.jsx";
 
+import ListaBloqueios from "./componentes/GerenciarBloqueios/ListaBloqueios/ListaBloqueios.jsx";
+import DetalhesBloqueio from "./componentes/GerenciarBloqueios/DetalhesBloqueio/DetalhesBloqueio.jsx";
+
 function App() {
   const [usuario, setUsuario] = useState({
     nome: '',
@@ -328,6 +331,30 @@ function App() {
                   <>
                     <Headerlogado />
                     <EditarOcorrencia />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+
+              {/* Gerenciar Bloqueios */}
+              <Route
+                path="/bloqueios"
+                element={
+                  <>
+                    <Headerlogado />
+                    <ListaBloqueios />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/bloqueios/detalhes/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <DetalhesBloqueio />
                     <Footer />
                     <Footer2 />
                   </>

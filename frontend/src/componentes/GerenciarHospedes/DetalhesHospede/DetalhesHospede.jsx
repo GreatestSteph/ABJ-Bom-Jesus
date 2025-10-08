@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { FiLock, FiPlus } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 
 function formatCPF(cpf) {
@@ -11,9 +12,18 @@ function formatCPF(cpf) {
 
 export default function DetalhesHospede() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [hospede, setHospede] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showBloqueioModal, setShowBloqueioModal] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [bloqueioFormData, setBloqueioFormData] = useState({
+    motivo: "",
+    data_inicio: "",
+    data_termino: ""
+  });
 
   useEffect(() => {
     fetch(`http://localhost:3001/guests/${id}`)
@@ -147,6 +157,122 @@ export default function DetalhesHospede() {
       backgroundColor: "#f8d7da",
       color: "#721c24",
     },
+    buttonBlock: {
+      backgroundColor: "#ffc107",
+      color: "white",
+      padding: "12px 24px",
+      borderRadius: "8px",
+      textDecoration: "none",
+      fontWeight: "bold",
+      transition: "background-color 0.3s ease",
+      border: "none",
+      cursor: "pointer",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "8px"
+    },
+    modalOverlay: {
+      position: "fixed",
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000
+    },
+    modalContent: {
+      backgroundColor: "white",
+      borderRadius: "12px",
+      padding: "30px",
+      maxWidth: "600px",
+      width: "90%",
+      boxShadow: "0 10px 30px rgba(0, 0, 0, 0.3)",
+      maxHeight: "90vh",
+      overflowY: "auto"
+    },
+    modalHeader: {
+      fontSize: "22px",
+      fontWeight: "bold",
+      color: "#333",
+      marginBottom: "20px",
+      display: "flex",
+      alignItems: "center",
+      gap: "10px"
+    },
+    modalBody: {
+      marginBottom: "25px"
+    },
+    modalLabel: {
+      display: "block",
+      fontWeight: "600",
+      color: "#495057",
+      fontSize: "14px",
+      marginBottom: "8px"
+    },
+    modalInput: {
+      width: "100%",
+      padding: "12px",
+      borderRadius: "8px",
+      border: "1px solid #ced4da",
+      fontSize: "14px",
+      fontFamily: "'Raleway', sans-serif",
+      transition: "border-color 0.2s"
+    },
+    modalTextarea: {
+      width: "100%",
+      padding: "12px",
+      borderRadius: "8px",
+      border: "1px solid #ced4da",
+      fontSize: "14px",
+      fontFamily: "'Raleway', sans-serif",
+      minHeight: "100px",
+      resize: "vertical",
+      transition: "border-color 0.2s"
+    },
+    modalFooter: {
+      display: "flex",
+      gap: "10px",
+      justifyContent: "flex-end"
+    },
+    modalCancelBtn: {
+      padding: "10px 20px",
+      backgroundColor: "#6c757d",
+      color: "white",
+      border: "none",
+      borderRadius: "8px",
+      fontSize: "14px",
+      fontWeight: "500",
+      cursor: "pointer",
+      transition: "background-color 0.2s"
+    },
+    modalConfirmBtn: {
+      padding: "10px 20px",
+      backgroundColor: "#28a745",
+      color: "white",
+      border: "none",
+      borderRadius: "8px",
+      fontSize: "14px",
+      fontWeight: "500",
+      cursor: "pointer",
+      transition: "background-color 0.2s",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "8px"
+    },
+    errorMessage: {
+      color: "#dc3545",
+      fontSize: "13px",
+      marginTop: "5px"
+    },
+    formGroup: {
+      marginBottom: "20px"
+    },
+    required: {
+      color: "#dc3545"
+    }
   };
 
   if (loading) {
@@ -180,6 +306,105 @@ export default function DetalhesHospede() {
   const formatDate = (dateString) => {
     if (!dateString) return "Não informado";
     return new Date(dateString).toLocaleDateString('pt-BR');
+  };
+
+  const handleOpenBloqueioModal = () => {
+    setShowBloqueioModal(true);
+    setBloqueioFormData({
+      motivo: "",
+      data_inicio: "",
+      data_termino: ""
+    });
+    setValidationErrors({});
+  };
+
+  const handleCloseBloqueioModal = () => {
+    setShowBloqueioModal(false);
+    setBloqueioFormData({
+      motivo: "",
+      data_inicio: "",
+      data_termino: ""
+    });
+    setValidationErrors({});
+  };
+
+  const handleBloqueioChange = (field, value) => {
+    setBloqueioFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+
+    if (validationErrors[field]) {
+      setValidationErrors(prev => ({
+        ...prev,
+        [field]: ""
+      }));
+    }
+  };
+
+  const validateBloqueioForm = () => {
+    const errors = {};
+
+    if (!bloqueioFormData.motivo.trim()) {
+      errors.motivo = "O motivo é obrigatório.";
+    }
+
+    if (!bloqueioFormData.data_inicio) {
+      errors.data_inicio = "A data de início é obrigatória.";
+    }
+
+    if (!bloqueioFormData.data_termino) {
+      errors.data_termino = "A data de término é obrigatória.";
+    }
+
+    if (bloqueioFormData.data_inicio && bloqueioFormData.data_termino) {
+      const dataInicio = new Date(bloqueioFormData.data_inicio);
+      const dataTermino = new Date(bloqueioFormData.data_termino);
+
+      if (dataTermino < dataInicio) {
+        errors.data_termino = "A data de término deve ser maior ou igual à data de início.";
+      }
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleCreateBloqueio = async () => {
+    if (!validateBloqueioForm()) {
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const response = await fetch('http://localhost:3001/bloqueios', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          hospede_id: hospede.id,
+          motivo: bloqueioFormData.motivo.trim(),
+          data_inicio: bloqueioFormData.data_inicio,
+          data_termino: bloqueioFormData.data_termino
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Erro ao criar bloqueio');
+      }
+
+      handleCloseBloqueioModal();
+      navigate('/bloqueios');
+    } catch (err) {
+      setValidationErrors(prev => ({
+        ...prev,
+        general: err.message
+      }));
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -268,10 +493,107 @@ export default function DetalhesHospede() {
           <Link to="/hospedes" style={styles.buttonBack}>
             Voltar à Lista
           </Link>
+          <button onClick={handleOpenBloqueioModal} style={styles.buttonBlock}>
+            <FiLock /> Bloquear Hóspede
+          </button>
           <Link to={`/hospedes/${hospede.id}`} style={styles.buttonEdit}>
             Editar Hóspede
           </Link>
         </div>
+
+        {showBloqueioModal && (
+          <div style={styles.modalOverlay} onClick={handleCloseBloqueioModal}>
+            <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+              <div style={styles.modalHeader}>
+                <FiLock style={{ color: "#ffc107" }} />
+                Criar Bloqueio para {hospede.nome}
+              </div>
+
+              <div style={styles.modalBody}>
+                {validationErrors.general && (
+                  <div style={{
+                    padding: "12px",
+                    backgroundColor: "#f8d7da",
+                    border: "1px solid #f5c6cb",
+                    borderRadius: "8px",
+                    marginBottom: "15px",
+                    color: "#721c24",
+                    fontSize: "14px"
+                  }}>
+                    {validationErrors.general}
+                  </div>
+                )}
+
+                <div style={styles.formGroup}>
+                  <label style={styles.modalLabel}>
+                    Data de Início <span style={styles.required}>*</span>
+                  </label>
+                  <input
+                    type="date"
+                    style={styles.modalInput}
+                    value={bloqueioFormData.data_inicio}
+                    onChange={(e) => handleBloqueioChange('data_inicio', e.target.value)}
+                    disabled={submitting}
+                  />
+                  {validationErrors.data_inicio && (
+                    <div style={styles.errorMessage}>{validationErrors.data_inicio}</div>
+                  )}
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.modalLabel}>
+                    Data de Término <span style={styles.required}>*</span>
+                  </label>
+                  <input
+                    type="date"
+                    style={styles.modalInput}
+                    value={bloqueioFormData.data_termino}
+                    onChange={(e) => handleBloqueioChange('data_termino', e.target.value)}
+                    min={bloqueioFormData.data_inicio}
+                    disabled={submitting}
+                  />
+                  {validationErrors.data_termino && (
+                    <div style={styles.errorMessage}>{validationErrors.data_termino}</div>
+                  )}
+                </div>
+
+                <div style={styles.formGroup}>
+                  <label style={styles.modalLabel}>
+                    Motivo do Bloqueio <span style={styles.required}>*</span>
+                  </label>
+                  <textarea
+                    style={styles.modalTextarea}
+                    value={bloqueioFormData.motivo}
+                    onChange={(e) => handleBloqueioChange('motivo', e.target.value)}
+                    placeholder="Descreva o motivo do bloqueio"
+                    disabled={submitting}
+                  />
+                  {validationErrors.motivo && (
+                    <div style={styles.errorMessage}>{validationErrors.motivo}</div>
+                  )}
+                </div>
+              </div>
+
+              <div style={styles.modalFooter}>
+                <button
+                  onClick={handleCloseBloqueioModal}
+                  style={styles.modalCancelBtn}
+                  disabled={submitting}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleCreateBloqueio}
+                  style={styles.modalConfirmBtn}
+                  disabled={submitting}
+                >
+                  <FiPlus />
+                  {submitting ? 'Criando...' : 'Criar Bloqueio'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );
