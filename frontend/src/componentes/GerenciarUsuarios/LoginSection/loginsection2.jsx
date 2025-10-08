@@ -38,10 +38,11 @@ export default function LoginSection2() {
     if (userFound) {
       setUsuarioGlobal({
         nome: userFound.usuario,
-        cargo: userFound.cargo, 
+        cargo: userFound.funcao, 
         logado: true
       });
       navigate("/listadeusuarios");
+      return
     } else {
       setErro("Usuário ou senha inválidos.");
     }

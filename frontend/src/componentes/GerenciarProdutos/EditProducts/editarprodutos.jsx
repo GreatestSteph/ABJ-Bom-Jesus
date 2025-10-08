@@ -10,7 +10,7 @@ export default function EditProducts() {
     nomeDoProduto: '',
     tamanho: '',
     cor: '',
-    quantidade: '',
+    quantidade: 1,
     marca: '',
     descricao: '',
     custoTotal: '',
@@ -18,15 +18,20 @@ export default function EditProducts() {
 
   const [errors, setErrors] = useState({});
   const [mostrarTamanho, setMostrarTamanho] = useState(true);
-
+  const [produtosExistentes, setProdutosExistentes] = useState([]);
 
   useEffect(() => {
+    // carrega todos os produtos para o autocomplete
+    fetch("http://localhost:3001/produtos")
+      .then(res => res.json())
+      .then(data => setProdutosExistentes(data))
+      .catch(err => console.error("Erro ao carregar produtos:", err));
+
+    // se for edição, carrega o item
     if (id) {
       fetch(`http://localhost:3001/produtos/${id}`)
         .then(res => {
-          if (!res.ok) {
-            throw new Error("Erro ao buscar o produto");
-          }
+          if (!res.ok) throw new Error("Erro ao buscar o produto");
           return res.json();
         })
         .then(data => setForm(data))
@@ -40,44 +45,36 @@ export default function EditProducts() {
 
   function validate() {
     const newErrors = {};
-
     if (!form.nomeDoProduto.trim()) {
       newErrors.nomeDoProduto = "Nome do produto é obrigatório.";
     } else if (form.nomeDoProduto.length > 100) {
       newErrors.nomeDoProduto = "Nome do produto deve ter no máximo 100 caracteres.";
     }
-    
     if (!form.cor.trim()) {
       newErrors.cor = "Selecione a cor do produto.";
     }
-
     if (!form.quantidade) {
       newErrors.quantidade = "Quantidade é obrigatória.";
     } else if (isNaN(form.quantidade) || Number(form.quantidade) <= 0) {
       newErrors.quantidade = "Quantidade deve ser um número maior que zero.";
     }
-
     if (!form.marca.trim()) {
       newErrors.marca = "Marca é obrigatória.";
     }
-
     if (form.custoTotal === '' || form.custoTotal === null || form.custoTotal === undefined) {
       newErrors.custoTotal = "Custo total é obrigatório.";
     } else if (isNaN(form.custoTotal) || Number(form.custoTotal) < 0) {
       newErrors.custoTotal = "Custo total deve ser um número igual ou maior que zero.";
     }
-
-
     if (!form.descricao.trim()) {
       newErrors.descricao = "Descrição é obrigatória.";
     } else if (form.descricao.length > 300) {
       newErrors.descricao = "Descrição deve ter no máximo 300 caracteres.";
     }
-
     return newErrors;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -86,22 +83,54 @@ export default function EditProducts() {
     }
     setErrors({});
 
-    const method = id ? "PUT" : "POST";
-    const url = id ? `http://localhost:3001/produtos/${id}` : "http://localhost:3001/produtos";
+    const normalize = (s) => (s ?? '').trim().toLowerCase();
 
-    fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    })
-      .then(res => {
-        if (!res.ok) throw new Error("Erro ao salvar");
-        navigate("/listarprodutos");
-      })
-      .catch(() => alert("Erro ao salvar produto."));
+    try {
+      if (!id) {
+        // procurar produto existente com nome parecido, mesma cor, tamanho e marca
+        const produtoExistente = produtosExistentes.find((p) =>
+          normalize(p?.nomeDoProduto).includes(normalize(form.nomeDoProduto)) &&
+          normalize(p?.cor) === normalize(form.cor) &&
+          normalize(p?.tamanho) === normalize(form.tamanho) &&
+          normalize(p?.marca) === normalize(form.marca)
+        );
+
+        if (produtoExistente) {
+          const novaQuantidade = Number(produtoExistente.quantidade ?? 0) + Number(form.quantidade ?? 1);
+          const novoCustoTotal = Number(produtoExistente.custoTotal ?? 0) + Number(form.custoTotal ?? 0);
+
+          await fetch(`http://localhost:3001/produtos/${produtoExistente.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ 
+              ...produtoExistente, 
+              quantidade: novaQuantidade,
+              custoTotal: novoCustoTotal
+            }),
+          });
+          navigate("/listarprodutos");
+          return;
+        }
+      }
+
+      // fluxo normal (POST novo ou PUT edição)
+      const method = id ? "PUT" : "POST";
+      const url = id ? `http://localhost:3001/produtos/${id}` : "http://localhost:3001/produtos";
+
+      await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      navigate("/listarprodutos");
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao salvar produto.");
+    }
   }
 
- const styles = {
+  const styles = {
     fundo: {
       backgroundImage: `url(${fundo})`,
       backgroundSize: 'cover',
@@ -203,154 +232,160 @@ export default function EditProducts() {
     },
   };
 
+  // nomes únicos para o autocomplete
+  const nomesUnicos = Array.from(
+    new Set(
+      (produtosExistentes || [])
+        .map(p => p?.nomeDoProduto)
+        .filter(Boolean)
+    )
+  );
 
   return (
     <main style={styles.fundo}>
       <div style={styles.aroundListBox}>
-          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-            <Link to="/registroprodutos" style={styles.functionSelected}>
-              Registrar Produtos
-            </Link>
-            <Link to="/registroconsumos" style={styles.functionNotSelected}>
-              Registrar Consumos
-            </Link>
-            <Link to="/listarprodutos" style={styles.functionNotSelected}>
-              Pesquisar Produtos
-            </Link>
-            <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
-              Adicionar Quartos
-            </Link>
-            <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
-              Listar Quartos
-            </Link>
-          </div>  
-          <hr style={styles.hr}/>
+        <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
+          <Link to="/registroprodutos" style={styles.functionSelected}>
+            Registrar Produtos
+          </Link>
+          <Link to="/registroconsumos" style={styles.functionNotSelected}>
+            Registrar Consumos
+          </Link>
+          <Link to="/listarprodutos" style={styles.functionNotSelected}>
+            Pesquisar Produtos
+          </Link>
+          <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
+            Adicionar Quartos
+          </Link>
+          <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
+            Listar Quartos
+          </Link>
+        </div>  
+        <hr style={styles.hr}/>
 
-          <form onSubmit={handleSubmit} style={styles.formBox2} className="row" noValidate>
+        <form onSubmit={handleSubmit} style={styles.formBox2} className="row" noValidate>
+          <h2 className="text-center w-100 mb-4" style={{ color: "#001b5e" }}>
+            {id ? "Editar Produto" : "Cadastrar Produto"}
+          </h2>
 
-            <h2 className="text-center w-100 mb-4" style={{ color: "#001b5e" }}>
-              {id ? "Editar Produto" : "Cadastrar Produto"}
-            </h2>
+          <input
+            list="produtos-list"
+            type="text"
+            name="nomeDoProduto"
+            id='nomeDoProduto'
+            value={form.nomeDoProduto}
+            onChange={handleChange}
+            placeholder="Nome do Produto"
+            style={styles.input}
+            required
+          />
+          <datalist id="produtos-list">
+            {nomesUnicos.map((nome) => (
+              <option key={nome} value={nome} />
+            ))}
+          </datalist>
+          {errors.nomeDoProduto && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px' }}>{errors.nomeDoProduto}</div>}
 
+          <div style={{ marginBottom: '10px', paddingLeft:'5px', marginTop: '10px' }}>
             <input
-              type="text"
-              name="nomeDoProduto"
-              id='nomeDoProduto'
-              value={form.nomeDoProduto}
-              onChange={handleChange}
-              placeholder="Nome do Produto"
-              style={styles.input}
-              required
+              type="checkbox"
+              id="mostrarTamanho"
+              checked={mostrarTamanho}
+              onChange={(e) => setMostrarTamanho(e.target.checked)}
             />
-            {errors.nomeDoProduto && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px' }}>{errors.nomeDoProduto}</div>}
+            <label htmlFor="mostrarTamanho" style={styles.checkboxLabel}>
+              Deseja colocar o tamanho do produto?
+            </label>
+          </div>
 
-            <div style={{ marginBottom: '10px', paddingLeft:'5px', marginTop: '10px' }}>
+          {mostrarTamanho && (
+            <>
               <input
-                type="checkbox"
-                id="mostrarTamanho"
-                checked={mostrarTamanho}
-                onChange={(e) => setMostrarTamanho(e.target.checked)}
+                type="text"
+                name="tamanho"
+                id="tamanho"
+                value={form.tamanho}
+                onChange={handleChange}
+                placeholder="Tamanho do Produto"
+                style={styles.input}
+                required
               />
-              <label htmlFor="mostrarTamanho" style={styles.checkboxLabel}>
-                Deseja colocar o tamanho do produto?
-              </label>
-            </div>
+            </>
+          )}
 
-            {mostrarTamanho && (
-              <>
-                <input
-                  type="text"
-                  name="tamanho"
-                  id="tamanho"
-                  value={form.tamanho}
-                  onChange={handleChange}
-                  placeholder="Tamanho do Produto"
-                  style={styles.input}
-                  required
-                />
-              </>
-            )}
+          <select
+            name="cor"
+            id="cor"
+            value={form.cor}
+            onChange={handleChange}
+            style={styles.input}
+            required
+          >
+            <option value="">Cor</option>
+            <option value="Azul">Azul</option>
+            <option value="Verde">Verde</option>
+            <option value="Transparente">Transparente</option>
+            <option value="Rosa">Rosa</option>
+            <option value="Roxo">Roxo</option>
+            <option value="Vermelho">Vermelho</option>
+            <option value="Amarelo">Amarelo</option>
+            <option value="Laranja">Laranja</option>
+            <option value="Colorido">Colorido</option>
+          </select>
+          {errors.cor && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.cor}</div>}
 
+          <input
+            list="marcas-list"
+            type="text"
+            name="marca"
+            id='marca'
+            value={form.marca}
+            onChange={handleChange}
+            placeholder="Marca do produto"
+            style={styles.input}
+            required
+          />
+          <datalist id="marcas-list">
+            {Array.from(new Set(produtosExistentes.map(p => p?.marca).filter(Boolean))).map((marca) => (
+              <option key={marca} value={marca} />
+            ))}
+          </datalist>
+          {errors.marca && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.marca}</div>}
 
-            <select
-              name="cor"
-              id="cor"
-              value={form.cor}
-              onChange={handleChange}
-              style={styles.input}
-              required
-            >
-              <option value="">Cor</option>
-              <option value="Azul">Azul</option>
-              <option value="Verde">Verde</option>
-              <option value="Transparente">Transparente</option>
-              <option value="Rosa">Rosa</option>
-              <option value="Roxo">Roxo</option>
-              <option value="Vermelho">Vermelho</option>
-              <option value="Amarelo">Amarelo</option>
-              <option value="Laranja">Laranja</option>
-              <option value="Colorido">Colorido</option>
-            </select>
-            {errors.cor && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.cor}</div>}
+          <input
+            type="number"
+            name="custoTotal"
+            id='custoTotal'
+            value={form.custoTotal}
+            onChange={handleChange}
+            placeholder="Custo total do produto"
+            style={styles.input}
+            required
+          />
+          {errors.custoTotal && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.custoTotal}</div>}
 
-            <input
-              type="number"
-              name="quantidade"
-              id='quantidade'
-              value={form.quantidade}
-              onChange={handleChange}
-              placeholder="Quantidade a ser cadastrada"
-              style={styles.input}
-              required
-            />
-            {errors.quantidade && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.quantidade}</div>}
+          <input
+            type="text"
+            name="descricao"
+            id='descricao'
+            value={form.descricao}
+            onChange={handleChange}
+            placeholder="Descreva o produto aqui"
+            style={styles.input}
+            required
+          />
+          {errors.descricao && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.descricao}</div>}
 
-            <input
-              type="text"
-              name="marca"
-              id='marca'
-              value={form.marca}
-              onChange={handleChange}
-              placeholder="Marca do produto"
-              style={styles.input}
-              required
-            />
-            {errors.marca && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.marca}</div>}
-
-            <input
-              type="number"
-              name="custoTotal"
-              id='custoTotal'
-              value={form.custoTotal}
-              onChange={handleChange}
-              placeholder="Custo total do produto"
-              style={styles.input}
-              required
-            />
-            {errors.custoTotal && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.custoTotal}</div>}
-
-            <input
-              type="text"
-              name="descricao"
-              id='descricao'
-              value={form.descricao}
-              onChange={handleChange}
-              placeholder="Descreva o produto aqui"
-              style={styles.input}
-              required
-            />
-            {errors.descricao && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.descricao}</div>}
-
-            <div className="col-12 d-flex justify-content-between mt-2 gap-3 flex-wrap">
-              <Link to="/listarprodutos" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
-                Cancelar
-              </Link>
-              <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
-                Salvar
-              </button>
-            </div>
-          </form>  
-        </div>
+          <div className="col-12 d-flex justify-content-between mt-2 gap-3 flex-wrap">
+            <Link to="/listarprodutos" style={{ ...styles.buttonCancel, maxWidth: "200px", textAlign: "center" }}>
+              Cancelar
+            </Link>
+            <button type="submit" style={{ ...styles.button, maxWidth: "200px" }}>
+              Salvar
+            </button>
+          </div>
+        </form>  
+      </div>
     </main>
   );
 }

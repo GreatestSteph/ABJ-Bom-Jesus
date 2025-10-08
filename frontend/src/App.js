@@ -34,7 +34,7 @@ function App() {
 
   const podeVerUsuarios = () => {
     const cargosPermitidos = ["TI", "ADMIN", "Administrador"];
-    return cargosPermitidos.includes(usuario.cargo?.toUpperCase());
+    return cargosPermitidos.includes(usuario.cargo);
   };
 
 
