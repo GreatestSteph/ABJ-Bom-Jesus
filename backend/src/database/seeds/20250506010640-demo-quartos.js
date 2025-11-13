@@ -10,28 +10,28 @@ module.exports = {
       [
         {
           numero: '101',                 // Define o número do quarto como '101'
-          tipo_cama: 'Solteiro',         // Define o tipo de cama como 'Solteiro'
+         // tipo_cama: 'Solteiro',         // Define o tipo de cama como 'Solteiro'
           status: 'disponivel',          // Define o status como 'disponivel'
           created_at: new Date(),        // Define a data de criação como o momento atual
           updated_at: new Date(),        // Define a data de atualização como o momento atual
         },
         {
           numero: '102',                 // Define o número do quarto como '102'
-          tipo_cama: 'Casal',            // Define o tipo de cama como 'Casal'
+         // tipo_cama: 'Casal',            // Define o tipo de cama como 'Casal'
           status: 'ocupado',             // Define o status como 'ocupado'
           created_at: new Date(),        // Define a data de criação como o momento atual
           updated_at: new Date(),        // Define a data de atualização como o momento atual
         },
         {
           numero: '201',                 // Define o número do quarto como '201'
-          tipo_cama: 'Beliche',          // Define o tipo de cama como 'Beliche'
+         // tipo_cama: 'Beliche',          // Define o tipo de cama como 'Beliche'
           status: 'manutencao',          // Define o status como 'manutencao'
           created_at: new Date(),        // Define a data de criação como o momento atual
           updated_at: new Date(),        // Define a data de atualização como o momento atual
         },
         {
           numero: '202',                 // Define o número do quarto como '202'
-          tipo_cama: 'Casal',            // Define o tipo de cama como 'Casal'
+          //tipo_cama: 'Casal',            // Define o tipo de cama como 'Casal'
           status: 'disponivel',          // Define o status como 'disponivel'
           created_at: new Date(),        // Define a data de criação como o momento atual
           updated_at: new Date(),        // Define a data de atualização como o momento atual

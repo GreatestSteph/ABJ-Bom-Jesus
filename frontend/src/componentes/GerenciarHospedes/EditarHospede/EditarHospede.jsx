@@ -340,18 +340,6 @@ export default function EditGuest() {
         </div>
       )}
       <div style={styles.formBox} className="row">
-        <div style={{ borderRadius: '12px' }} className='d-flex flex-start'>
-          <Link to="/hospedes/cadastrar" style={styles.functionSelected}>
-            Registrar Hóspedes
-          </Link>
-          <Link to="/hospedes-comportamento" style={styles.functionNotSelected}>
-            Relatar Comportamento
-          </Link>
-          <Link to="/hospedes" style={styles.functionNotSelected}>
-            Pesquisar Hóspedes
-          </Link>
-        </div>
-        <hr style={styles.hr} />
 
         <form onSubmit={handleSubmit} style={styles.formBox2} className="row" noValidate>
           <h2 className="text-center w-100 mb-4" style={{ color: "#001b5e" }}>
