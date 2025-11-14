@@ -91,12 +91,12 @@ const styles = {
   },
   functionNotSelected: {
     color: 'rgb(42, 135, 211)',
-    borderTopLeftRadius: '20px',
     padding: '25px 30px',
     textDecoration: 'none',
     fontWeight: 'bold',
   },
   functionSelected: {
+    borderTopLeftRadius: '20px',
     backgroundColor: 'rgb(60, 162, 245)',
     color: 'white',
     padding: '25px 30px',
@@ -205,20 +205,6 @@ const styles = {
     border: "none",
     cursor: "pointer"
   },
-  functionNotSelected: {
-    color: 'rgb(42, 135, 211)',
-    borderTopLeftRadius: '20px',
-    padding: '25px 30px',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-  },
-  functionSelected: {
-    backgroundColor: 'rgb(60, 162, 245)',
-    color: 'white',
-    padding: '25px 30px',
-    textDecoration: 'none',
-    fontWeight: 'bold'
-  }
 };
 
 // Componente de Paginação
@@ -342,6 +328,14 @@ export default function GuestList() {
          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
               <Link to="/hospedes" style={styles.functionSelected}>
                 Hóspedes
+              </Link>
+
+              <Link to="/entradahospedes" style={styles.functionNotSelected}>
+                Hospedagem
+              </Link>
+
+              <Link to="/historicodehospedagens" style={styles.functionNotSelected}>
+                Lista de Hospedagens
               </Link>
 
               <Link to="/bloqueios" style={styles.functionNotSelected}>

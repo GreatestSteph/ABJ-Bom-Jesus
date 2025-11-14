@@ -17,12 +17,18 @@ import UserList from "./componentes/GerenciarUsuarios/ListUsers/listarusuarios.j
 import ListHospedes from "./componentes/GerenciarHospedes/ListHospedes/ListarHospedes.jsx";
 import EditarHospede from "./componentes/GerenciarHospedes/EditarHospede/EditarHospede.jsx";
 import DetalhesHospede from "./componentes/GerenciarHospedes/DetalhesHospede/DetalhesHospede.jsx";
+import EntradaHospedes from "./componentes/GerenciarHospedes/HospedarHospede/registrarentrada.jsx";
+import Hospedados from "./componentes/GerenciarHospedes/HospedarHospede/listadeentradas.jsx"
 
 import EditProducts from "./componentes/GerenciarProdutos/EditProducts/editarprodutos.jsx";
 import ProdutosLista from "./componentes/GerenciarProdutos/ListProducts/listarprodutos.jsx";
 
 import ListQuartos from "./componentes/GerenciarQuartos/ListQuartos/ListQuartos.jsx";
 import EditarQuarto from "./componentes/GerenciarQuartos/EditarQuarto/EditarQuarto.jsx";
+
+import HistoricoDeConsumos from "./componentes/RegistrarConsumo/listarhistoricodeconsumo.jsx"
+import RegistrarHistoricoConsumo from "./componentes/RegistrarConsumo/registrarconsumo.jsx"
+
 
 import ListarOcorrencias from "./componentes/GerenciarOcorrencias/ListOcorrencias/ListarOcorrencias.jsx";
 import ListaOcorrencias from "./componentes/GerenciarOcorrencias/ListaOcorrencias/ListaOcorrencias.jsx";
@@ -154,6 +160,44 @@ function App() {
                   </>
                 }
               />
+      
+
+
+              {/* Gerenciar Consumos */}
+              <Route
+                path="/registroconsumos"
+                element={
+                  <>
+                    <Headerlogado />
+                    <RegistrarHistoricoConsumo/>
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/registroconsumos/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <RegistrarHistoricoConsumo/>
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/listarconsumos"
+                element={
+                  <>
+                    <Headerlogado />
+                    <HistoricoDeConsumos/>
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+
 
               {/* Gerenciar Hóspedes */}
               <Route
@@ -200,6 +244,35 @@ function App() {
                   </>
                 }
               />
+
+
+              {/* registrar entradas de hospedes */}
+              <Route
+                path="/entradahospedes"
+                element={
+                  <>
+                    <Headerlogado />
+                    <EntradaHospedes/>
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              
+              <Route
+                path="/historicodehospedagens"
+                element={
+                  <>
+                    <Headerlogado />
+                    <Hospedados/>
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+
+
+
 
               {/* Gerenciar Quartos */}
               <Route

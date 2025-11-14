@@ -493,9 +493,11 @@ export default function DetalhesHospede() {
           <Link to="/hospedes" style={styles.buttonBack}>
             Voltar à Lista
           </Link>
+
           <button onClick={handleOpenBloqueioModal} style={styles.buttonBlock}>
             <FiLock /> Bloquear Hóspede
           </button>
+
           <Link to={`/hospedes/${hospede.id}`} style={styles.buttonEdit}>
             Editar Hóspede
           </Link>

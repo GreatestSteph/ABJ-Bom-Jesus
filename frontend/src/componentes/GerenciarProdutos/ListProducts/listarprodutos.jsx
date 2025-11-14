@@ -170,25 +170,29 @@ export default function ProdutosLista() {
       
       <div style={styles.aroundListBox}>
          <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-              <Link to="/registroprodutos" style={styles.functionNotSelected}>
-                Registrar Produtos
-              </Link>
+                    <Link to="/registroprodutos" style={styles.functionNotSelected}>
+                      Registrar Produtos
+                    </Link>
+                  
+                    <Link to="/listarprodutos" style={styles.functionSelected}>
+                      Pesquisar Produtos
+                    </Link>
+                    
+                    <Link to="/registroconsumos" style={styles.functionNotSelected}>
+                      Registrar Consumos
+                    </Link>
+                    
+                    <Link to="/listarconsumos" style={styles.functionNotSelected}>
+                      Ver Consumos
+                    </Link>
 
-              <Link to="/registroconsumos" style={styles.functionNotSelected}>
-                Registrar Consumos
-              </Link>
+                    <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
+                    Adicionar Quartos
+                    </Link>
 
-              <Link to="/listarprodutos" style={styles.functionSelected}>
-                Pesquisar Produtos
-              </Link>
-
-              <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
-              Adicionar Quartos
-              </Link>
-
-              <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
-              Listar Quartos
-              </Link>
+                    <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
+                    Listar Quartos
+                    </Link>
             </div>
             <hr style={styles.hr}/>
 

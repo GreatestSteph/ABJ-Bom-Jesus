@@ -6,9 +6,13 @@ import produtos from './produtos.js';
 import tipoOcorrencia from './tipoOcorrencia.js';
 import occurrences from './occurrences.js';
 import bloqueios from './bloqueios.js';
+import consumos from './consumos.js';
+import entradas from "./entradas.js";
+
 
 const routes = new Router();
-
+routes.use("/entradas", entradas);
+routes.use('/consumos', consumos);
 routes.use('/guests', guests);
 routes.use('/users', users);
 routes.use('/produtos', produtos);

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
-import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
+import fundo from "../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import lupa from "../WebsiteDesign/RegisterImages/lupa.svg";
 
 const styles = {
   fundo: {
@@ -38,7 +38,7 @@ const styles = {
     borderBottom: "1px solid #ddd",
   },
   td: {
-    padding: "10px",
+    padding: "15px",
     borderBottom: "1px solid #ddd",
   },
   actions: {
@@ -123,132 +123,159 @@ const styles = {
   },
 };
 
-export default function HistoricodeConsumos() {
-  const [produtos, setProdutos] = useState([]);
+export default function HistoricoDeConsumos() {
+  const [consumos, setConsumos] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [produtoToDelete, setProdutoToDelete] = useState(null);
+  const [consumoToDelete, setConsumoToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3001/produtos")
-      .then((res) => res.json())
-      .then((data) => {
-        const sortedData = data.sort((a, b) => a.nomeDoProduto.localeCompare(b.nomeDoProduto));
-        setProdutos(sortedData);
-      })
+    Promise.all([
+      fetch("http://localhost:3001/consumos").then(res => res.json()),
+      fetch("http://localhost:3001/guests").then(res => res.json()),
+      fetch("http://localhost:3001/produtos").then(res => res.json()),
+    ])
+    .then(([consumosData, hospedesData, produtosData]) => {
+      
+      const merged = consumosData.map(c => {
+        const hospede = hospedesData.find(h => h.id === c.hospedeId);
+        const produto = produtosData.find(p => p.id === c.produtoId);
 
-      .catch((err) => console.error("Erro ao buscar produtos:", err));
+        return {
+          ...c,
+          hospede,
+          produto
+        };
+      });
+
+      setConsumos(merged);
+    })
+    .catch(err => console.error("Erro ao buscar dados:", err));
   }, []);
 
-  const handleDeleteClick = (produto) => {
-    setProdutoToDelete(produto);
+  const handleDeleteClick = (consumo) => {
+    setConsumoToDelete(consumo);
     setShowModal(true);
   };
 
   const handleDelete = () => {
-    if (!produtoToDelete) return;
+    if (!consumoToDelete) return;
 
-    fetch(`http://localhost:3001/produtos/${produtoToDelete.id}`, {
+    fetch(`http://localhost:3001/consumos/${consumoToDelete.id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())
-      .then((data) => {
-        setProdutos(produtos.filter((produto) => produto.id !== produtoToDelete.id));
+      .then(() => {
+        setConsumos(consumos.filter(c => c.id !== consumoToDelete.id));
         setShowModal(false);
-        setProdutoToDelete(null);
-        console.log(data);
+        setConsumoToDelete(null);
       });
   };
 
-  const filteredProdutos = produtos.filter(produto =>
-    produto.nomeDoProduto?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredConsumos = consumos.filter(c =>
+    c.hospede?.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <main style={styles.fundo}>
-
-      
       <div style={styles.aroundListBox}>
-         <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-              <Link to="/registroprodutos" style={styles.functionNotSelected}>
-                Registrar Produtos
-              </Link>
 
-              <Link to="/registroconsumos" style={styles.functionNotSelected}>
-                Registrar Consumos
-              </Link>
+        {/* ==== MENU SUPERIOR ==== */}
+        <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
+          <Link to="/registroprodutos" style={styles.functionNotSelected}>Registrar Produtos</Link>
+          <Link to="/listarprodutos" style={styles.functionNotSelected}>Pesquisar Produtos</Link>
+          <Link to="/registroconsumos" style={styles.functionNotSelected}>Registrar Consumos</Link>
+          <Link to="/listarconsumos" style={styles.functionSelected}>Ver Consumos</Link>
+          <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>Adicionar Quartos</Link>
+          <Link to="/gerenciarquartos" style={styles.functionNotSelected}>Listar Quartos</Link>
+        </div>
 
-              <Link to="/listarprodutos" style={styles.functionSelected}>
-                Pesquisar Produtos
-              </Link>
+        <hr style={styles.hr} />
 
-              <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
-              Adicionar Quartos
-              </Link>
-
-              <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
-              Listar Quartos
-              </Link>
-            </div>
-            <hr style={styles.hr}/>
-
+        {/* ==== PESQUISA ==== */}
         <div style={styles.searchContainer} className="mt-4 pt-3 mb-5 mx-5 px-2">
           <div style={{ position: 'relative', width: '100%' }}>
             <input
               type="text"
-              placeholder="Digite aqui o nome do produto"
+              placeholder="Pesquise aqui o consumo do hospede"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={styles.barraPesquisa}
             />
 
             <div style={styles.posicaoBotoes}>
-            <button style={{ backgroundColor: 'rgba(231, 127, 60, 1)', padding: '10px 12px'}} className="btn" onClick={() => setSearchTerm(searchTerm + ' ')}>
-              <img src={lupa} alt="Ícone de lupa" />
-            </button>              
+              <button style={{ backgroundColor: 'rgba(231, 127, 60, 1)', padding: '10px 12px'}} className="btn">
+                <img src={lupa} alt="Ícone de lupa" />
+              </button>              
             </div>
           </div>
         </div>
         
+        {/* ==== TABELA ==== */}
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <table style={styles.table} className='mb-5'>
             <thead>
               <tr>
-                <th style={styles.th}>Nome</th>
+                <th style={styles.th}>Hospede</th>
+                <th style={styles.th}>Data Nascimento</th>
+                <th style={styles.th}>Produto Utilizado</th>
                 <th style={styles.th}>Tamanho</th>
+                <th style={styles.th}>Marca</th>
                 <th style={styles.th}>Cor</th>
                 <th style={styles.th}>Qtde</th>
-                <th style={styles.th}>Marca</th>
-                <th style={styles.th}>Custo Total</th>
-                <th style={styles.th}>Descrição</th>
+                <th style={styles.th}>Data Consumo</th>
+                <th style={styles.th}>Reutilizavel</th>
                 <th style={styles.th}>Ações</th>
               </tr>
             </thead>
+
             <tbody>
-              {filteredProdutos.map((produto) => (
-                <tr key={produto.id}>
-                  <td style={styles.td}>{produto.nomeDoProduto}</td>
-                  <td style={styles.td}>{produto.tamanho}</td>
-                  <td style={styles.td}>{produto.cor}</td>
-                  <td style={styles.td}>{produto.quantidade}</td>
-                  <td style={styles.td}>{produto.marca}</td>
-                  <td style={styles.td}>{produto.custoTotal}</td>
-                  <td style={styles.td}>{produto.descricao}</td>
-                  <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link to={`/registroprodutos/${produto.id}`} className="btn btn-sm btn-primary">Editar</Link>
-                    <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(produto)}>Excluir</button>
+              {filteredConsumos.map((consumo) => (
+                <tr key={consumo.id}>
+
+                  <td style={styles.td}>{consumo.hospede?.nome}</td>
+
+                  <td style={styles.td}>
+                    {new Date(consumo.hospede?.data_nascimento).toLocaleDateString("pt-BR")}
                   </td>
+
+                  <td style={styles.td}>{consumo.produto?.nomeDoProduto}</td>
+                  <td style={styles.td}>{consumo.produto?.tamanho}</td>
+                  <td style={styles.td}>{consumo.produto?.marca}</td>
+                  <td style={styles.td}>{consumo.produto?.cor}</td>
+                  <td style={styles.td}>{consumo.quantidade}</td>
+
+                  <td style={styles.td}>
+                    {new Date(consumo.dataConsumo).toLocaleString("pt-BR", {
+                      dateStyle: "short",
+                      timeStyle: "short",
+                    })}
+                  </td>
+
+                  <td style={styles.td}>{consumo.naoReutilizavel ? "Sim" : "Não"}</td>
+
+                  <td style={styles.td}>
+                    <div style={styles.actions}>
+                      <Link to={`/registroconsumos/${consumo.id}`} className="btn btn-sm btn-primary">Editar</Link>
+                      <button className="btn btn-sm btn-danger" onClick={() => handleDeleteClick(consumo)}>
+                        Excluir
+                      </button>
+                    </div>
+                  </td>
+
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
+        {/* ==== MODAL EXCLUSÃO ==== */}
         {showModal && (
           <div style={styles.modal}>
             <div style={styles.modalContent}>
               <h4>Confirmar Exclusão</h4>
-              <p>Tem certeza que deseja excluir o produto {produtoToDelete?.nomeDoProduto}?</p>
+              <p>Tem certeza que deseja excluir este consumo?</p>
+
               <div style={styles.modalButtons}>
                 <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
                 <button className="btn btn-danger" onClick={handleDelete}>Confirmar</button>
@@ -256,6 +283,7 @@ export default function HistoricodeConsumos() {
             </div>
           </div>
         )}
+
       </div>
     </main>
   );
