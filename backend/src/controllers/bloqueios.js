@@ -343,10 +343,10 @@ class BloqueiosController {
         });
       }
 
-      if (bloqueio.ocorrencia_id && !motivo_cancelamento) {
+      if (!motivo_cancelamento || !motivo_cancelamento.trim()) {
         return res.status(400).json({
           error: 'Motivo required',
-          message: 'O motivo de cancelamento é obrigatório para bloqueios automáticos.'
+          message: 'O motivo de cancelamento é obrigatório.'
         });
       }
 
@@ -364,7 +364,7 @@ class BloqueiosController {
         status: 'cancelado',
         cancelado_em: new Date(),
         cancelado_por_usuario_id: usuario_id || null,
-        motivo_cancelamento: motivo_cancelamento || null
+        motivo_cancelamento: motivo_cancelamento.trim()
       });
 
       return res.status(200).json(addCalculatedStatus(bloqueio));

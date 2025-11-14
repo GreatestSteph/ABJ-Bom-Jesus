@@ -16,7 +16,6 @@ const styles = {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'flex-start',
-    maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)',
   },
   container: {
     backgroundColor: "white",
@@ -340,8 +339,8 @@ export default function DetalhesBloqueio() {
   };
 
   const handleCancelBloqueio = async () => {
-    if (bloqueio.ocorrencia_id && !motivoCancelamento.trim()) {
-      setValidationError("O motivo de cancelamento é obrigatório para bloqueios automáticos.");
+    if (!motivoCancelamento.trim()) {
+      setValidationError("O motivo de cancelamento é obrigatório.");
       return;
     }
 
@@ -353,7 +352,7 @@ export default function DetalhesBloqueio() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          motivo_cancelamento: motivoCancelamento.trim() || null,
+          motivo_cancelamento: motivoCancelamento.trim(),
           usuario_id: usuario?.id || null
         })
       });
@@ -564,14 +563,12 @@ export default function DetalhesBloqueio() {
               </div>
 
               <div style={styles.modalBody}>
-                {bloqueio.ocorrencia_id && (
-                  <div style={styles.alertBox}>
-                    <strong>Atenção:</strong> Este é um bloqueio automático. O motivo do cancelamento é obrigatório.
-                  </div>
-                )}
+                <div style={styles.alertBox}>
+                  <strong>Atenção:</strong> O cancelamento de um bloqueio é uma ação irreversível. Prossiga apenas se tiver certeza.
+                </div>
 
                 <label style={styles.modalLabel}>
-                  Motivo do Cancelamento {bloqueio.ocorrencia_id && <span style={{ color: "#dc3545" }}>*</span>}
+                  Motivo do Cancelamento <span style={{ color: "#dc3545" }}>*</span>
                 </label>
                 <textarea
                   style={styles.modalTextarea}

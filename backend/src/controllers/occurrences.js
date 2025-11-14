@@ -284,6 +284,18 @@ class OccurrencesController {
         return res.status(404).json({ error: 'Occurrence not found.' });
       }
 
+      // Verificar se existe algum bloqueio vinculado a esta ocorrência
+      const bloqueioVinculado = await Bloqueio.findOne({
+        where: { ocorrencia_id: id }
+      });
+
+      if (bloqueioVinculado) {
+        return res.status(400).json({
+          error: 'Cannot delete occurrence',
+          message: 'Não é possível excluir esta ocorrência pois existe um bloqueio vinculado a ela.'
+        });
+      }
+
       await occurrence.destroy();
 
       return res.status(200).json({ message: 'Occurrence deleted successfully.' });

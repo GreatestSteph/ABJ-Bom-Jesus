@@ -359,6 +359,7 @@ export default function ListaOcorrencias() {
   const [ocorrencias, setOcorrencias] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [ocorrenciaToDelete, setOcorrenciaToDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState({
     guestName: "",
@@ -402,21 +403,32 @@ export default function ListaOcorrencias() {
 
   const handleDeleteClick = (ocorrencia) => {
     setOcorrenciaToDelete(ocorrencia);
+    setDeleteError("");
     setShowModal(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!ocorrenciaToDelete) return;
 
-    fetch(`http://localhost:3001/occurrences/${ocorrenciaToDelete.id}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setOcorrencias(ocorrencias.filter((ocorrencia) => ocorrencia.id !== ocorrenciaToDelete.id));
-        setShowModal(false);
-        setOcorrenciaToDelete(null);
+    try {
+      const response = await fetch(`http://localhost:3001/occurrences/${ocorrenciaToDelete.id}`, {
+        method: "DELETE",
       });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setDeleteError(data.message || "Erro ao excluir ocorrência.");
+        return;
+      }
+
+      setOcorrencias(ocorrencias.filter((ocorrencia) => ocorrencia.id !== ocorrenciaToDelete.id));
+      setShowModal(false);
+      setOcorrenciaToDelete(null);
+      setDeleteError("");
+    } catch (error) {
+      setDeleteError("Erro ao excluir ocorrência. Tente novamente.");
+    }
   };
 
   const handleFilterChange = (field, value) => {
@@ -626,6 +638,21 @@ export default function ListaOcorrencias() {
             <div style={styles.modalContent}>
               <h4>Confirmar Exclusão</h4>
               <p>Tem certeza que deseja excluir esta ocorrência?</p>
+              {deleteError && (
+                <div style={{
+                  backgroundColor: '#f8d7da',
+                  border: '1px solid #f5c6cb',
+                  color: '#721c24',
+                  padding: '12px',
+                  borderRadius: '6px',
+                  marginTop: '15px',
+                  marginBottom: '15px',
+                  fontSize: '14px',
+                  textAlign: 'left'
+                }}>
+                  <strong>Erro:</strong> {deleteError}
+                </div>
+              )}
               <div style={styles.modalButtons}>
                 <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
                 <button className="btn btn-danger" onClick={handleDelete}>Confirmar</button>
