@@ -134,11 +134,12 @@ export default function Hospedados() {
     setShowModal(true);
   };
 
-  // Confirmar saída (marca hospedou = 0)
+  // Confirmar saída (marca hospedou = 0 e registra data_saida)
   const confirmarSaida = async () => {
     try {
       await axios.put(`http://localhost:3001/entradas/${selectedId}`, {
         hospedou: 0,
+        dataSaida: new Date().toISOString(),
       });
       setShowModal(false);
       setSelectedId(null);

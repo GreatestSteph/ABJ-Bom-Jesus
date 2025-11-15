@@ -1,5 +1,6 @@
 import Entradas from '../models/entradas.js';
 import Guests from '../models/guests.js';
+import Bloqueio from '../models/bloqueio.js';
 
 class EntradasController {
 
@@ -68,7 +69,27 @@ class EntradasController {
         return res.status(404).json({ error: 'Entrada não encontrada.' });
       }
 
+      // Verifica se está registrando uma saída (data_saida está sendo definida)
+      const estaSaindo = req.body.dataSaida && !entrada.dataSaida;
+
       await entrada.update(req.body);
+
+      // Se está registrando uma saída, cria bloqueio automático de 90 dias
+      if (estaSaindo) {
+        const dataInicio = new Date(req.body.dataSaida);
+        const dataTermino = new Date(req.body.dataSaida);
+        dataTermino.setDate(dataTermino.getDate() + 90); // Adiciona 90 dias
+
+        await Bloqueio.create({
+          hospede_id: entrada.hospedeId,
+          motivo: 'Bloqueio automático por saída de hospedagem',
+          data_inicio: dataInicio,
+          data_termino: dataTermino,
+          data_termino_original: dataTermino,
+          status: 'ativo',
+        });
+      }
+
       return res.json(entrada);
 
     } catch (e) {

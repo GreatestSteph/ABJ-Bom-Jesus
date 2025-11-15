@@ -14,6 +14,11 @@ class Entradas extends Model {
           allowNull: false,
           field: 'data_entrada',
         },
+        dataSaida: {
+          type: Sequelize.DATE,
+          allowNull: true,
+          field: 'data_saida',
+        },
         hospedou: {
           type: Sequelize.STRING, // Pode ser "Sim" / "Não"
           allowNull: false,
