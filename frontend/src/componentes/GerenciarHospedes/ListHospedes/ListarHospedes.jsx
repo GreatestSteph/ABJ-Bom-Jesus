@@ -329,11 +329,7 @@ export default function GuestList() {
               <Link to="/hospedes" style={styles.functionSelected}>
                 Hóspedes
               </Link>
-
-              <Link to="/entradahospedes" style={styles.functionNotSelected}>
-                Hospedagem
-              </Link>
-
+              
               <Link to="/historicodehospedagens" style={styles.functionNotSelected}>
                 Lista de Hospedagens
               </Link>

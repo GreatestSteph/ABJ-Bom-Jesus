@@ -17,8 +17,9 @@ import UserList from "./componentes/GerenciarUsuarios/ListUsers/listarusuarios.j
 import ListHospedes from "./componentes/GerenciarHospedes/ListHospedes/ListarHospedes.jsx";
 import EditarHospede from "./componentes/GerenciarHospedes/EditarHospede/EditarHospede.jsx";
 import DetalhesHospede from "./componentes/GerenciarHospedes/DetalhesHospede/DetalhesHospede.jsx";
-import EntradaHospedes from "./componentes/GerenciarHospedes/HospedarHospede/registrarentrada.jsx";
+
 import Hospedados from "./componentes/GerenciarHospedes/HospedarHospede/listadeentradas.jsx"
+
 
 import EditProducts from "./componentes/GerenciarProdutos/EditProducts/editarprodutos.jsx";
 import ProdutosLista from "./componentes/GerenciarProdutos/ListProducts/listarprodutos.jsx";
@@ -247,18 +248,6 @@ function App() {
 
 
               {/* registrar entradas de hospedes */}
-              <Route
-                path="/entradahospedes"
-                element={
-                  <>
-                    <Headerlogado />
-                    <EntradaHospedes/>
-                    <Footer />
-                    <Footer2 />
-                  </>
-                }
-              />
-              
               <Route
                 path="/historicodehospedagens"
                 element={

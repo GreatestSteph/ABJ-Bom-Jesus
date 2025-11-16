@@ -535,8 +535,8 @@ export default function ListaBloqueios() {
             Hóspedes
           </Link>
 
-          <Link to="/hospedagem" style={styles.functionNotSelected}>
-            Hospedagem
+          <Link to="/historicodehospedagens" style={styles.functionNotSelected}>
+            Lista de Hospedagens
           </Link>
 
           <Link to="/bloqueios" style={styles.functionSelected}>
