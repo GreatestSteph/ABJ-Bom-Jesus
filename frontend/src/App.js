@@ -19,6 +19,7 @@ import EditarHospede from "./componentes/GerenciarHospedes/EditarHospede/EditarH
 import DetalhesHospede from "./componentes/GerenciarHospedes/DetalhesHospede/DetalhesHospede.jsx";
 
 import Hospedados from "./componentes/GerenciarHospedes/HospedarHospede/listadeentradas.jsx"
+import DetalhesHospedagem from "./componentes/GerenciarHospedes/DetalhesHospedagem/DetalhesHospedagem.jsx";
 
 
 import EditProducts from "./componentes/GerenciarProdutos/EditProducts/editarprodutos.jsx";
@@ -254,6 +255,17 @@ function App() {
                   <>
                     <Headerlogado />
                     <Hospedados/>
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/historicodehospedagens/detalhes/:id"
+                element={
+                  <>
+                    <Headerlogado />
+                    <DetalhesHospedagem/>
                     <Footer />
                     <Footer2 />
                   </>

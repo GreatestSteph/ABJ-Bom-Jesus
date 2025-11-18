@@ -18,14 +18,53 @@ class EntradasController {
   // Listar todas as entradas
   async list(req, res) {
     try {
-      const entradas = await Entradas.findAll({
-        include: [
-          {
-            model: Guests,
-            as: 'hospede',
-            attributes: ['id', 'nome', 'cpf', 'rg', 'data_nascimento']
+      const { guest_name, start_date, end_date, hospedou } = req.query;
+      const { Op } = await import('sequelize');
+
+      // Construir o objeto where dinamicamente
+      const whereClause = {};
+      const includeClause = {
+        model: Guests,
+        as: 'hospede',
+        attributes: ['id', 'nome', 'cpf', 'rg', 'data_nascimento']
+      };
+
+      // Filtro por nome do hóspede (busca no modelo Guest)
+      if (guest_name && guest_name.trim()) {
+        includeClause.where = {
+          nome: {
+            [Op.like]: `%${guest_name.trim()}%`
           }
-        ],
+        };
+      }
+
+      // Filtro por data de entrada (intervalo)
+      if (start_date || end_date) {
+        whereClause.dataEntrada = {};
+        if (start_date) {
+          whereClause.dataEntrada[Op.gte] = new Date(start_date);
+        }
+        if (end_date) {
+          // Adiciona 23:59:59 ao end_date para incluir o dia completo
+          const endDateTime = new Date(end_date);
+          endDateTime.setHours(23, 59, 59, 999);
+          whereClause.dataEntrada[Op.lte] = endDateTime;
+        }
+      }
+
+      // Filtro por status de hospedagem (ativo/inativo)
+      if (hospedou !== undefined && hospedou !== '') {
+        // Aceita tanto "true"/"false" quanto "1"/"0"
+        if (hospedou === 'true' || hospedou === '1') {
+          whereClause.hospedou = { [Op.in]: ['1', 'true', true] };
+        } else if (hospedou === 'false' || hospedou === '0') {
+          whereClause.hospedou = { [Op.in]: ['0', 'false', false] };
+        }
+      }
+
+      const entradas = await Entradas.findAll({
+        where: whereClause,
+        include: [includeClause],
         order: [['dataEntrada', 'DESC']]
       });
 

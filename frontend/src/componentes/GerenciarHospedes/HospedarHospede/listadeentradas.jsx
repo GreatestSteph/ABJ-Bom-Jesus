@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FiEye, FiLogOut } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 import axios from "axios";
 
@@ -108,35 +109,130 @@ export default function Hospedados() {
       outline: "none",
       transition: "border-color 0.3s ease",
     },
+    filtersContainer: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+      gap: '20px',
+      marginBottom: '25px',
+      alignItems: 'end',
+      padding: '20px',
+      backgroundColor: '#f8f9fa',
+      borderRadius: '10px',
+    },
+    filterGroup: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '6px'
+    },
+    filterLabel: {
+      fontSize: '13px',
+      fontWeight: '600',
+      color: '#495057',
+      marginBottom: '2px'
+    },
+    filterInput: {
+      padding: '10px 12px',
+      borderRadius: '6px',
+      border: '1px solid #ddd',
+      fontSize: '14px',
+      width: '100%',
+      transition: 'border-color 0.2s'
+    },
+    filterSelect: {
+      padding: '10px 12px',
+      borderRadius: '6px',
+      border: '1px solid #ddd',
+      fontSize: '14px',
+      width: '100%',
+      transition: 'border-color 0.2s',
+      cursor: 'pointer'
+    },
+    clearButton: {
+      padding: '10px 20px',
+      borderRadius: '6px',
+      border: '1px solid #ccc',
+      backgroundColor: '#f8f9fa',
+      cursor: 'pointer',
+      fontSize: '14px',
+      fontWeight: '500',
+      transition: 'all 0.2s',
+      height: 'fit-content'
+    },
+    dateInput: {
+      padding: '10px 12px',
+      borderRadius: '6px',
+      border: '1px solid #ddd',
+      fontSize: '14px',
+      transition: 'border-color 0.2s'
+    },
+    iconButton: {
+      padding: "8px 12px",
+      border: "none",
+      borderRadius: "6px",
+      cursor: "pointer",
+      fontSize: "16px",
+      transition: "all 0.2s",
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      marginRight: "8px",
+    },
+    iconButtonView: {
+      backgroundColor: "#6c757d",
+      color: "white",
+    },
   };
 
   const [hospedados, setHospedados] = useState([]);
-  const [allHospedados, setAllHospedados] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filteredMonth, setFilteredMonth] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showModalEntrada, setShowModalEntrada] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
-  // Carrega dados do backend
+  // Filtros adicionais (similares aos de Bloqueios)
+  const [filters, setFilters] = useState({
+    guestName: "",
+    startDate: "",
+    endDate: "",
+    hospedou: "1" // Padrão: mostrar apenas hospedagens ativas
+  });
+
+  // Carrega dados do backend com filtros
   const carregarDados = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3001/entradas");
-      const ativos = res.data.filter((e) => String(e.hospedou) === "1");
 
-      // guardamos lista original e exibida
-      setAllHospedados(ativos);
-      setHospedados(ativos);
+      // Construir query params baseado nos filtros
+      const params = new URLSearchParams();
+      if (filters.guestName.trim()) {
+        params.append('guest_name', filters.guestName.trim());
+      }
+      if (filters.startDate) {
+        params.append('start_date', filters.startDate);
+      }
+      if (filters.endDate) {
+        params.append('end_date', filters.endDate);
+      }
+      if (filters.hospedou !== '') {
+        params.append('hospedou', filters.hospedou);
+      }
+
+      const url = `http://localhost:3001/entradas${params.toString() ? '?' + params.toString() : ''}`;
+      const res = await axios.get(url);
+
+      // guardamos lista
+      setHospedados(res.data);
     } catch (e) {
       console.error("Erro ao carregar hospedados:", e);
     } finally {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     carregarDados();
-  }, []);
+  }, [filters]); // Recarrega quando os filtros mudarem
 
 
   // Formata data para exibição (usa horário local do navegador)
@@ -152,19 +248,31 @@ export default function Hospedados() {
       minute: "2-digit",
     });
   };
-  // Filtra por mês selecionado no formato "YYYY-MM" (ex: "2025-11")
-  const filtrarMes = (valor) => {
-    setFilteredMonth(valor);
-    if (!valor) {
-      setHospedados(allHospedados);
-      return;
+  // Handler para mudanças nos filtros
+  const handleFilterChange = (field, value) => {
+    const newFilters = {
+      ...filters,
+      [field]: value
+    };
+
+    // Validação: se data inicial for maior que data final, ajusta data final
+    if (field === 'startDate' && filters.endDate && value) {
+      if (new Date(value) > new Date(filters.endDate)) {
+        newFilters.endDate = value;
+      }
     }
-    const [ano, mes] = valor.split("-").map(Number);
-    const filtrados = allHospedados.filter((h) => {
-      const d = new Date(h.dataEntrada);
-      return d.getFullYear() === ano && d.getMonth() + 1 === mes;
+
+    setFilters(newFilters);
+  };
+
+  // Limpar todos os filtros
+  const clearFilters = () => {
+    setFilters({
+      guestName: "",
+      startDate: "",
+      endDate: "",
+      hospedou: "1" // Mantém o padrão de mostrar apenas ativos
     });
-    setHospedados(filtrados);
   };
 
 
@@ -204,8 +312,7 @@ export default function Hospedados() {
     }
   };
 
-
-  // Isso evita problemas de parsing/meses trocados.
+  // Agrupamento por mês para visualização
   const agrupadoPorMes = {}; // chave: "YYYY-MM" -> array de itens
   hospedados.forEach((h) => {
     const d = new Date(h.dataEntrada);
@@ -217,9 +324,8 @@ export default function Hospedados() {
     agrupadoPorMes[chave].push(h);
   });
 
-  // Ordena chaves (do mais recente para o mais antigo -- muda se quiser ascendente)
+  // Ordena chaves (do mais recente para o mais antigo)
   const chavesOrdenadas = Object.keys(agrupadoPorMes).sort((a, b) => {
-    // a e b são "YYYY-MM"
     const [aY, aM] = a.split("-").map(Number);
     const [bY, bM] = b.split("-").map(Number);
     if (aY !== bY) return bY - aY; // ordena decrescente por ano
@@ -229,32 +335,11 @@ export default function Hospedados() {
   // Função para transformar chave "YYYY-MM" em label "Novembro de 2025"
   const labelFromKey = (key) => {
     const [y, m] = key.split("-");
-    // cria uma Date segura usando partes numéricas
     const d = new Date(Number(y), Number(m) - 1, 1);
     return d.toLocaleString("pt-BR", { month: "long", year: "numeric" });
   };
 
-
-  // lista de meses para o select (baseada em allHospedados)
-  const mesesDisponiveis = [
-    ...new Set(
-      allHospedados.map((h) => {
-        const d = new Date(h.dataEntrada);
-        if (isNaN(d.getTime())) return null;
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        return `${y}-${m}`;
-      }).filter(Boolean)
-    ),
-  ]
-    .sort((a, b) => {
-      const [ay, am] = a.split("-").map(Number);
-      const [by, bm] = b.split("-").map(Number);
-      if (ay !== by) return by - ay;
-      return bm - am;
-    });
-
-      // --- STATES E FUNÇÕES DO FORMULÁRIO (copiados do EntradaHospedes.jsx) ---
+  // --- STATES E FUNÇÕES DO FORMULÁRIO (copiados do EntradaHospedes.jsx) ---
   const [hospedesModal, setHospedesModal] = useState([]); // renomeei para evitar conflito com hospedados da lista
   const [hospedeSelecionado, setHospedeSelecionado] = useState(null);
   const [bloqueados, setBloqueados] = useState([]);
@@ -348,14 +433,15 @@ export default function Hospedados() {
         alert("Erro ao salvar entrada. Veja console.");
         return;
       }
-      alert("Entrada salva com sucesso!");
       // Limpar modal
       setHospedeSelecionado(null);
       setBuscaHospede("");
       setForm({ hospedeId: "", dataEntrada: "", hospedou: "" });
       setErrors({});
-      // Fechar modal
+      // Fechar modal de entrada
       setShowModalEntrada(false);
+      // Mostrar modal de sucesso
+      setShowSuccessModal(true);
       // Recarregar dados e hóspedes permitidos
       carregarDados();
       carregarHospedesPermitidos();
@@ -364,11 +450,6 @@ export default function Hospedados() {
       alert("Erro inesperado ao salvar.");
     }
   }
-
-  console.log("Hóspedes filtrados:", hospedesFiltrados);
-  console.log("Bloqueados:", bloqueados);
-  console.log("Resultado final sem bloqueio:", hospedesFiltradosSemBloqueio);
-
 
   useEffect(() => {
     fetch("http://localhost:3001/bloqueios")
@@ -398,66 +479,88 @@ export default function Hospedados() {
 
 
         <div className="mt-4 pt-3 mb-4 mx-5 px-2">
-          <div style={{ marginBottom: "25px", display: 'flex', justifyContent: 'space-between' }}>
+          {/* SEÇÃO DE FILTROS PRINCIPAIS */}
+          <div style={styles.filtersContainer}>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Nome do Hóspede</label>
+              <input
+                type="text"
+                placeholder="Digite o nome do hóspede"
+                value={filters.guestName}
+                onChange={(e) => handleFilterChange('guestName', e.target.value)}
+                style={styles.filterInput}
+              />
+            </div>
 
-            <div>
-              {/* FILTRO POR MÊS */}
-              <label style={{ fontWeight: "600", marginRight: "15px" }}>
-                Filtrar por mês:
-              </label>
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Data Inicial</label>
+              <input
+                type="date"
+                value={filters.startDate}
+                onChange={(e) => handleFilterChange('startDate', e.target.value)}
+                style={styles.dateInput}
+              />
+            </div>
 
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Data Final</label>
+              <input
+                type="date"
+                value={filters.endDate}
+                onChange={(e) => handleFilterChange('endDate', e.target.value)}
+                style={styles.dateInput}
+                min={filters.startDate}
+              />
+            </div>
+
+            <div style={styles.filterGroup}>
+              <label style={styles.filterLabel}>Status</label>
               <select
-                style={{
-                  padding: "12px",
-                  fontSize: "16px",
-                  borderRadius: "8px",
-                  border: "1px solid #ccc",
-                  width: "260px",
-                  fontFamily: "'Raleway', sans-serif",
-                }}
-                value={filteredMonth}
-                onChange={(e) => filtrarMes(e.target.value)}>
-                <option value="">Todos os meses</option>
-                {mesesDisponiveis.map((mesKey) => (
-                  <option key={mesKey} value={mesKey}>
-                    {labelFromKey(mesKey)}
-                  </option>
-                ))}
+                value={filters.hospedou}
+                onChange={(e) => handleFilterChange('hospedou', e.target.value)}
+                style={styles.filterSelect}
+              >
+                <option value="">Todas as hospedagens</option>
+                <option value="1">Hospedagens Ativas</option>
+                <option value="0">Hospedagens Encerradas</option>
               </select>
-              {loading && <span style={{ marginLeft: 12 }}>carregando...</span>}
             </div>
 
-            <div>
-              {/* Botao que abre formulario de entrada em modal */}
-              <button
-                onClick={() => abrirModalEntrada()}
-                
-                style={{
-                  padding: "12px",
-                  fontSize: "16px",
-                  borderRadius: "8px",
-                  width: "190px",
-                  color: "white",
-                  border: 'none',
-                  backgroundColor: "rgba(216, 117, 25, 1)",
-                  fontFamily: "'Raleway', sans-serif",
-                  fontWeight: '600',
-                }}>
-                Registrar Entrada
-              </button>
-            </div>
-
+            <button
+              onClick={clearFilters}
+              style={styles.clearButton}
+            >
+              Limpar Filtros
+            </button>
           </div>
 
+          <div style={{ marginBottom: "25px", display: 'flex', justifyContent: 'flex-end' }}>
+            {/* Botao que abre formulario de entrada em modal */}
+            <button
+              onClick={() => abrirModalEntrada()}
+              style={{
+                padding: "12px 24px",
+                fontSize: "16px",
+                borderRadius: "8px",
+                color: "white",
+                border: 'none',
+                backgroundColor: "#28a745",
+                fontFamily: "'Raleway', sans-serif",
+                fontWeight: '600',
+                cursor: 'pointer',
+              }}>
+              Registrar Entrada
+            </button>
+          </div>
 
-          {/* LISTA AGRUPADA POR MÊS */}
-          {chavesOrdenadas.length === 0 && !loading && (
-            <p>Nenhuma hospedagem encontrada.</p>
+          {loading && <p style={{ textAlign: 'center' }}>Carregando...</p>}
+
+          {/* LISTA DE HOSPEDAGENS AGRUPADAS POR MÊS */}
+          {!loading && chavesOrdenadas.length === 0 && (
+            <p style={{ textAlign: 'center', padding: '20px' }}>Nenhuma hospedagem encontrada.</p>
           )}
 
-
-
-          {chavesOrdenadas.map((chave) => (
+          {!loading && chavesOrdenadas.map((chave) => (
             <div key={chave} style={{ marginBottom: "40px" }}>
               <h3
                 style={{
@@ -477,33 +580,63 @@ export default function Hospedados() {
                 <thead>
                   <tr>
                     <th style={styles.th}>Nome</th>
-                    <th style={styles.th}>CPF</th>
                     <th style={styles.th}>Entrada</th>
+                    <th style={styles.th}>Saída</th>
+                    <th style={styles.th}>Status</th>
                     <th style={styles.th}>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {agrupadoPorMes[chave].map((item) => (
-                    <tr key={item.id}>
-                      <td style={styles.td}>{item.hospede?.nome}</td>
-                      <td style={styles.td}>{item.hospede?.cpf || "—"}</td>
-                      <td style={styles.td}>{formatarData(item.dataEntrada)}</td>
-                      <td style={styles.td}>
-                        <button
-                          onClick={() => abrirModalSaida(item.id)}
-                          style={{
-                            padding: "6px 17px",
-                            borderRadius: "6px",
-                            backgroundColor: "rgba(0, 80, 155, 1)",
-                            color: "white",
-                            border: "none",
-                            cursor: "pointer",
-                            fontWeight: '500',}}>
-                          Registrar Saída
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {agrupadoPorMes[chave].map((item) => {
+                    const isAtivo = String(item.hospedou) === "1" || item.hospedou === true;
+                    return (
+                      <tr key={item.id}>
+                        <td style={styles.td}>{item.hospede?.nome}</td>
+                        <td style={styles.td}>{formatarData(item.dataEntrada)}</td>
+                        <td style={styles.td}>{formatarData(item.dataSaida)}</td>
+                        <td style={styles.td}>
+                          <span style={{
+                            padding: '4px 12px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            backgroundColor: isAtivo ? '#d4edda' : '#f8d7da',
+                            color: isAtivo ? '#155724' : '#721c24',
+                          }}>
+                            {isAtivo ? 'ATIVO' : 'ENCERRADO'}
+                          </span>
+                        </td>
+                        <td style={styles.td}>
+                          <Link
+                            to={`/historicodehospedagens/detalhes/${item.id}`}
+                            style={{ ...styles.iconButton, ...styles.iconButtonView }}
+                            title="Visualizar detalhes"
+                          >
+                            <FiEye />
+                          </Link>
+                          {isAtivo && (
+                            <button
+                              onClick={() => abrirModalSaida(item.id)}
+                              title="Registrar Saída"
+                              style={{
+                                padding: "8px 12px",
+                                borderRadius: "6px",
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                border: "none",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}>
+                              <FiLogOut />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -676,6 +809,55 @@ export default function Hospedados() {
                     </button>
                   </div>
                 </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Sucesso */}
+      {showSuccessModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            backgroundColor: "rgba(0,0,0,0.5)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 10000,
+          }}>
+          <div
+            style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "10px",
+              width: "400px",
+              textAlign: "center",
+            }}>
+            <div style={{
+              fontSize: "48px",
+              color: "#28a745",
+              marginBottom: "15px"
+            }}>
+              ✓
+            </div>
+            <h3 style={{ color: "#001b5e", marginBottom: "10px" }}>Sucesso!</h3>
+            <p style={{ marginBottom: "20px", color: "#495057" }}>
+              Entrada registrada com sucesso!
+            </p>
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              style={{
+                background: "#28a745",
+                color: "white",
+                padding: "12px 30px",
+                borderRadius: "6px",
+                border: "none",
+                cursor: "pointer",
+                fontWeight: "600",
+                fontSize: "14px",
+              }}>
+              OK
+            </button>
           </div>
         </div>
       )}
