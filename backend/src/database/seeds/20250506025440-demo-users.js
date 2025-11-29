@@ -1,23 +1,50 @@
 'use strict';
+const bcrypt = require('bcryptjs');
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    const hashedPassword = '123456';
+
     await queryInterface.bulkInsert('users', [
       {
-        nome: 'Suporte',
+        nome: 'Administrador Geral',
         funcao: 'Administrador',
-        usuario: 'suporte_abj',
-        senha: '123456',
-        created_at: new Date(),
-        updated_at: new Date(),
+        usuario: 'admin',
+        senha: hashedPassword,
+        created_at: new Date('2025-09-01'),
+        updated_at: new Date('2025-09-01'),
       },
       {
-        nome: 'Kelly',
+        nome: 'Maria Silva',
         funcao: 'Secretária',
-        usuario: 'kelly_bomjesus',
-        senha: '123456',
-        created_at: new Date(),
-        updated_at: new Date(),
+        usuario: 'maria.silva',
+        senha: hashedPassword,
+        created_at: new Date('2025-09-01'),
+        updated_at: new Date('2025-09-01'),
+      },
+      {
+        nome: 'Felipe Santos',
+        funcao: 'Coordenador',
+        usuario: 'felipe.santos',
+        senha: hashedPassword,
+        created_at: new Date('2025-09-01'),
+        updated_at: new Date('2025-09-01'),
+      },
+      {
+        nome: 'Ana Costa',
+        funcao: 'Assistente Social',
+        usuario: 'ana.costa',
+        senha: hashedPassword,
+        created_at: new Date('2025-09-15'),
+        updated_at: new Date('2025-09-15'),
+      },
+      {
+        nome: 'Carlos Oliveira',
+        funcao: 'Psicólogo',
+        usuario: 'carlos.oliveira',
+        senha: hashedPassword,
+        created_at: new Date('2025-10-01'),
+        updated_at: new Date('2025-10-01'),
       }
     ], {});
   },

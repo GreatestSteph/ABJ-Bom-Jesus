@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { FiArrowLeft, FiCalendar, FiUser, FiAlertCircle, FiFileText, FiEdit2 } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 const styles = {
   fundo: {
@@ -177,7 +178,7 @@ export default function DetalhesOcorrencia() {
   useEffect(() => {
     const fetchOcorrencia = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/occurrences/${id}`);
+        const response = await fetch(`${API_URL}/occurrences/${id}`);
         if (!response.ok) {
           throw new Error('Ocorrência não encontrada');
         }

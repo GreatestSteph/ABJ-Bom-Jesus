@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
+import API_URL from "../../../config/api";
 
 const styles = {
   fundo: {
@@ -130,7 +131,7 @@ export default function ProdutosLista() {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    fetch("http://localhost:3001/produtos")
+    fetch(`${API_URL}/produtos`)
       .then((res) => res.json())
       .then((data) => {
         const sortedData = data.sort((a, b) => a.nomeDoProduto.localeCompare(b.nomeDoProduto));
@@ -148,7 +149,7 @@ export default function ProdutosLista() {
   const handleDelete = () => {
     if (!produtoToDelete) return;
 
-    fetch(`http://localhost:3001/produtos/${produtoToDelete.id}`, {
+    fetch(`${API_URL}/produtos/${produtoToDelete.id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())

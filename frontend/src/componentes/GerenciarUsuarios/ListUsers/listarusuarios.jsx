@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 import lupa from "../../WebsiteDesign/RegisterImages/lupa.svg";
+import API_URL from "../../../config/api";
 
 const styles = {
   fundo: {
@@ -133,7 +134,7 @@ export default function UserList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:3001/users")
+    fetch(`${API_URL}/users`)
       .then((res) => res.json())
       .then((data) => {
         const sortedData = data.sort((a, b) => a.nome.localeCompare(b.nome));
@@ -148,7 +149,7 @@ export default function UserList() {
 
   const handleDelete = (userId) => {
     if (window.confirm("Tem certeza que deseja excluir este usuário?")) {
-      fetch(`http://localhost:3001/users/${userId}`, {
+      fetch(`${API_URL}/users/${userId}`, {
         method: "DELETE",
       })
         .then((res) => res.json())

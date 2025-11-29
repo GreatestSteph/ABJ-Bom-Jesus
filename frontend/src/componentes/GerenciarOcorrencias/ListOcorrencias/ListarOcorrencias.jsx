@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiPlus, FiEdit2, FiTrash2 } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 const styles = {
   fundo: {
@@ -295,7 +296,7 @@ export default function OcorrenciasList() {
   const OCORRENCIAS_PER_PAGE = 10;
 
   useEffect(() => {
-    fetch("http://localhost:3001/tipos-ocorrencia")
+    fetch(`${API_URL}/tipos-ocorrencia`)
       .then((res) => res.json())
       .then((data) => setOcorrencias(data))
       .catch((err) => console.error("Erro ao buscar tipos de ocorrências:", err));
@@ -309,7 +310,7 @@ export default function OcorrenciasList() {
   const handleDelete = () => {
     if (!ocorrenciaToDelete) return;
 
-    fetch(`http://localhost:3001/tipos-ocorrencia/${ocorrenciaToDelete.id}`, {
+    fetch(`${API_URL}/tipos-ocorrencia/${ocorrenciaToDelete.id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())

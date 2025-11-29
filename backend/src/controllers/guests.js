@@ -1,4 +1,8 @@
 import Guests from '../models/guests.js';
+import Entradas from '../models/entradas.js';
+import Bloqueio from '../models/bloqueio.js';
+import Consumos from '../models/consumos.js';
+import Occurrence from '../models/occurrence.js';
 
 class GuestsController {
   async create(req, res) {
@@ -88,6 +92,27 @@ class GuestsController {
 
       if (!guest) {
         return res.status(404).json({ error: 'Not found.' });
+      }
+
+      // Verificar se o hóspede tem registros relacionados
+      const [entradas, bloqueios, consumos, ocorrencias] = await Promise.all([
+        Entradas.count({ where: { hospedeId: id } }),
+        Bloqueio.count({ where: { hospede_id: id } }),
+        Consumos.count({ where: { hospedeId: id } }),
+        Occurrence.count({ where: { guest_id: id } })
+      ]);
+
+      const registrosRelacionados = [];
+      if (entradas > 0) registrosRelacionados.push(`${entradas} hospedagem(ns)`);
+      if (bloqueios > 0) registrosRelacionados.push(`${bloqueios} bloqueio(s)`);
+      if (consumos > 0) registrosRelacionados.push(`${consumos} consumo(s)`);
+      if (ocorrencias > 0) registrosRelacionados.push(`${ocorrencias} ocorrência(s)`);
+
+      if (registrosRelacionados.length > 0) {
+        return res.status(400).json({
+          error: 'Não é possível excluir este hóspede',
+          message: `Este hóspede possui registros no sistema: ${registrosRelacionados.join(', ')}. Não é permitido excluir hóspedes com histórico.`
+        });
       }
 
       await guest.destroy();

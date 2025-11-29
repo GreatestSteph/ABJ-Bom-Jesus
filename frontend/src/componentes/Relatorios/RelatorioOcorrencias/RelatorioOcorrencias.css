@@ -1,0 +1,282 @@
+/* Container de Filtros */
+.filtros-container {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.filtros-container h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.filtros-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filtro-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filtro-item label {
+  font-weight: 500;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.filtro-item input,
+.filtro-item select {
+  padding: 0.6rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.filtro-item input:focus,
+.filtro-item select:focus {
+  outline: none;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+}
+
+.filtros-acoes {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.btn-buscar,
+.btn-limpar,
+.btn-exportar {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-buscar {
+  background: #2196F3;
+  color: white;
+}
+
+.btn-buscar:hover:not(:disabled) {
+  background: #1976D2;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.btn-buscar:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.btn-limpar {
+  background: #f5f5f5;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.btn-limpar:hover {
+  background: #e0e0e0;
+  border-color: #bbb;
+}
+
+.btn-exportar {
+  background: #4CAF50;
+  color: white;
+  margin-left: auto;
+}
+
+.btn-exportar:hover:not(:disabled) {
+  background: #45a049;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.btn-exportar:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+/* Mensagens */
+.erro-mensagem {
+  background: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 1.5rem;
+  border-left: 4px solid #c62828;
+}
+
+.loading-container,
+.sem-dados {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Estatísticas */
+.estatisticas-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-numero {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2196F3;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+/* Tabela */
+.tabela-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.tabela-ocorrencias {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  font-size: 0.9rem;
+}
+
+.tabela-ocorrencias thead {
+  background: #154B7A;
+  color: white;
+}
+
+.tabela-ocorrencias th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.tabela-ocorrencias tbody tr {
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s ease;
+}
+
+.tabela-ocorrencias tbody tr:hover {
+  background: #f8f9fa;
+}
+
+.tabela-ocorrencias td {
+  padding: 1rem;
+  vertical-align: top;
+}
+
+.badge-nivel {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.descricao-cell {
+  max-width: 300px;
+}
+
+.descricao-texto {
+  max-height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .filtros-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .filtros-acoes {
+    flex-direction: column;
+  }
+
+  .btn-exportar {
+    margin-left: 0;
+  }
+
+  .estatisticas-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .tabela-container {
+    font-size: 0.8rem;
+  }
+
+  .tabela-ocorrencias th,
+  .tabela-ocorrencias td {
+    padding: 0.7rem 0.5rem;
+  }
+
+  .descricao-cell {
+    max-width: 150px;
+  }
+
+  .stat-numero {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .estatisticas-container {
+    grid-template-columns: 1fr;
+  }
+
+  .tabela-ocorrencias {
+    font-size: 0.75rem;
+  }
+
+  .badge-nivel {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+  }
+}

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { FiArrowLeft, FiCalendar, FiUser, FiAlertCircle, FiFileText, FiX } from "react-icons/fi";
 import ContextoUsuario from "../../../services/context.js";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 const styles = {
   fundo: {
@@ -277,7 +278,7 @@ export default function DetalhesBloqueio() {
   useEffect(() => {
     const fetchBloqueio = async () => {
       try {
-        const response = await fetch(`http://localhost:3001/bloqueios/${id}`);
+        const response = await fetch(`${API_URL}/bloqueios/${id}`);
         if (!response.ok) {
           throw new Error('Bloqueio não encontrado');
         }
@@ -346,7 +347,7 @@ export default function DetalhesBloqueio() {
 
     setSubmitting(true);
     try {
-      const response = await fetch(`http://localhost:3001/bloqueios/${id}/cancelar`, {
+      const response = await fetch(`${API_URL}/bloqueios/${id}/cancelar`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -7,6 +7,11 @@ class EntradasController {
   // Criar entrada
   async create(req, res) {
     try {
+      // Garante que hospedou seja boolean
+      if (req.body.hospedou !== undefined) {
+        req.body.hospedou = req.body.hospedou === true || req.body.hospedou === 'true' || req.body.hospedou === 1 || req.body.hospedou === '1';
+      }
+
       const entrada = await Entradas.create(req.body);
       return res.status(201).json(entrada);
     } catch (e) {
@@ -52,13 +57,14 @@ class EntradasController {
         }
       }
 
-      // Filtro por status de hospedagem (ativo/inativo)
+      // Filtro por status de hospedagem (ativo/encerrado baseado em data_saida)
       if (hospedou !== undefined && hospedou !== '') {
-        // Aceita tanto "true"/"false" quanto "1"/"0"
+        // "1" ou "true" = ativo (sem data de saída)
+        // "0" ou "false" = encerrado (com data de saída)
         if (hospedou === 'true' || hospedou === '1') {
-          whereClause.hospedou = { [Op.in]: ['1', 'true', true] };
+          whereClause.dataSaida = null;
         } else if (hospedou === 'false' || hospedou === '0') {
-          whereClause.hospedou = { [Op.in]: ['0', 'false', false] };
+          whereClause.dataSaida = { [Op.ne]: null };
         }
       }
 
@@ -110,6 +116,11 @@ class EntradasController {
 
       // Verifica se está registrando uma saída (data_saida está sendo definida)
       const estaSaindo = req.body.dataSaida && !entrada.dataSaida;
+
+      // Garante que hospedou seja boolean
+      if (req.body.hospedou !== undefined) {
+        req.body.hospedou = Boolean(req.body.hospedou) && req.body.hospedou !== 0 && req.body.hospedou !== '0' && req.body.hospedou !== 'false';
+      }
 
       await entrada.update(req.body);
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 export default function EditProducts() {
   const { id } = useParams();
@@ -22,14 +23,14 @@ export default function EditProducts() {
 
   useEffect(() => {
     // carrega todos os produtos para o autocomplete
-    fetch("http://localhost:3001/produtos")
+    fetch(`${API_URL}/produtos`)
       .then(res => res.json())
       .then(data => setProdutosExistentes(data))
       .catch(err => console.error("Erro ao carregar produtos:", err));
 
     // se for edição, carrega o item
     if (id) {
-      fetch(`http://localhost:3001/produtos/${id}`)
+      fetch(`${API_URL}/produtos/${id}`)
         .then(res => {
           if (!res.ok) throw new Error("Erro ao buscar o produto");
           return res.json();
@@ -99,7 +100,7 @@ export default function EditProducts() {
           const novaQuantidade = Number(produtoExistente.quantidade ?? 0) + Number(form.quantidade ?? 1);
           const novoCustoTotal = Number(produtoExistente.custoTotal ?? 0) + Number(form.custoTotal ?? 0);
 
-          await fetch(`http://localhost:3001/produtos/${produtoExistente.id}`, {
+          await fetch(`${API_URL}/produtos/${produtoExistente.id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ 
@@ -115,7 +116,7 @@ export default function EditProducts() {
 
       // fluxo normal (POST novo ou PUT edição)
       const method = id ? "PUT" : "POST";
-      const url = id ? `http://localhost:3001/produtos/${id}` : "http://localhost:3001/produtos";
+      const url = id ? `${API_URL}/produtos/${id}` : `${API_URL}/produtos`;
 
       await fetch(url, {
         method,

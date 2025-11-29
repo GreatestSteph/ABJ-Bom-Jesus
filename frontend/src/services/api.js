@@ -1,9 +1,10 @@
 import axios from 'axios';
+import API_URL from '../config/api';
 
 const api = axios.create({
-  baseURL: 'http://localhost:3001', 
+  baseURL: API_URL,
 });
 
-api.defaults.headers.common['token'] = 'SEU_TOKEN_AQUI'; 
+api.defaults.headers.common['token'] = 'SEU_TOKEN_AQUI';
 
 export default api;

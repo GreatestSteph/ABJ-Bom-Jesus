@@ -1,49 +1,47 @@
 'use strict';
 
-// Exporta o objeto com os métodos up e down para a seed
 module.exports = {
-  // Método "up": executado quando aplicamos a seed para inserir dados
   async up(queryInterface, Sequelize) {
-    // Insere vários registros na tabela 'quartos'
-    await queryInterface.bulkInsert(
-      'quartos', // Nome da tabela onde os registros serão inseridos
-      [
-        {
-          numero: '101',                 // Define o número do quarto como '101'
-         // tipo_cama: 'Solteiro',         // Define o tipo de cama como 'Solteiro'
-          status: 'disponivel',          // Define o status como 'disponivel'
-          created_at: new Date(),        // Define a data de criação como o momento atual
-          updated_at: new Date(),        // Define a data de atualização como o momento atual
-        },
-        {
-          numero: '102',                 // Define o número do quarto como '102'
-         // tipo_cama: 'Casal',            // Define o tipo de cama como 'Casal'
-          status: 'ocupado',             // Define o status como 'ocupado'
-          created_at: new Date(),        // Define a data de criação como o momento atual
-          updated_at: new Date(),        // Define a data de atualização como o momento atual
-        },
-        {
-          numero: '201',                 // Define o número do quarto como '201'
-         // tipo_cama: 'Beliche',          // Define o tipo de cama como 'Beliche'
-          status: 'manutencao',          // Define o status como 'manutencao'
-          created_at: new Date(),        // Define a data de criação como o momento atual
-          updated_at: new Date(),        // Define a data de atualização como o momento atual
-        },
-        {
-          numero: '202',                 // Define o número do quarto como '202'
-          //tipo_cama: 'Casal',            // Define o tipo de cama como 'Casal'
-          status: 'disponivel',          // Define o status como 'disponivel'
-          created_at: new Date(),        // Define a data de criação como o momento atual
-          updated_at: new Date(),        // Define a data de atualização como o momento atual
-        },
-      ],
-      {} // Opções adicionais (vazio, pois não precisamos de configurações extras)
-    );
+    const quartos = [];
+    const statusOptions = ['disponivel', 'ocupado', 'manutencao'];
+
+    // Distribuir quartos entre setembro, outubro e novembro de 2025
+    // Setembro: 6 quartos (101-106)
+    // Outubro: 7 quartos (201-207)
+    // Novembro: 7 quartos (301-307)
+
+    for (let andar = 1; andar <= 3; andar++) {
+      const numQuartosAndar = andar === 1 ? 6 : 7;
+      const mes = andar === 1 ? 9 : (andar === 2 ? 10 : 11);
+
+      for (let num = 1; num <= numQuartosAndar; num++) {
+        const numeroQuarto = `${andar}0${num}`;
+        const dia = Math.floor(Math.random() * 28) + 1;
+
+        // Distribuição de status: 50% disponivel, 35% ocupado, 15% manutencao
+        let status;
+        const random = Math.random();
+        if (random < 0.50) {
+          status = 'disponivel';
+        } else if (random < 0.85) {
+          status = 'ocupado';
+        } else {
+          status = 'manutencao';
+        }
+
+        quartos.push({
+          numero: numeroQuarto,
+          status: status,
+          created_at: new Date(`2025-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`),
+          updated_at: new Date(`2025-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`),
+        });
+      }
+    }
+
+    await queryInterface.bulkInsert('quartos', quartos, {});
   },
 
-  // Método "down": executado quando revertermos esta seed (apagando os dados inseridos)
   async down(queryInterface, Sequelize) {
-    // Remove todos os registros da tabela 'quartos'
     await queryInterface.bulkDelete('quartos', null, {});
   }
 };

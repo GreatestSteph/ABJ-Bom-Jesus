@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiEye, FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 function formatCPF(cpf) {
   if (!cpf) return "";
@@ -268,11 +269,13 @@ export default function GuestList() {
   const [guestToDelete, setGuestToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [showMessageModal, setShowMessageModal] = useState(false);
+  const [messageModal, setMessageModal] = useState({ type: '', title: '', text: '' });
 
   const GUESTS_PER_PAGE = 10;
 
   useEffect(() => {
-    fetch("http://localhost:3001/guests")
+    fetch(`${API_URL}/guests`)
       .then((res) => res.json())
       .then((data) => setGuests(data))
       .catch((err) => console.error("Erro ao buscar hóspedes:", err));
@@ -283,19 +286,50 @@ export default function GuestList() {
     setShowModal(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!guestToDelete) return;
 
-    fetch(`http://localhost:3001/guests/${guestToDelete.id}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then((data) => {
+    try {
+      const res = await fetch(`${API_URL}/guests/${guestToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Sucesso
         setGuests(guests.filter((guest) => guest.id !== guestToDelete.id));
         setShowModal(false);
         setGuestToDelete(null);
-        console.log(data);
+        setMessageModal({
+          type: 'success',
+          title: 'Sucesso!',
+          text: 'Hóspede excluído com sucesso.'
+        });
+        setShowMessageModal(true);
+      } else {
+        // Erro do servidor (400, 404, etc)
+        setShowModal(false);
+        setGuestToDelete(null);
+        setMessageModal({
+          type: 'error',
+          title: data.error || 'Erro',
+          text: data.message || 'Não foi possível excluir o hóspede.'
+        });
+        setShowMessageModal(true);
+      }
+    } catch (error) {
+      // Erro de rede ou outro erro
+      console.error("Erro ao excluir hóspede:", error);
+      setShowModal(false);
+      setGuestToDelete(null);
+      setMessageModal({
+        type: 'error',
+        title: 'Erro',
+        text: 'Erro ao tentar excluir o hóspede. Verifique sua conexão.'
       });
+      setShowMessageModal(true);
+    }
   };
 
   // Busca por nome OU CPF (ignorando máscara do CPF)
@@ -434,6 +468,30 @@ export default function GuestList() {
                 <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
                 <button className="btn btn-danger" onClick={handleDelete}>Confirmar</button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {showMessageModal && (
+          <div style={styles.modal}>
+            <div style={styles.modalContent}>
+              <div style={{
+                fontSize: '48px',
+                color: messageModal.type === 'success' ? '#28a745' : '#dc3545',
+                marginBottom: '15px'
+              }}>
+                {messageModal.type === 'success' ? '✓' : '✕'}
+              </div>
+              <h4 style={{ marginBottom: '10px' }}>{messageModal.title}</h4>
+              <p style={{ marginBottom: '20px', color: '#495057' }}>
+                {messageModal.text}
+              </p>
+              <button
+                className={messageModal.type === 'success' ? 'btn btn-success' : 'btn btn-danger'}
+                onClick={() => setShowMessageModal(false)}
+              >
+                OK
+              </button>
             </div>
           </div>
         )}

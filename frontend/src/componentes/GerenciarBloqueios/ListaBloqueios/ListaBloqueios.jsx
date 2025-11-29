@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiEye, FiPlus, FiX } from "react-icons/fi";
 import ContextoUsuario from "../../../services/context.js";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 const styles = {
   fundo: {
@@ -409,7 +410,7 @@ export default function ListaBloqueios() {
       params.append('end_date', filters.endDate);
     }
 
-    const url = `http://localhost:3001/bloqueios${params.toString() ? '?' + params.toString() : ''}`;
+    const url = `${API_URL}/bloqueios${params.toString() ? '?' + params.toString() : ''}`;
 
     fetch(url)
       .then((res) => res.json())
@@ -502,7 +503,7 @@ export default function ListaBloqueios() {
 
     setSubmitting(true);
     try {
-      const response = await fetch(`http://localhost:3001/bloqueios/${selectedBloqueio.id}/cancelar`, {
+      const response = await fetch(`${API_URL}/bloqueios/${selectedBloqueio.id}/cancelar`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

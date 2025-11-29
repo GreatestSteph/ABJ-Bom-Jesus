@@ -42,6 +42,13 @@ import EditarTipoOcorrencia from "./componentes/GerenciarTiposOcorrencias/Editar
 import ListaBloqueios from "./componentes/GerenciarBloqueios/ListaBloqueios/ListaBloqueios.jsx";
 import DetalhesBloqueio from "./componentes/GerenciarBloqueios/DetalhesBloqueio/DetalhesBloqueio.jsx";
 
+import PainelRelatorios from "./componentes/Relatorios/PainelRelatorios/PainelRelatorios.jsx";
+import RelatorioHospedagens from "./componentes/Relatorios/RelatorioHospedagens/RelatorioHospedagens.jsx";
+import RelatorioConsumos from "./componentes/Relatorios/RelatorioConsumos/RelatorioConsumos.jsx";
+import RelatorioHospedesBloqueados from "./componentes/Relatorios/RelatorioHospedesBloqueados/RelatorioHospedesBloqueados.jsx";
+import RelatorioSocioeconomico from "./componentes/Relatorios/RelatorioSocioeconomico/RelatorioSocioeconomico.jsx";
+import RelatorioOcorrencias from "./componentes/Relatorios/RelatorioOcorrencias/RelatorioOcorrencias.jsx";
+
 function App() {
   const [usuario, setUsuario] = useState({
     nome: '',
@@ -429,6 +436,74 @@ function App() {
                   <>
                     <Headerlogado />
                     <DetalhesBloqueio />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+
+              {/* Relatórios e Estatísticas */}
+              <Route
+                path="/relatorios"
+                element={
+                  <>
+                    <Headerlogado />
+                    <PainelRelatorios />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/relatorios/hospedagens"
+                element={
+                  <>
+                    <Headerlogado />
+                    <RelatorioHospedagens />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/relatorios/consumos"
+                element={
+                  <>
+                    <Headerlogado />
+                    <RelatorioConsumos />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/relatorios/hospedes-bloqueados"
+                element={
+                  <>
+                    <Headerlogado />
+                    <RelatorioHospedesBloqueados />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/relatorios/socioeconomico"
+                element={
+                  <>
+                    <Headerlogado />
+                    <RelatorioSocioeconomico />
+                    <Footer />
+                    <Footer2 />
+                  </>
+                }
+              />
+              <Route
+                path="/relatorios/ocorrencias"
+                element={
+                  <>
+                    <Headerlogado />
+                    <RelatorioOcorrencias />
                     <Footer />
                     <Footer2 />
                   </>
