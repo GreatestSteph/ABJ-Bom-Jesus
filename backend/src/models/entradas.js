@@ -20,8 +20,9 @@ class Entradas extends Model {
           field: 'data_saida',
         },
         hospedou: {
-          type: Sequelize.STRING, // Pode ser "Sim" / "Não"
+          type: Sequelize.BOOLEAN,
           allowNull: false,
+          defaultValue: true,
         },
       },
       {

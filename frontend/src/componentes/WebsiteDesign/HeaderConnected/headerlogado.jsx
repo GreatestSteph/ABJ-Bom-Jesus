@@ -78,9 +78,11 @@ export default function Headerlogado() {
             <div>
                 <img src={logoABL} alt="Logo ABL" style={estiloHeader.logo} />
 
-                <Link to="/listadeusuarios" style={navStyle(["/listadeusuarios", "/registrousuarios"])}>
-                    Perfis
-                </Link>
+                {(usuarioGlobal.cargo === 'Administrador' || usuarioGlobal.cargo === 'TI') && (
+                    <Link to="/listadeusuarios" style={navStyle(["/listadeusuarios", "/registrousuarios"])}>
+                        Perfis
+                    </Link>
+                )}
 
                 <Link to="/hospedes" style={navStyle(["/hospedes", "/hospedes/cadastrar"])}>
                     Gerenciar Hóspedes
