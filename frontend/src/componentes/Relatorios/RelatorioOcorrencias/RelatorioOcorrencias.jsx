@@ -169,10 +169,29 @@ const RelatorioOcorrencias = () => {
     }
 
     // Estatísticas
+    const totalLeves = ocorrencias.filter(o => o.occurrenceType?.nivel === 'Leve').length;
+    const totalModeradas = ocorrencias.filter(o => o.occurrenceType?.nivel === 'Moderado').length;
+    const totalGraves = ocorrencias.filter(o => o.occurrenceType?.nivel === 'Grave').length;
+
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
-    doc.text(`Total de Ocorrências: ${ocorrencias.length}`, 14, yPos);
-    yPos += 10;
+    doc.text('Estatísticas:', 14, yPos);
+    yPos += 6;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`• Total de Ocorrências: ${ocorrencias.length}`, 14, yPos);
+    yPos += 5;
+    doc.setTextColor(76, 175, 80);
+    doc.text(`• Leves: ${totalLeves}`, 14, yPos);
+    yPos += 5;
+    doc.setTextColor(255, 152, 0);
+    doc.text(`• Moderadas: ${totalModeradas}`, 14, yPos);
+    yPos += 5;
+    doc.setTextColor(244, 67, 54);
+    doc.text(`• Graves: ${totalGraves}`, 14, yPos);
+    yPos += 8;
+    doc.setTextColor(0, 0, 0); // Resetar cor para preto
 
     // Tabela
     const tableData = ocorrencias.map(occ => [
