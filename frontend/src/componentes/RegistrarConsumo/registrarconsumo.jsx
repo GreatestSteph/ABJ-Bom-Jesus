@@ -47,16 +47,25 @@ export default function RegistrarConsumos() {
   }, [id, hospedes, produtos]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/guests")
+    // Buscar entradas ativas
+    fetch("http://localhost:3001/entradas")
       .then((res) => res.json())
-      .then((data) => setHospedes(data))
-      .catch((err) => console.error("Erro ao carregar hóspedes:", err));
+      .then((data) => {
+        // Filtrar só hóspedes com dataSaida nula (ativos)
+        const entradasAtivas = data.filter(e => e.dataSaida === null);
+        // Extrair apenas os hóspedes únicos dessas entradas
+        const hospedesAtivos = entradasAtivas.map(e => e.hospede);
+        setHospedes(hospedesAtivos);
+      })
+      .catch((err) => console.error("Erro ao carregar hóspedes ativos:", err));
 
+    // Buscar produtos normalmente
     fetch("http://localhost:3001/produtos")
       .then((res) => res.json())
       .then((data) => setProdutos(data))
       .catch((err) => console.error("Erro ao carregar produtos:", err));
   }, []);
+
 
   useEffect(() => {
     if (!id) return; // só busca se tiver id (edição)
@@ -97,12 +106,14 @@ export default function RegistrarConsumos() {
     });
   }, []);
 
-  const hospedesFiltrados = hospedes.filter(
+  const hospedesFiltrados = hospedes
+  .filter(
     (h) =>
       h.nome?.toLowerCase().includes(buscaHospede.toLowerCase()) ||
       h.cpf?.includes(buscaHospede) ||
       h.rg?.includes(buscaHospede)
   );
+
 
   const produtosFiltrados = produtos.filter(
     (p) =>

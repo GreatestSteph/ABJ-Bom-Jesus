@@ -376,7 +376,7 @@ export default function Hospedados() {
   // efeito: carrega hóspedes ao abrir modal
   useEffect(() => {
     if (showModalEntrada) {
-      carregarHospedesPermitidos(); // se você tiver essa função
+      carregarHospedesPermitidos(); 
       fetch("http://localhost:3001/bloqueios")
         .then(res => res.json())
         .then(data => setBloqueados(data))
@@ -393,21 +393,33 @@ export default function Hospedados() {
   );
 
   const hospedesFiltradosSemBloqueio = hospedesFiltrados.filter(h => {
+    // Verifica se o hóspede está bloqueado
     const bloqueadoAtivo = bloqueados.some(b =>
       b.hospede_id === h.id &&
       (b.status_calculado || b.status || "").toLowerCase() === "ativo"
     );
-    return !bloqueadoAtivo;
+
+    // Verifica se o hóspede tem hospedagem ativa sem dataSaida
+    const hospedagemAtivaSemSaida = hospedados.some(e =>
+      e.hospede?.id === h.id && (!e.dataSaida || e.hospedou === true)
+    );
+
+    // Permite apenas se não estiver bloqueado e não tiver hospedagem ativa
+    return !bloqueadoAtivo && !hospedagemAtivaSemSaida;
   });
+
 
 
   function validateModal() {
     const newErrors = {};
     if (!hospedeSelecionado) newErrors.hospede = "Selecione um hóspede.";
     if (!form.dataEntrada) newErrors.dataEntrada = "Selecione a data da entrada.";
+    else if (new Date(form.dataEntrada) > new Date())
+      newErrors.dataEntrada = "A data de entrada não pode ser futura.";
     if (form.hospedou === "") newErrors.hospedou = "Selecione se hospedou.";
     return newErrors;
   }
+
 
   async function handleSubmitModal(e) {
     e.preventDefault();
@@ -767,7 +779,9 @@ export default function Hospedados() {
                       style={styles.input}
                       value={form.dataEntrada}
                       onChange={(e) => setForm((p) => ({ ...p, dataEntrada: e.target.value }))}
-                      required/>
+                      max={new Date().toISOString().slice(0,16)} // impede datas futuras
+                      required
+                    />
                     {errors.dataEntrada && (
                       <p style={{ color: "red", marginTop: "5px" }}>{errors.dataEntrada}</p>
                     )}
