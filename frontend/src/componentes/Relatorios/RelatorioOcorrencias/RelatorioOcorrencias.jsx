@@ -4,6 +4,7 @@ import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import '../RelatorioTemplate.css';
 import './RelatorioOcorrencias.css';
+import API_URL from '../../../config/api';
 
 const RelatorioOcorrencias = () => {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ const RelatorioOcorrencias = () => {
       if (filtros.start_date) queryParams.append('start_date', filtros.start_date);
       if (filtros.end_date) queryParams.append('end_date', filtros.end_date);
 
-      const response = await fetch(`http://localhost:3001/occurrences?${queryParams}`, {
+      const response = await fetch(`${API_URL}/occurrences?${queryParams}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

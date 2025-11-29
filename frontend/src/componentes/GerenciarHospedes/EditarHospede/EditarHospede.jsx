@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 function maskCPF(value) {
   value = value.replace(/\D/g, "");
@@ -50,7 +51,7 @@ export default function EditGuest() {
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3001/guests/${id}`)
+      fetch(`${API_URL}/guests/${id}`)
         .then(res => res.json())
         .then(data => {
           setForm({
@@ -132,8 +133,8 @@ export default function EditGuest() {
 
     const method = id ? "PUT" : "POST";
     const url = id
-      ? `http://localhost:3001/guests/${id}`
-      : "http://localhost:3001/guests";
+      ? `${API_URL}/guests/${id}`
+      : `${API_URL}/guests`;
 
     let dataContatoFamiliaToSend = form.data_contato_familia;
     if (

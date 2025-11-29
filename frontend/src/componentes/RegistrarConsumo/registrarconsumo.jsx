@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import fundo from "../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../config/api";
 
 export default function RegistrarConsumos() {
   const { id } = useParams();
@@ -26,7 +27,7 @@ export default function RegistrarConsumos() {
   useEffect(() => {
     if (!id) return;
 
-    fetch(`http://localhost:3001/consumos/${id}`)
+    fetch(`${API_URL}/consumos/${id}`)
       .then(res => res.json())
       .then(data => {
         setForm({
@@ -47,12 +48,12 @@ export default function RegistrarConsumos() {
   }, [id, hospedes, produtos]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/guests")
+    fetch(`${API_URL}/guests`)
       .then((res) => res.json())
       .then((data) => setHospedes(data))
       .catch((err) => console.error("Erro ao carregar hóspedes:", err));
 
-    fetch("http://localhost:3001/produtos")
+    fetch(`${API_URL}/produtos`)
       .then((res) => res.json())
       .then((data) => setProdutos(data))
       .catch((err) => console.error("Erro ao carregar produtos:", err));
@@ -61,7 +62,7 @@ export default function RegistrarConsumos() {
   useEffect(() => {
     if (!id) return; // só busca se tiver id (edição)
 
-    fetch(`http://localhost:3001/consumos/${id}`)
+    fetch(`${API_URL}/consumos/${id}`)
       .then(res => res.json())
       .then(data => {
         setForm({
@@ -143,7 +144,7 @@ export default function RegistrarConsumos() {
   try {
     if (id) {
       // --- EDIÇÃO ---
-      await fetch(`http://localhost:3001/consumos/${id}`, {
+      await fetch(`${API_URL}/consumos/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(consumo),
@@ -154,7 +155,7 @@ export default function RegistrarConsumos() {
         const diferenca = Number(form.quantidade) - quantidadeOriginal;
         const novaQuantidadeProduto = Number(produtoSelecionado.quantidade) - diferenca;
 
-        await fetch(`http://localhost:3001/produtos/${produtoSelecionado.id}`, {
+        await fetch(`${API_URL}/produtos/${produtoSelecionado.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -166,7 +167,7 @@ export default function RegistrarConsumos() {
 
     } else {
       // --- NOVO CONSUMO ---
-      await fetch("http://localhost:3001/consumos", {
+      await fetch(`${API_URL}/consumos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(consumo),
@@ -176,7 +177,7 @@ export default function RegistrarConsumos() {
       if (!form.naoReutilizavel) {
         const novaQuantidadeProduto = Number(produtoSelecionado.quantidade) - Number(form.quantidade);
 
-        await fetch(`http://localhost:3001/produtos/${produtoSelecionado.id}`, {
+        await fetch(`${API_URL}/produtos/${produtoSelecionado.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

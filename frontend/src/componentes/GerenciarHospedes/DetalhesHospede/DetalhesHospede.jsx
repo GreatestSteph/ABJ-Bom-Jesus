@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { FiLock, FiPlus } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 function formatCPF(cpf) {
   if (!cpf) return "";
@@ -27,7 +28,7 @@ export default function DetalhesHospede() {
   const [bloqueioAtivo, setBloqueioAtivo] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/guests/${id}`)
+    fetch(`${API_URL}/guests/${id}`)
       .then(res => {
         if (!res.ok) throw new Error("Erro ao carregar dados do hóspede");
         return res.json();
@@ -312,7 +313,7 @@ export default function DetalhesHospede() {
   const handleOpenBloqueioModal = async () => {
     // Verificar se existe bloqueio ativo para este hóspede
     try {
-      const response = await fetch(`http://localhost:3001/bloqueios?hospede_id=${id}&status=ativo`);
+      const response = await fetch(`${API_URL}/bloqueios?hospede_id=${id}&status=ativo`);
       const bloqueios = await response.json();
 
       if (bloqueios && bloqueios.length > 0) {
@@ -394,7 +395,7 @@ export default function DetalhesHospede() {
 
     setSubmitting(true);
     try {
-      const response = await fetch('http://localhost:3001/bloqueios', {
+      const response = await fetch(`${API_URL}/bloqueios`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

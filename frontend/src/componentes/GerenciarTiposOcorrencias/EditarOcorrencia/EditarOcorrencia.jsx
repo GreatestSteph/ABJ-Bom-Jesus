@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 function InputGroup({ children, error }) {
   return (
@@ -28,7 +29,7 @@ export default function EditOcorrencia() {
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3001/tipos-ocorrencia/${id}`)
+      fetch(`${API_URL}/tipos-ocorrencia/${id}`)
         .then(res => res.json())
         .then(data => {
           setForm({
@@ -73,8 +74,8 @@ export default function EditOcorrencia() {
 
     const method = id ? "PUT" : "POST";
     const url = id
-      ? `http://localhost:3001/tipos-ocorrencia/${id}`
-      : "http://localhost:3001/tipos-ocorrencia";
+      ? `${API_URL}/tipos-ocorrencia/${id}`
+      : `${API_URL}/tipos-ocorrencia`;
 
     const formToSend = {
       nome: form.nome.trim(),

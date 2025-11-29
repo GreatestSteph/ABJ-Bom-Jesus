@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 export default function EditProfiles() {
   const { id } = useParams();
@@ -18,7 +19,7 @@ export default function EditProfiles() {
 
   useEffect(() => {
     if (id) {
-      fetch(`http://localhost:3001/users/${id}`)
+      fetch(`${API_URL}/users/${id}`)
         .then(res => {
           if (!res.ok) throw new Error("Erro ao buscar usuário");
           return res.json();
@@ -61,7 +62,7 @@ async function handleSubmit(e) {
     // Verificar se o nome de usuário já existe (em modo de criação)
     if (!id && form.usuario) {
       try {
-        const res = await fetch(`http://localhost:3001/users`);
+        const res = await fetch(`${API_URL}/users`);
         if (!res.ok) throw new Error("Erro ao buscar usuários");
         const users = await res.json();
 
@@ -81,8 +82,8 @@ async function handleSubmit(e) {
 
     const method = id ? "PUT" : "POST";
     const url = id
-      ? `http://localhost:3001/users/${id}`
-      : "http://localhost:3001/users";
+      ? `${API_URL}/users/${id}`
+      : `${API_URL}/users`;
 
     fetch(url, {
       method,

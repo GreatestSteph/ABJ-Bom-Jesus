@@ -2,6 +2,7 @@
 import { Link } from "react-router-dom";
 import fundo from "../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 import lupa from "../WebsiteDesign/RegisterImages/lupa.svg";
+import API_URL from "../../config/api";
 
 const styles = {
   fundo: {
@@ -131,9 +132,9 @@ export default function HistoricoDeConsumos() {
 
   useEffect(() => {
     Promise.all([
-      fetch("http://localhost:3001/consumos").then(res => res.json()),
-      fetch("http://localhost:3001/guests").then(res => res.json()),
-      fetch("http://localhost:3001/produtos").then(res => res.json()),
+      fetch(`${API_URL}/consumos`).then(res => res.json()),
+      fetch(`${API_URL}/guests`).then(res => res.json()),
+      fetch(`${API_URL}/produtos`).then(res => res.json()),
     ])
     .then(([consumosData, hospedesData, produtosData]) => {
       
@@ -161,7 +162,7 @@ export default function HistoricoDeConsumos() {
   const handleDelete = () => {
     if (!consumoToDelete) return;
 
-    fetch(`http://localhost:3001/consumos/${consumoToDelete.id}`, {
+    fetch(`${API_URL}/consumos/${consumoToDelete.id}`, {
       method: "DELETE",
     })
       .then((res) => res.json())

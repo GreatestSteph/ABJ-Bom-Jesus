@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiEye, FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 const styles = {
   fundo: {
@@ -385,7 +386,7 @@ export default function ListaOcorrencias() {
       params.append('end_date', filters.endDate);
     }
 
-    const url = `http://localhost:3001/occurrences${params.toString() ? '?' + params.toString() : ''}`;
+    const url = `${API_URL}/occurrences${params.toString() ? '?' + params.toString() : ''}`;
 
     fetch(url)
       .then((res) => res.json())
@@ -411,7 +412,7 @@ export default function ListaOcorrencias() {
     if (!ocorrenciaToDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:3001/occurrences/${ocorrenciaToDelete.id}`, {
+      const response = await fetch(`${API_URL}/occurrences/${ocorrenciaToDelete.id}`, {
         method: "DELETE",
       });
 

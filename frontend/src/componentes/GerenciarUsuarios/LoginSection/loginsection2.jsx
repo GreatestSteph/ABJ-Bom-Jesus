@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ContextoUsuario from "../../../services/context"; // Caminho correto conforme sua estrutura
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 
 export default function LoginSection2() {
@@ -14,7 +15,7 @@ export default function LoginSection2() {
   const [usuarioGlobal, setUsuarioGlobal] = useContext(ContextoUsuario); 
 
   useEffect(() => {
-    fetch("http://localhost:3001/users")
+    fetch(`${API_URL}/users`)
       .then((res) => res.json())
       .then((data) => setUsers(data))
       .catch((err) => console.error("Erro ao buscar usuários:", err));

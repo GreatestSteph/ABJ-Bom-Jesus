@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ContextoUsuario from "../../../services/context.js";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 function InputGroup({ children, error }) {
   return (
@@ -188,8 +189,8 @@ export default function CadastrarOcorrencia() {
     const fetchData = async () => {
       try {
         const [hospedesRes, tiposRes] = await Promise.all([
-          fetch("http://localhost:3001/guests"),
-          fetch("http://localhost:3001/tipos-ocorrencia")
+          fetch(`${API_URL}/guests`),
+          fetch(`${API_URL}/tipos-ocorrencia`)
         ]);
 
         if (hospedesRes.ok) {
@@ -218,7 +219,7 @@ export default function CadastrarOcorrencia() {
   }
 
   const submitOccurrence = (dataToSend) => {
-    fetch("http://localhost:3001/occurrences", {
+    fetch(`${API_URL}/occurrences`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(dataToSend)

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { FiArrowLeft } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 function formatCPF(cpf) {
   if (!cpf) return "";
@@ -19,7 +20,7 @@ export default function DetalhesHospedagem() {
   const [showModalSaida, setShowModalSaida] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:3001/entradas/${id}`)
+    fetch(`${API_URL}/entradas/${id}`)
       .then(res => {
         if (!res.ok) throw new Error("Erro ao carregar dados da hospedagem");
         return res.json();
@@ -250,7 +251,7 @@ export default function DetalhesHospedagem() {
 
   const handleRegistrarSaida = async () => {
     try {
-      await fetch(`http://localhost:3001/entradas/${id}`, {
+      await fetch(`${API_URL}/entradas/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

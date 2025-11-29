@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import ContextoUsuario from "../../../services/context.js";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 function InputGroup({ children, error }) {
   return (
@@ -175,12 +176,12 @@ export default function EditarOcorrencia() {
     const fetchData = async () => {
       try {
         const requests = [
-          fetch("http://localhost:3001/guests"),
-          fetch("http://localhost:3001/tipos-ocorrencia")
+          fetch(`${API_URL}/guests`),
+          fetch(`${API_URL}/tipos-ocorrencia`)
         ];
 
         if (id) {
-          requests.push(fetch(`http://localhost:3001/occurrences/${id}`));
+          requests.push(fetch(`${API_URL}/occurrences/${id}`));
         }
 
         const responses = await Promise.all(requests);
@@ -277,8 +278,8 @@ export default function EditarOcorrencia() {
     };
 
     const url = id
-      ? `http://localhost:3001/occurrences/${id}`
-      : "http://localhost:3001/occurrences";
+      ? `${API_URL}/occurrences/${id}`
+      : `${API_URL}/occurrences`;
     const method = id ? "PUT" : "POST";
 
 

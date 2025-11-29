@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { FiEye, FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
+import API_URL from "../../../config/api";
 
 function formatCPF(cpf) {
   if (!cpf) return "";
@@ -274,7 +275,7 @@ export default function GuestList() {
   const GUESTS_PER_PAGE = 10;
 
   useEffect(() => {
-    fetch("http://localhost:3001/guests")
+    fetch(`${API_URL}/guests`)
       .then((res) => res.json())
       .then((data) => setGuests(data))
       .catch((err) => console.error("Erro ao buscar hóspedes:", err));
@@ -289,7 +290,7 @@ export default function GuestList() {
     if (!guestToDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:3001/guests/${guestToDelete.id}`, {
+      const res = await fetch(`${API_URL}/guests/${guestToDelete.id}`, {
         method: "DELETE",
       });
 
