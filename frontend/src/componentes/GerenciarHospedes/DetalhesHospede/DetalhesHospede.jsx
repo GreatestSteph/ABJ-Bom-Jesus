@@ -24,6 +24,7 @@ export default function DetalhesHospede() {
     data_inicio: "",
     data_termino: ""
   });
+  const [bloqueioAtivo, setBloqueioAtivo] = useState(null);
 
   useEffect(() => {
     fetch(`http://localhost:3001/guests/${id}`)
@@ -308,7 +309,22 @@ export default function DetalhesHospede() {
     return new Date(dateString).toLocaleDateString('pt-BR');
   };
 
-  const handleOpenBloqueioModal = () => {
+  const handleOpenBloqueioModal = async () => {
+    // Verificar se existe bloqueio ativo para este hóspede
+    try {
+      const response = await fetch(`http://localhost:3001/bloqueios?hospede_id=${id}&status=ativo`);
+      const bloqueios = await response.json();
+
+      if (bloqueios && bloqueios.length > 0) {
+        setBloqueioAtivo(bloqueios[0]);
+      } else {
+        setBloqueioAtivo(null);
+      }
+    } catch (err) {
+      console.error("Erro ao verificar bloqueios ativos:", err);
+      setBloqueioAtivo(null);
+    }
+
     setShowBloqueioModal(true);
     setBloqueioFormData({
       motivo: "",
@@ -326,6 +342,7 @@ export default function DetalhesHospede() {
       data_termino: ""
     });
     setValidationErrors({});
+    setBloqueioAtivo(null);
   };
 
   const handleBloqueioChange = (field, value) => {
@@ -513,6 +530,22 @@ export default function DetalhesHospede() {
               </div>
 
               <div style={styles.modalBody}>
+                {bloqueioAtivo && (
+                  <div style={{
+                    padding: "12px",
+                    backgroundColor: "#fff3cd",
+                    border: "1px solid #ffeaa7",
+                    borderRadius: "8px",
+                    marginBottom: "15px",
+                    color: "#856404",
+                    fontSize: "14px"
+                  }}>
+                    <strong>⚠️ Atenção:</strong> Este hóspede já possui um bloqueio ativo até{" "}
+                    {new Date(bloqueioAtivo.data_termino).toLocaleDateString('pt-BR')}.
+                    Ao criar um novo bloqueio, o hóspede terá múltiplos bloqueios ativos simultaneamente.
+                  </div>
+                )}
+
                 {validationErrors.general && (
                   <div style={{
                     padding: "12px",

@@ -2,50 +2,40 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('guests', [
-      {
-        nome: 'João da Silva',
-        data_nascimento: new Date('1990-05-15'),
-        rg: '123456789',
-        cpf: '123.456.789-00',
-        data_contato_familia: new Date('2025-05-05'),
-        escolaridade: 'Analfabeto',
-        empregado: true,
-        biometria: 'biometria_joao_123',
+    const nomes = [
+      'João da Silva', 'Carlos Pereira', 'Pedro Costa', 'Roberto Lima', 'Ricardo Mendes',
+      'Paulo Martins', 'Lucas Barbosa', 'Marcos Dias', 'Felipe Araújo', 'Rodrigo Nascimento',
+      'André Santos', 'Bruno Oliveira', 'Diego Souza', 'Eduardo Alves', 'Fernando Rocha',
+      'Gustavo Ferreira', 'Henrique Cardoso', 'Igor Cavalcanti', 'José Monteiro', 'Leonardo Gomes'
+    ];
+
+    const escolaridades = ['Analfabeto', 'Fundamental Incompleto', 'Fundamental Completo', 'Médio Incompleto', 'Médio Completo', 'Superior Incompleto'];
+    const estadosCivis = ['Solteiro', 'Casado', 'Divorciado', 'Viúvo'];
+
+    const hospedes = [];
+
+    for (let i = 0; i < 20; i++) {
+      const mes = i < 7 ? 9 : (i < 14 ? 10 : 11); // Distribuir entre set, out, nov
+      const dia = Math.floor(Math.random() * 28) + 1;
+      const anoNasc = 1960 + Math.floor(Math.random() * 45); // Entre 1960 e 2005
+
+      hospedes.push({
+        nome: nomes[i],
+        data_nascimento: new Date(`${anoNasc}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`),
+        rg: `${10000000 + i}${Math.floor(Math.random() * 10)}`,
+        cpf: `${String(100 + i).padStart(3, '0')}.${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}.${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}-${String(Math.floor(Math.random() * 100)).padStart(2, '0')}`,
+        data_contato_familia: new Date(`2025-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`),
+        escolaridade: escolaridades[Math.floor(Math.random() * escolaridades.length)],
+        empregado: Math.random() > 0.6,
+        biometria: `bio_${i + 1}_${Math.random().toString(36).substring(7)}`,
         genero: 'Masculino',
-        estado_civil: 'Solteiro(a)',
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      {
-        nome: 'Maria Oliveira',
-        data_nascimento: new Date('1985-03-22'),
-        rg: '987654321',
-        cpf: '987.654.321-00',
-        data_contato_familia: new Date('2025-05-05'),
-        escolaridade: 'Médio Completo',
-        empregado: false,
-        biometria: 'biometria_maria_456',
-        genero: 'Feminino',
-        estado_civil: 'Solteiro(a)',
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      {
-        nome: 'Carlos Pereira',
-        data_nascimento: new Date('1995-07-30'),
-        rg: '456123789',
-        cpf: '456.123.789-00',
-        data_contato_familia: new Date('2025-05-05'),
-        escolaridade: 'Fundamental Completo',
-        empregado: true,
-        biometria: 'biometria_carlos_789',
-        genero: 'Masculino',
-        estado_civil: 'Divorciado(a)',
-        created_at: new Date(),
-        updated_at: new Date(),
-      }
-    ], {});
+        estado_civil: estadosCivis[Math.floor(Math.random() * estadosCivis.length)],
+        created_at: new Date(`2025-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`),
+        updated_at: new Date(`2025-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`),
+      });
+    }
+
+    await queryInterface.bulkInsert('guests', hospedes, {});
   },
 
   async down(queryInterface, Sequelize) {

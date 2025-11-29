@@ -296,11 +296,10 @@ export default function Hospedados() {
   };
 
   
-  // Confirmar saída (marca hospedou = 0 e registra data_saida)
+  // Confirmar saída (registra data_saida)
   const confirmarSaida = async () => {
     try {
       await axios.put(`http://localhost:3001/entradas/${selectedId}`, {
-        hospedou: 0,
         dataSaida: new Date().toISOString(),
       });
       setShowModal(false);
@@ -588,7 +587,7 @@ export default function Hospedados() {
                 </thead>
                 <tbody>
                   {agrupadoPorMes[chave].map((item) => {
-                    const isAtivo = String(item.hospedou) === "1" || item.hospedou === true;
+                    const isAtivo = !item.dataSaida; // Ativo = sem data de saída
                     return (
                       <tr key={item.id}>
                         <td style={styles.td}>{item.hospede?.nome}</td>
