@@ -371,6 +371,14 @@ export default function GuestList() {
               <Link to="/bloqueios" style={styles.functionNotSelected}>
                 Bloqueios
               </Link>
+              
+              <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
+                Adicionar Quartos
+              </Link>
+              
+              <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
+                Listar Quartos
+              </Link>
             </div>
             <hr style={styles.hr}/>
 

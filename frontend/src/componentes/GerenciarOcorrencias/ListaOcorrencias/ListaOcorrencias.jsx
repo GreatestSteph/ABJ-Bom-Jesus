@@ -168,7 +168,8 @@ const styles = {
     color: 'white',
     padding: '25px 30px',
     textDecoration: 'none',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    borderTopLeftRadius: '20px',
   },
   hr: {
     border: 'none',

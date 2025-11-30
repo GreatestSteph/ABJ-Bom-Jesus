@@ -155,20 +155,16 @@ export default function ListQuartos() {
     <main style={styles.fundo}>
       <div style={styles.aroundListBox}>
         <div style={{borderRadius: '12px'}} className='d-flex flex-start'>
-                    <Link to="/registroprodutos" style={styles.functionNotSelected}>
-                      Registrar Produtos
+                    <Link to="/hospedes" style={styles.functionNotSelected}>
+                      Hóspedes
                     </Link>
-                  
-                    <Link to="/listarprodutos" style={styles.functionNotSelected}>
-                      Pesquisar Produtos
+                                        
+                    <Link to="/historicodehospedagens" style={styles.functionNotSelected}>
+                      Lista de Hospedagens
                     </Link>
-                    
-                    <Link to="/registroconsumos" style={styles.functionNotSelected}>
-                      Registrar Consumos
-                    </Link>
-                    
-                    <Link to="/listarconsumos" style={styles.functionNotSelected}>
-                      Ver Consumos
+                                        
+                    <Link to="/bloqueios" style={styles.functionNotSelected}>
+                      Bloqueios
                     </Link>
 
                     <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>

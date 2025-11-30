@@ -543,6 +543,14 @@ export default function ListaBloqueios() {
           <Link to="/bloqueios" style={styles.functionSelected}>
             Bloqueios
           </Link>
+          
+          <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
+            Adicionar Quartos
+          </Link>
+                    
+          <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
+            Listar Quartos
+          </Link>
         </div>
         <hr style={styles.hr}/>
 

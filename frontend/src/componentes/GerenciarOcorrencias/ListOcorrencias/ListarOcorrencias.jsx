@@ -122,7 +122,7 @@ const styles = {
     color: 'white',
     padding: '25px 30px',
     textDecoration: 'none',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   hr: {
     border: 'none',

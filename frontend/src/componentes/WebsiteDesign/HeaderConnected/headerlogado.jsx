@@ -27,21 +27,26 @@ export default function Headerlogado() {
             color: 'rgb(21, 75, 122)',
             textDecoration: 'none',
             fontWeight: 'bold',
-            paddingLeft: '30px',
-            paddingRight: '30px',
+            fontSize: "clamp(13.5px, 1.5vw, 17px)",
+            paddingLeft: 'clamp(4px, 0.9vw, 20px)',
+            paddingRight: 'clamp(4px, 0.9vw, 20px)',
             paddingBottom: '22px',
             borderBottom: '5px solid rgb(255, 140, 46)',
         },
         logo: {
             width: '70px',
-            marginRight: '30px',
+            marginRight: 'clamp(0px, 1.5vw, 30px)',
         },
         ajudaeicone: {
+            fontSize: "clamp(13.5px, 1.5vw, 17px)",
             color: 'rgb(21, 75, 122)',
             textDecoration: 'none',
             fontWeight: 'bold',
             paddingLeft: '5px',
             paddingRight: '5px',
+        },
+        icone: {
+            width: "clamp(0px, 2vw, 40px)"
         }
     };
 
@@ -89,15 +94,15 @@ export default function Headerlogado() {
                 </Link>
 
                 <Link to="/listarprodutos" style={navStyle(["/listarprodutos", "/registroprodutos"])}>
-                    Gerenciar Consumo
+                    Produtos e Consumos
                 </Link>
 
                 <Link to="/ocorrencias" style={navStyle(["/ocorrencias", "/ocorrencias/cadastrar"])}>
-                    Gerenciar Ocorrências
+                    Ocorrências
                 </Link>
 
                 <Link to="/relatorios" style={navStyle(["/relatorios"])}>
-                    Relatórios e Estatísticas
+                    Relatórios
                 </Link>
             </div>
 

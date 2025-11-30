@@ -337,14 +337,6 @@ const styles = {
                     <Link to="/listarconsumos" style={styles.functionNotSelected}>
                       Ver Consumos
                     </Link>
-
-                    <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
-                    Adicionar Quartos
-                    </Link>
-
-                    <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
-                    Listar Quartos
-                    </Link>
                   </div>
         <hr style={styles.hr}/>
 
