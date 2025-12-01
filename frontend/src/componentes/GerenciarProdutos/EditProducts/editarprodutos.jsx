@@ -11,7 +11,7 @@ export default function EditProducts() {
     nomeDoProduto: '',
     tamanho: '',
     cor: '',
-    quantidade: 1,
+    quantidade: '',
     marca: '',
     descricao: '',
     custoTotal: '',
@@ -86,9 +86,19 @@ export default function EditProducts() {
 
     const normalize = (s) => (s ?? '').trim().toLowerCase();
 
+    // calcula custo total = quantidade × custo unitário
+    const quantidadeNumber = Number(form.quantidade);
+    const custoUnitarioNumber = Number(form.custoTotal);
+    const custoTotalCalculado = quantidadeNumber * custoUnitarioNumber;
+
+    // esse é o objeto final que vai pro backend
+    const formEnviado = {
+      ...form,
+      custoTotal: custoTotalCalculado,
+    };
+
     try {
       if (!id) {
-        // procurar produto existente com nome parecido, mesma cor, tamanho e marca
         const produtoExistente = produtosExistentes.find((p) =>
           normalize(p?.nomeDoProduto).includes(normalize(form.nomeDoProduto)) &&
           normalize(p?.cor) === normalize(form.cor) &&
@@ -97,8 +107,8 @@ export default function EditProducts() {
         );
 
         if (produtoExistente) {
-          const novaQuantidade = Number(produtoExistente.quantidade ?? 0) + Number(form.quantidade ?? 1);
-          const novoCustoTotal = Number(produtoExistente.custoTotal ?? 0) + Number(form.custoTotal ?? 0);
+          const novaQuantidade = Number(produtoExistente.quantidade ?? 0) + quantidadeNumber;
+          const novoCustoTotal = Number(produtoExistente.custoTotal ?? 0) + custoTotalCalculado;
 
           await fetch(`${API_URL}/produtos/${produtoExistente.id}`, {
             method: "PUT",
@@ -114,14 +124,13 @@ export default function EditProducts() {
         }
       }
 
-      // fluxo normal (POST novo ou PUT edição)
       const method = id ? "PUT" : "POST";
       const url = id ? `${API_URL}/produtos/${id}` : `${API_URL}/produtos`;
 
       await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(formEnviado),
       });
 
       navigate("/listarprodutos");
@@ -130,6 +139,7 @@ export default function EditProducts() {
       alert("Erro ao salvar produto.");
     }
   }
+
 
   const styles = {
     fundo: {
@@ -336,6 +346,18 @@ export default function EditProducts() {
           {errors.cor && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.cor}</div>}
 
           <input
+              type="number"
+              name="quantidade"
+              id='quantidade'
+              value={form.quantidade}
+              onChange={handleChange}
+              placeholder="Quantidade de produtos"
+              style={styles.input}
+              required
+            />
+            {errors.quantidade && <div style={{ color: "red", marginBottom: '10px', paddingLeft:'1px', fontSize: '14px'  }}>{errors.quantidade}</div>}
+
+          <input
             list="marcas-list"
             type="text"
             name="marca"
@@ -359,7 +381,7 @@ export default function EditProducts() {
             id='custoTotal'
             value={form.custoTotal}
             onChange={handleChange}
-            placeholder="Custo total do produto"
+            placeholder="Custo unitário do produto"
             style={styles.input}
             required
           />

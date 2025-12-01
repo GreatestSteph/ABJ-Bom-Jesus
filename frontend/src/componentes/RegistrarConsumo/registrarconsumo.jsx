@@ -92,19 +92,21 @@ export default function RegistrarConsumos() {
 
 
   useEffect(() => {
-  fetch("https://worldtimeapi.org/api/ip")
-    .then(res => res.json())
-    .then(data => {
-      const dataReal = new Date(data.datetime);
-      setForm(prev => ({ ...prev, dataConsumo: dataReal.toISOString().slice(0, 19).replace("T", " ") }));
-    })
-    .catch(err => {
-      console.error("Erro ao obter data real:", err);
-      // fallback: usa a data local caso a API falhe
-      const local = new Date();
-      setForm(prev => ({ ...prev, dataConsumo: local.toISOString().slice(0, 19).replace("T", " ") }));
-    });
+    const agora = new Date();
+
+    // Formatar manualmente YYYY-MM-DD HH:mm:ss
+    const ano = agora.getFullYear();
+    const mes = String(agora.getMonth() + 1).padStart(2, "0");
+    const dia = String(agora.getDate()).padStart(2, "0");
+    const horas = String(agora.getHours()).padStart(2, "0");
+    const minutos = String(agora.getMinutes()).padStart(2, "0");
+    const segundos = String(agora.getSeconds()).padStart(2, "0");
+
+    const formatada = `${ano}-${mes}-${dia} ${horas}:${minutos}:${segundos}`;
+
+    setForm(prev => ({ ...prev, dataConsumo: formatada }));
   }, []);
+
 
   const hospedesFiltrados = hospedes
   .filter(
@@ -134,76 +136,69 @@ export default function RegistrarConsumos() {
   }
 
   async function handleSubmit(e) {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Validação do formulário
-  const validationErrors = validate();
-  if (Object.keys(validationErrors).length > 0) {
-    setErrors(validationErrors);
-    return;
-  }
-
-  const consumo = {
-    hospedeId: hospedeSelecionado.id,
-    produtoId: produtoSelecionado.id,
-    quantidade: Number(form.quantidade),
-    dataConsumo: form.dataConsumo,
-    naoReutilizavel: form.naoReutilizavel,
-  };
-
-  try {
-    if (id) {
-      // --- EDIÇÃO ---
-      await fetch(`http://localhost:3001/consumos/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(consumo),
-      });
-
-      // Atualiza estoque se o produto não for reutilizável
-      if (!form.naoReutilizavel) {
-        const diferenca = Number(form.quantidade) - quantidadeOriginal;
-        const novaQuantidadeProduto = Number(produtoSelecionado.quantidade) - diferenca;
-
-        await fetch(`http://localhost:3001/produtos/${produtoSelecionado.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...produtoSelecionado,
-            quantidade: novaQuantidadeProduto,
-          }),
-        });
-      }
-
-    } else {
-      // --- NOVO CONSUMO ---
-      await fetch("http://localhost:3001/consumos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(consumo),
-      });
-
-      // Atualiza estoque se não for reutilizável
-      if (!form.naoReutilizavel) {
-        const novaQuantidadeProduto = Number(produtoSelecionado.quantidade) - Number(form.quantidade);
-
-        await fetch(`http://localhost:3001/produtos/${produtoSelecionado.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            ...produtoSelecionado,
-            quantidade: novaQuantidadeProduto,
-          }),
-        });
-      }
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
     }
 
-    navigate("/listarconsumos");
-  } catch (err) {
-    console.error("Erro ao salvar consumo:", err);
-    alert("Erro ao salvar consumo. Verifique o console.");
+    const consumo = {
+      hospedeId: hospedeSelecionado.id,
+      produtoId: produtoSelecionado.id,
+      quantidade: Number(form.quantidade),
+      dataConsumo: form.dataConsumo,
+      naoReutilizavel: form.naoReutilizavel,
+    };
+
+    try {
+      if (id) {
+        // --- EDIÇÃO ---
+        await fetch(`http://localhost:3001/consumos/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(consumo),
+      });
+
+        const diferenca = Number(form.quantidade) - quantidadeOriginal;
+        const novaQuantidade = Number(produtoSelecionado.quantidade) - diferenca;
+
+        await fetch(`http://localhost:3001/produtos/${produtoSelecionado.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...produtoSelecionado,
+            quantidade: novaQuantidade,
+          }),
+        });
+
+      } else {
+        // --- NOVO CONSUMO ---
+        await fetch("http://localhost:3001/consumos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(consumo),
+        });
+
+        const novaQuantidade = Number(produtoSelecionado.quantidade) - Number(form.quantidade);
+
+        await fetch(`http://localhost:3001/produtos/${produtoSelecionado.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...produtoSelecionado,
+            quantidade: novaQuantidade,
+          }),
+        });
+      }
+
+      navigate("/listarconsumos");
+    } catch (err) {
+      console.error("Erro ao salvar consumo:", err);
+      alert("Erro ao salvar consumo. Verifique o console.");
+    }
   }
-}
 
 
 const styles = {

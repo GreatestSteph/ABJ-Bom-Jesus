@@ -125,10 +125,25 @@ const styles = {
 };
 
 export default function HistoricoDeConsumos() {
+  const [showReturnModal, setShowReturnModal] = useState(false);
+  const [itemIsReutilizavel, setItemIsReutilizavel] = useState(false);
   const [consumos, setConsumos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [consumoToDelete, setConsumoToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+
+  
+  // retorna true se o consumo representa "reutilizável"
+  const isReutilizavelFlag = (consumo) => {
+    // tenta ler o campo no próprio consumo, ou no objeto produto (caso venha diferente)
+    const raw = consumo?.naoReutilizavel ?? consumo?.produto?.naoReutilizavel;
+
+    // normaliza pra string (cobre: 1, "1", true, "true")
+    if (raw === undefined || raw === null) return false;
+    const s = String(raw).toLowerCase().trim();
+    return s === "1" || s === "true" || s === "sim" || s === "s";
+  };
+
 
   useEffect(() => {
     Promise.all([
@@ -154,24 +169,85 @@ export default function HistoricoDeConsumos() {
     .catch(err => console.error("Erro ao buscar dados:", err));
   }, []);
 
+
+
   const handleDeleteClick = (consumo) => {
     setConsumoToDelete(consumo);
-    setShowModal(true);
+    const reutilizavel = isReutilizavelFlag(consumo);
+
+    if (reutilizavel) {
+      setItemIsReutilizavel(true);
+      setShowReturnModal(true); 
+    } else {
+      setItemIsReutilizavel(false);
+      setShowModal(true);
+    }
   };
 
-  const handleDelete = () => {
+
+
+  const devolverProduto = async () => {
     if (!consumoToDelete) return;
 
-    fetch(`${API_URL}/consumos/${consumoToDelete.id}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setConsumos(consumos.filter(c => c.id !== consumoToDelete.id));
-        setShowModal(false);
-        setConsumoToDelete(null);
-      });
+    const produtoId = consumoToDelete.produtoId ?? consumoToDelete.produto?.id;
+    // pega quantidade atual do produto de forma segura
+    const quantidadeAtual = Number(consumoToDelete.produto?.quantidade ?? 0);
+
+    const novaQuantidade = quantidadeAtual + Number(consumoToDelete.quantidade ?? 1);
+
+    // pega o objeto produto completo se existir
+    const produtoAtual = consumoToDelete.produto ?? {};
+
+    await fetch(`${API_URL}/produtos/${produtoId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        ...produtoAtual,
+        quantidade: novaQuantidade,
+      }),
+    });
   };
+
+
+
+  const handleDelete = async () => {
+    if (!consumoToDelete) return;
+    await fetch(`${API_URL}/consumos/${consumoToDelete.id}`, {
+      method: "DELETE",
+    });
+    setConsumos(consumos.filter(c => c.id !== consumoToDelete.id));
+    setShowModal(false);
+    setConsumoToDelete(null);
+  };
+
+
+
+  const handleReturnChoice = async (devolveu) => {
+    if (!consumoToDelete) return;
+
+    try {
+      if (devolveu) {
+        await devolverProduto();
+      }
+
+      // deleta o consumo
+      await fetch(`${API_URL}/consumos/${consumoToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      setConsumos(prev => prev.filter(c => c.id !== consumoToDelete.id));
+    } catch (err) {
+      console.error("Erro ao deletar/devolver:", err);
+      alert("Erro ao processar exclusão. Veja o console.");
+    } finally {
+      setShowReturnModal(false);
+      setShowModal(false);
+      setConsumoToDelete(null);
+      setItemIsReutilizavel(false);
+    }
+  };
+
+
 
   const filteredConsumos = consumos.filter(c =>
     c.hospede?.nome.toLowerCase().includes(searchTerm.toLowerCase())
@@ -268,7 +344,23 @@ export default function HistoricoDeConsumos() {
           </table>
         </div>
 
-        {/* ==== MODAL EXCLUSÃO ==== */}
+        {/* ==== DEVOLUÇÃO ==== */}
+        {showReturnModal && (
+          <div style={styles.modal}>
+            <div style={styles.modalContent}>
+              <h4>Produto Reutilizável</h4>
+              <p>O hóspede devolveu o produto?</p>
+
+              <div style={styles.modalButtons}>
+                <button className="btn btn-secondary" onClick={() => setShowReturnModal(false)}>Cancelar</button>
+                <button className="btn btn-danger" onClick={() => handleReturnChoice(false)}>Não, excluir</button>
+                <button className="btn btn-success" onClick={() => handleReturnChoice(true)}>Sim, excluir</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==== EXCLUSÃO ==== */}
         {showModal && (
           <div style={styles.modal}>
             <div style={styles.modalContent}>
