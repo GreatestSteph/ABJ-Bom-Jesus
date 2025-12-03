@@ -28,7 +28,7 @@ export default function LoginSection2() {
         cargo: "TI",
         logado: true
       });
-      navigate("/listadeusuarios");
+      navigate("/historicodehospedagens");
       return;
     }
 
@@ -39,10 +39,10 @@ export default function LoginSection2() {
     if (userFound) {
       setUsuarioGlobal({
         nome: userFound.usuario,
-        cargo: userFound.funcao, 
+        cargo: userFound.funcao,
         logado: true
       });
-      navigate("/listadeusuarios");
+      navigate("/historicodehospedagens");
       return
     } else {
       setErro("Usuário ou senha inválidos.");
