@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FiEye, FiLogOut } from "react-icons/fi";
 import fundo from "../../WebsiteDesign/HeaderandFooterImages/Fundo.png";
 import axios from "axios";
+import API_URL from "../../../config/api";
 
 export default function Hospedados() {
   const styles = {
@@ -218,7 +219,7 @@ export default function Hospedados() {
         params.append('hospedou', filters.hospedou);
       }
 
-      const url = `http://localhost:3001/entradas${params.toString() ? '?' + params.toString() : ''}`;
+      const url = `${API_URL}/entradas${params.toString() ? '?' + params.toString() : ''}`;
       const res = await axios.get(url);
 
       // guardamos lista
@@ -299,7 +300,7 @@ export default function Hospedados() {
   // Confirmar saída (marca hospedou = 0 e registra data_saida)
   const confirmarSaida = async () => {
     try {
-      await axios.put(`http://localhost:3001/entradas/${selectedId}`, {
+      await axios.put(`${API_URL}/entradas/${selectedId}`, {
         hospedou: 0,
         dataSaida: new Date().toISOString(),
       });
@@ -358,8 +359,8 @@ export default function Hospedados() {
     try {
       setLoadingModal(true);
       const [hRes, bRes] = await Promise.all([
-        fetch("http://localhost:3001/guests"),
-        fetch("http://localhost:3001/bloqueios"),
+        fetch(`${API_URL}/guests`),
+        fetch(`${API_URL}/bloqueios`),
       ]);
       const listaHospedes = await hRes.json();
       const listaBloqueios = await bRes.json();
@@ -376,8 +377,8 @@ export default function Hospedados() {
   // efeito: carrega hóspedes ao abrir modal
   useEffect(() => {
     if (showModalEntrada) {
-      carregarHospedesPermitidos(); 
-      fetch("http://localhost:3001/bloqueios")
+      carregarHospedesPermitidos();
+      fetch(`${API_URL}/bloqueios`)
         .then(res => res.json())
         .then(data => setBloqueados(data))
         .catch(err => console.error("Erro ao carregar bloqueios:", err));
@@ -434,7 +435,7 @@ export default function Hospedados() {
       hospedou: form.hospedou === "true",
     };
     try {
-      const res = await fetch("http://localhost:3001/entradas", {
+      const res = await fetch(`${API_URL}/entradas`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -464,7 +465,7 @@ export default function Hospedados() {
   }
 
   useEffect(() => {
-    fetch("http://localhost:3001/bloqueios")
+    fetch(`${API_URL}/bloqueios`)
       .then(res => res.json())
       .then(data => setBloqueados(data))
       .catch(err => console.error("Erro ao buscar bloqueios:", err));
