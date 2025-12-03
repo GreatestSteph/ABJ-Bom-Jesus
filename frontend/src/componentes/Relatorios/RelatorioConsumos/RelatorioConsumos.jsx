@@ -101,9 +101,8 @@ const RelatorioConsumos = () => {
   const exportarParaPDF = () => {
     const doc = new jsPDF({ unit: 'pt', format: 'a4' });
 
-    // Cabeçalho elegante com cor de fundo
     doc.setFillColor(21, 75, 122);
-    doc.rect(0, 0, 595, 70, 'F'); // barra superior
+    doc.rect(0, 0, 595, 70, 'F'); 
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(18);
     doc.setFont('helvetica', 'bold');
@@ -113,9 +112,9 @@ const RelatorioConsumos = () => {
     doc.setFontSize(10);
     doc.setTextColor(80, 80, 80);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 40, 95); // aumentei de 55 para 65
+    doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 40, 95); 
 
-    let yPos = 120; // também aumenta o startY da tabela e filtros
+    let yPos = 120; 
 
 
     // Filtros
@@ -123,7 +122,7 @@ const RelatorioConsumos = () => {
       doc.setFontSize(10);
       doc.setTextColor(50, 50, 50);
       doc.setFont('helvetica', 'normal');
-      if (filtros.guest_name) { doc.text(`-  Hóspede: ${filtros.guest_name}`, 50, yPos); yPos+=12; }
+      if (filtros.guest_name) { doc.text(`-  Busca por nome: ${filtros.guest_name}`, 50, yPos); yPos+=12; }
       if (filtros.start_date) { doc.text(`-  Data Início: ${filtros.start_date}`, 50, yPos); yPos+=12; }
       if (filtros.end_date) { doc.text(`-  Data Fim: ${filtros.end_date}`, 50, yPos); yPos+=12; }
       yPos += 18;
