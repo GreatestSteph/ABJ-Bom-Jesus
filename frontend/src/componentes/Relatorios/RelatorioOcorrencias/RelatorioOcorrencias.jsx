@@ -221,13 +221,13 @@ const RelatorioOcorrencias = () => {
         cellPadding: 3
       },
       columnStyles: {
-        0: { cellWidth: 8 },
+        0: { cellWidth: 9 },
         1: { cellWidth: 25 },
         2: { cellWidth: 30 },
         3: { cellWidth: 20 },
         4: { cellWidth: 22 },
         5: { cellWidth: 'auto', halign: 'left' },
-        6: { cellWidth: 21 }
+        6: { cellWidth: 23 }
       },
       styles: {
         overflow: 'linebreak',

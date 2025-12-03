@@ -2,6 +2,33 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
+    // Função para gerar CPF válido
+    function generateValidCPF(index) {
+      // Base para os primeiros 9 dígitos (usando index para garantir unicidade)
+      const base = String(100000000 + index * 11111).padStart(9, '0');
+
+      // Calcular primeiro dígito verificador
+      let sum = 0;
+      for (let i = 0; i < 9; i++) {
+        sum += parseInt(base.charAt(i)) * (10 - i);
+      }
+      let firstDigit = 11 - (sum % 11);
+      if (firstDigit >= 10) firstDigit = 0;
+
+      // Calcular segundo dígito verificador
+      sum = 0;
+      for (let i = 0; i < 9; i++) {
+        sum += parseInt(base.charAt(i)) * (11 - i);
+      }
+      sum += firstDigit * 2;
+      let secondDigit = 11 - (sum % 11);
+      if (secondDigit >= 10) secondDigit = 0;
+
+      // Formatar CPF
+      const cpf = base + firstDigit + secondDigit;
+      return `${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9, 11)}`;
+    }
+
     const nomes = [
       'João da Silva', 'Carlos Pereira', 'Pedro Costa', 'Roberto Lima', 'Ricardo Mendes',
       'Paulo Martins', 'Lucas Barbosa', 'Marcos Dias', 'Felipe Araújo', 'Rodrigo Nascimento',
@@ -23,7 +50,7 @@ module.exports = {
         nome: nomes[i],
         data_nascimento: new Date(`${anoNasc}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}`),
         rg: `${10000000 + i}${Math.floor(Math.random() * 10)}`,
-        cpf: `${String(100 + i).padStart(3, '0')}.${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}.${String(Math.floor(Math.random() * 1000)).padStart(3, '0')}-${String(Math.floor(Math.random() * 100)).padStart(2, '0')}`,
+        cpf: generateValidCPF(i),
         data_contato_familia: new Date(`2025-${String(mes).padStart(2, '0')}-${String(dia).padStart(2, '0')}`),
         escolaridade: escolaridades[Math.floor(Math.random() * escolaridades.length)],
         empregado: Math.random() > 0.6,

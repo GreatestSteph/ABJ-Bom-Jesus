@@ -40,11 +40,16 @@ const styles = {
   td: {
     padding: "10px",
     borderBottom: "1px solid #ddd",
+    maxWidth: "300px",
+    wordWrap: "break-word",
+    whiteSpace: "normal",
+    verticalAlign: "middle",
   },
   actions: {
     display: "flex",
     gap: "10px",
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   modal: {
     position: 'fixed',
@@ -593,28 +598,30 @@ export default function ListaOcorrencias() {
                       {ocorrencia.occurrenceType?.nivel || 'N/A'}
                     </span>
                   </td>
-                  <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link
-                      to={`/ocorrencias/detalhes/${ocorrencia.id}`}
-                      title="Visualizar detalhes"
-                      style={{ ...styles.iconButton, ...styles.iconButtonView }}
-                    >
-                      <FiEye />
-                    </Link>
-                    <Link
-                      to={`/ocorrencias/editar/${ocorrencia.id}`}
-                      title="Editar"
-                      style={{ ...styles.iconButton, ...styles.iconButtonEdit }}
-                    >
-                      <FiEdit2 />
-                    </Link>
-                    <button
-                      title="Excluir"
-                      style={{ ...styles.iconButton, ...styles.iconButtonDelete }}
-                      onClick={() => handleDeleteClick(ocorrencia)}
-                    >
-                      <FiTrash2 />
-                    </button>
+                  <td style={styles.td}>
+                    <div style={styles.actions}>
+                      <Link
+                        to={`/ocorrencias/detalhes/${ocorrencia.id}`}
+                        title="Visualizar detalhes"
+                        style={{ ...styles.iconButton, ...styles.iconButtonView }}
+                      >
+                        <FiEye />
+                      </Link>
+                      <Link
+                        to={`/ocorrencias/editar/${ocorrencia.id}`}
+                        title="Editar"
+                        style={{ ...styles.iconButton, ...styles.iconButtonEdit }}
+                      >
+                        <FiEdit2 />
+                      </Link>
+                      <button
+                        title="Excluir"
+                        style={{ ...styles.iconButton, ...styles.iconButtonDelete }}
+                        onClick={() => handleDeleteClick(ocorrencia)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

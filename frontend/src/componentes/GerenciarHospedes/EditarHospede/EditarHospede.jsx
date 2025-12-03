@@ -16,6 +16,45 @@ function maskCPF(value) {
   return value;
 }
 
+function validateCPF(cpf) {
+  cpf = cpf.replace(/\D/g, "");
+
+  if (cpf.length !== 11) {
+    return false;
+  }
+
+  // Verifica se todos os dígitos são iguais
+  if (/^(\d)\1{10}$/.test(cpf)) {
+    return false;
+  }
+
+  // Validação do primeiro dígito verificador
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    sum += parseInt(cpf.charAt(i)) * (10 - i);
+  }
+  let firstDigit = 11 - (sum % 11);
+  if (firstDigit >= 10) firstDigit = 0;
+
+  if (parseInt(cpf.charAt(9)) !== firstDigit) {
+    return false;
+  }
+
+  // Validação do segundo dígito verificador
+  sum = 0;
+  for (let i = 0; i < 10; i++) {
+    sum += parseInt(cpf.charAt(i)) * (11 - i);
+  }
+  let secondDigit = 11 - (sum % 11);
+  if (secondDigit >= 10) secondDigit = 0;
+
+  if (parseInt(cpf.charAt(10)) !== secondDigit) {
+    return false;
+  }
+
+  return true;
+}
+
 function InputGroup({ children, error }) {
   return (
     <div style={{ marginBottom: "6px", minHeight: error ? 70 : 52 }}>
@@ -120,8 +159,12 @@ export default function EditGuest() {
     }
 
     const cpfNumeros = form.cpf.replace(/\D/g, "");
-    if (form.cpf && !/^\d{11}$/.test(cpfNumeros)) {
-      newErrors.cpf = "O CPF deve conter exatamente 11 números.";
+    if (form.cpf) {
+      if (!/^\d{11}$/.test(cpfNumeros)) {
+        newErrors.cpf = "O CPF deve conter exatamente 11 números.";
+      } else if (!validateCPF(cpfNumeros)) {
+        newErrors.cpf = "CPF inválido. Por favor, verifique os números digitados.";
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {

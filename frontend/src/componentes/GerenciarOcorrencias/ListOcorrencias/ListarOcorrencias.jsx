@@ -40,11 +40,16 @@ const styles = {
   td: {
     padding: "10px",
     borderBottom: "1px solid #ddd",
+    maxWidth: "300px",
+    wordWrap: "break-word",
+    whiteSpace: "normal",
+    verticalAlign: "middle",
   },
   actions: {
     display: "flex",
     gap: "10px",
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   modal: {
     position: 'fixed',
@@ -292,6 +297,7 @@ export default function OcorrenciasList() {
   const [ocorrenciaToDelete, setOcorrenciaToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [deleteError, setDeleteError] = useState("");
 
   const OCORRENCIAS_PER_PAGE = 10;
 
@@ -304,22 +310,32 @@ export default function OcorrenciasList() {
 
   const handleDeleteClick = (ocorrencia) => {
     setOcorrenciaToDelete(ocorrencia);
+    setDeleteError("");
     setShowModal(true);
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!ocorrenciaToDelete) return;
 
-    fetch(`${API_URL}/tipos-ocorrencia/${ocorrenciaToDelete.id}`, {
-      method: "DELETE",
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setOcorrencias(ocorrencias.filter((ocorrencia) => ocorrencia.id !== ocorrenciaToDelete.id));
-        setShowModal(false);
-        setOcorrenciaToDelete(null);
-      })
-      .catch((err) => console.error("Erro ao excluir tipo de ocorrência:", err));
+    try {
+      const response = await fetch(`${API_URL}/tipos-ocorrencia/${ocorrenciaToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setDeleteError(data.message || "Erro ao excluir tipo de ocorrência.");
+        return;
+      }
+
+      setOcorrencias(ocorrencias.filter((ocorrencia) => ocorrencia.id !== ocorrenciaToDelete.id));
+      setShowModal(false);
+      setOcorrenciaToDelete(null);
+      setDeleteError("");
+    } catch (error) {
+      setDeleteError("Erro ao excluir tipo de ocorrência. Tente novamente.");
+    }
   };
 
   // Busca por nome
@@ -402,30 +418,30 @@ export default function OcorrenciasList() {
                   <td style={styles.td}>#{ocorrencia.id}</td>
                   <td style={styles.td}>{ocorrencia.nome}</td>
                   <td style={styles.td}>
-                    {ocorrencia.descricao?.length > 50 
-                      ? `${ocorrencia.descricao.substring(0, 50)}...` 
-                      : ocorrencia.descricao || 'Sem descrição'}
+                    {ocorrencia.descricao || 'Sem descrição'}
                   </td>
                   <td style={styles.td}>
                     <span style={getNivelStyle(ocorrencia.nivel)}>
                       {ocorrencia.nivel}
                     </span>
                   </td>
-                  <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link
-                      to={`/tipo-ocorrencias/${ocorrencia.id}`}
-                      title="Editar"
-                      style={{ ...styles.iconButton, ...styles.iconButtonEdit }}
-                    >
-                      <FiEdit2 />
-                    </Link>
-                    <button
-                      title="Excluir"
-                      style={{ ...styles.iconButton, ...styles.iconButtonDelete }}
-                      onClick={() => handleDeleteClick(ocorrencia)}
-                    >
-                      <FiTrash2 />
-                    </button>
+                  <td style={styles.td}>
+                    <div style={styles.actions}>
+                      <Link
+                        to={`/tipo-ocorrencias/${ocorrencia.id}`}
+                        title="Editar"
+                        style={{ ...styles.iconButton, ...styles.iconButtonEdit }}
+                      >
+                        <FiEdit2 />
+                      </Link>
+                      <button
+                        title="Excluir"
+                        style={{ ...styles.iconButton, ...styles.iconButtonDelete }}
+                        onClick={() => handleDeleteClick(ocorrencia)}
+                      >
+                        <FiTrash2 />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -451,6 +467,21 @@ export default function OcorrenciasList() {
             <div style={styles.modalContent}>
               <h4>Confirmar Exclusão</h4>
               <p>Tem certeza que deseja excluir o tipo de ocorrência "{ocorrenciaToDelete?.nome}"?</p>
+              {deleteError && (
+                <div style={{
+                  backgroundColor: '#f8d7da',
+                  border: '1px solid #f5c6cb',
+                  color: '#721c24',
+                  padding: '12px',
+                  borderRadius: '6px',
+                  marginTop: '15px',
+                  marginBottom: '15px',
+                  fontSize: '14px',
+                  textAlign: 'left'
+                }}>
+                  <strong>Erro:</strong> {deleteError}
+                </div>
+              )}
               <div style={styles.modalButtons}>
                 <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
                 <button className="btn btn-danger" onClick={handleDelete}>Confirmar</button>

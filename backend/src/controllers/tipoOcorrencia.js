@@ -1,4 +1,5 @@
 import TipoOcorrencia from '../models/tipoOcorrencia.js';
+import Occurrence from '../models/occurrence.js';
 
 class TipoOcorrenciaController {
   async create(req, res) {
@@ -68,6 +69,18 @@ class TipoOcorrenciaController {
 
       if (!tipoOcorrencia) {
         return res.status(404).json({ error: 'Not found.' });
+      }
+
+      // Verificar se o tipo de ocorrência está sendo usado
+      const occurrencesCount = await Occurrence.count({
+        where: { occurrence_type_id: id }
+      });
+
+      if (occurrencesCount > 0) {
+        return res.status(400).json({
+          error: 'Não é possível excluir este tipo de ocorrência',
+          message: `Este tipo de ocorrência está sendo usado em ${occurrencesCount} ocorrência(s). Não é permitido excluir tipos de ocorrência que estão em uso.`
+        });
       }
 
       await tipoOcorrencia.destroy();

@@ -41,11 +41,16 @@ const styles = {
   td: {
     padding: "10px",
     borderBottom: "1px solid #ddd",
+    maxWidth: "300px",
+    wordWrap: "break-word",
+    whiteSpace: "normal",
+    verticalAlign: "middle",
   },
   actions: {
     display: "flex",
     gap: "10px",
     alignItems: "center",
+    justifyContent: "flex-start",
   },
   filtersContainer: {
     display: 'grid',
@@ -627,7 +632,7 @@ export default function ListaBloqueios() {
               {paginatedBloqueios.map((bloqueio) => (
                 <tr key={bloqueio.id}>
                   <td style={styles.td}>{bloqueio.guest?.nome || 'N/A'}</td>
-                  <td style={styles.td}>{bloqueio.motivo.substring(0, 50)}...</td>
+                  <td style={styles.td}>{bloqueio.motivo || 'N/A'}</td>
                   <td style={styles.td}>{formatDate(bloqueio.data_inicio)}</td>
                   <td style={styles.td}>{formatDate(bloqueio.data_termino)}</td>
                   <td style={styles.td}>
@@ -635,23 +640,25 @@ export default function ListaBloqueios() {
                       {(bloqueio.status_calculado || bloqueio.status).toUpperCase()}
                     </span>
                   </td>
-                  <td style={{ ...styles.td, ...styles.actions }}>
-                    <Link
-                      to={`/bloqueios/detalhes/${bloqueio.id}`}
-                      title="Visualizar detalhes"
-                      style={{ ...styles.iconButton, ...styles.iconButtonView }}
-                    >
-                      <FiEye />
-                    </Link>
-                    {(bloqueio.status_calculado || bloqueio.status) === 'ativo' && (
-                      <button
-                        onClick={() => handleOpenCancelModal(bloqueio)}
-                        title="Cancelar bloqueio"
-                        style={{ ...styles.iconButton, ...styles.iconButtonCancel }}
+                  <td style={styles.td}>
+                    <div style={styles.actions}>
+                      <Link
+                        to={`/bloqueios/detalhes/${bloqueio.id}`}
+                        title="Visualizar detalhes"
+                        style={{ ...styles.iconButton, ...styles.iconButtonView }}
                       >
-                        <FiX />
-                      </button>
-                    )}
+                        <FiEye />
+                      </Link>
+                      {(bloqueio.status_calculado || bloqueio.status) === 'ativo' && (
+                        <button
+                          onClick={() => handleOpenCancelModal(bloqueio)}
+                          title="Cancelar bloqueio"
+                          style={{ ...styles.iconButton, ...styles.iconButtonCancel }}
+                        >
+                          <FiX />
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
