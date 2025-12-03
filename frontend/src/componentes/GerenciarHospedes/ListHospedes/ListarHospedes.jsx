@@ -363,22 +363,11 @@ export default function GuestList() {
               <Link to="/hospedes" style={styles.functionSelected}>
                 Hóspedes
               </Link>
-              
-              <Link to="/historicodehospedagens" style={styles.functionNotSelected}>
-                Lista de Hospedagens
-              </Link>
 
               <Link to="/bloqueios" style={styles.functionNotSelected}>
                 Bloqueios
               </Link>
-              
-              <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
-                Adicionar Quartos
-              </Link>
-              
-              <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
-                Listar Quartos
-              </Link>
+
             </div>
             <hr style={styles.hr}/>
 

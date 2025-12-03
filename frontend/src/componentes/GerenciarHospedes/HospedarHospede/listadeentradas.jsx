@@ -474,25 +474,11 @@ export default function Hospedados() {
   return (
     <main style={styles.fundo}>
       <div style={styles.aroundListBox}>
-        {/* Menu */}
-        <div className="d-flex flex-start">
-          <Link to="/hospedes" style={styles.functionNotSelected}>
-            Hóspedes
-          </Link>
-          <Link to="/historicodehospedagens" style={styles.functionSelected}>
-            Lista de Hospedagens
-          </Link>
-          <Link to="/bloqueios" style={styles.functionNotSelected}>
-            Bloqueios
-          </Link>
-          
-          <Link to="/gerenciarquartos/novo" style={styles.functionNotSelected}>
-            Adicionar Quartos
-          </Link>
-          
-          <Link to="/gerenciarquartos" style={styles.functionNotSelected}>
-            Listar Quartos
-          </Link>
+        {/* Título */}
+        <div style={{ padding: "25px 30px" }}>
+          <h2 style={{ color: "#154B7A", fontWeight: "bold", margin: 0 }}>
+            Registro de Hospedagens
+          </h2>
         </div>
         <hr style={styles.hr} />
 

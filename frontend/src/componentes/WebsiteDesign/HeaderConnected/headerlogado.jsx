@@ -83,38 +83,42 @@ export default function Headerlogado() {
             <div>
                 <img src={logoABL} alt="Logo ABL" style={estiloHeader.logo} />
 
-                {(usuarioGlobal.cargo === 'Administrador' || usuarioGlobal.cargo === 'TI') && (
-                    <Link to="/listadeusuarios" style={navStyle(["/listadeusuarios", "/registrousuarios"])}>
-                        Perfis
-                    </Link>
-                )}
+                <Link to="/historicodehospedagens" style={navStyle(["/historicodehospedagens"])}>
+                    Hospedagens
+                </Link>
 
                 <Link to="/hospedes" style={navStyle(["/hospedes", "/hospedes/cadastrar"])}>
                     Gerenciar Hóspedes
-                </Link>
-
-                <Link to="/listarprodutos" style={navStyle(["/listarprodutos", "/registroprodutos"])}>
-                    Produtos e Consumos
                 </Link>
 
                 <Link to="/ocorrencias" style={navStyle(["/ocorrencias", "/ocorrencias/cadastrar"])}>
                     Ocorrências
                 </Link>
 
+                <Link to="/listarprodutos" style={navStyle(["/listarprodutos", "/registroprodutos"])}>
+                    Produtos e Consumos
+                </Link>
+
                 <Link to="/relatorios" style={navStyle(["/relatorios"])}>
                     Relatórios
                 </Link>
+
+                {(usuarioGlobal.cargo === 'Administrador' || usuarioGlobal.cargo === 'TI') && (
+                    <Link to="/listadeusuarios" style={navStyle(["/listadeusuarios", "/registrousuarios"])}>
+                        Perfis
+                    </Link>
+                )}
             </div>
 
             <div className="position-relative" ref={ajudaRef}>
-                <div
-                    className="d-flex align-items-center"
-                    onClick={() => setMostrarMenuAjuda(!mostrarMenuAjuda)}
-                    style={{ cursor: 'pointer' }}
-                >
-                    <img src={iconeAjuda} alt="Ajuda" style={estiloHeader.icone} />
-                    <span style={estiloHeader.ajudaeicone}>Ajuda</span>
-                </div>
+                    <div
+                        className="d-flex align-items-center"
+                        onClick={() => setMostrarMenuAjuda(!mostrarMenuAjuda)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <img src={iconeAjuda} alt="Ajuda" style={estiloHeader.icone} />
+                        <span style={estiloHeader.ajudaeicone}>Ajuda</span>
+                    </div>
 
                 {mostrarMenuAjuda && (
                     <div style={{
