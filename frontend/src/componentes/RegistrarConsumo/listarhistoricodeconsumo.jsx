@@ -10,13 +10,12 @@ const styles = {
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     width: '100%',
-    height: '100%',
+    minHeight: '100vh',
     paddingTop: '180px',
     paddingBottom: '180px',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
-    maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)',
+    alignItems: 'flex-start',
   },     
   aroundListBox: {
     backgroundColor: "white",
@@ -122,7 +121,93 @@ const styles = {
     display: 'flex',
     gap: '8px'
   },
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '24px 0 12px 0',
+    gap: '8px'
+  },
+  paginationButton: {
+    padding: '6px 14px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    background: 'white',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  paginationButtonActive: {
+    padding: '6px 14px',
+    border: '1px solid rgb(60, 162, 245)',
+    borderRadius: '4px',
+    background: 'rgb(60, 162, 245)',
+    color: 'white',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  paginationButtonDisabled: {
+    padding: '6px 14px',
+    border: '1px solid #eee',
+    borderRadius: '4px',
+    background: '#f5f5f5',
+    color: '#aaa',
+    cursor: 'not-allowed',
+    fontWeight: 'bold'
+  },
 };
+
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, '...', totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      }
+    }
+    return pages;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div style={styles.paginationContainer}>
+      <button
+        style={currentPage === 1 ? styles.paginationButtonDisabled : styles.paginationButton}
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        &lt;
+      </button>
+      {getPageNumbers().map((page, idx) =>
+        page === "..." ? (
+          <span key={idx} style={{ padding: '0 6px', color: '#888' }}>...</span>
+        ) : (
+          <button
+            key={page}
+            style={currentPage === page ? styles.paginationButtonActive : styles.paginationButton}
+            onClick={() => onPageChange(page)}
+            disabled={currentPage === page}
+          >
+            {page}
+          </button>
+        )
+      )}
+      <button
+        style={currentPage === totalPages ? styles.paginationButtonDisabled : styles.paginationButton}
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &gt;
+      </button>
+    </div>
+  );
+}
 
 export default function HistoricoDeConsumos() {
   const [showReturnModal, setShowReturnModal] = useState(false);
@@ -131,6 +216,9 @@ export default function HistoricoDeConsumos() {
   const [showModal, setShowModal] = useState(false);
   const [consumoToDelete, setConsumoToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const CONSUMOS_PER_PAGE = 10;
 
   
   // retorna true se o consumo representa "reutilizável"
@@ -253,6 +341,16 @@ export default function HistoricoDeConsumos() {
     c.hospede?.nome.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const totalPages = Math.ceil(filteredConsumos.length / CONSUMOS_PER_PAGE) || 1;
+  const paginatedConsumos = filteredConsumos.slice(
+    (currentPage - 1) * CONSUMOS_PER_PAGE,
+    currentPage * CONSUMOS_PER_PAGE
+  );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
   return (
     <main style={styles.fundo}>
       <div style={styles.aroundListBox}>
@@ -305,7 +403,7 @@ export default function HistoricoDeConsumos() {
             </thead>
 
             <tbody>
-              {filteredConsumos.map((consumo) => (
+              {paginatedConsumos.map((consumo) => (
                 <tr key={consumo.id}>
 
                   <td style={styles.td}>{consumo.hospede?.nome}</td>
@@ -343,6 +441,12 @@ export default function HistoricoDeConsumos() {
             </tbody>
           </table>
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
 
         {/* ==== DEVOLUÇÃO ==== */}
         {showReturnModal && (

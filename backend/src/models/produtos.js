@@ -4,13 +4,19 @@ class Produtos extends Model {
   static init(sequelize) {
     super.init(
       {
-        nomeDoProduto: Sequelize.STRING,
+        nomeDoProduto: {
+          type: Sequelize.STRING,
+          field: 'nome_do_produto',
+        },
         tamanho: Sequelize.STRING,
         cor: Sequelize.STRING,
         quantidade: Sequelize.INTEGER,
         marca: Sequelize.STRING,
         descricao: Sequelize.STRING,
-        custoTotal: Sequelize.INTEGER,
+        custoTotal: {
+          type: Sequelize.INTEGER,
+          field: 'custo_total',
+        },
       },
       { sequelize },
     );

@@ -35,7 +35,18 @@ export default function EditProducts() {
           if (!res.ok) throw new Error("Erro ao buscar o produto");
           return res.json();
         })
-        .then(data => setForm(data))
+        .then(data => {
+          // Garante que valores null sejam convertidos para strings vazias
+          setForm({
+            nomeDoProduto: data.nomeDoProduto || '',
+            tamanho: data.tamanho || '',
+            cor: data.cor || '',
+            quantidade: data.quantidade || '',
+            marca: data.marca || '',
+            descricao: data.descricao || '',
+            custoTotal: data.custoTotal || '',
+          });
+        })
         .catch(err => console.error("Erro ao carregar o produto:", err));
     }
   }, [id]);
@@ -46,12 +57,12 @@ export default function EditProducts() {
 
   function validate() {
     const newErrors = {};
-    if (!form.nomeDoProduto.trim()) {
+    if (!form.nomeDoProduto?.trim()) {
       newErrors.nomeDoProduto = "Nome do produto é obrigatório.";
     } else if (form.nomeDoProduto.length > 100) {
       newErrors.nomeDoProduto = "Nome do produto deve ter no máximo 100 caracteres.";
     }
-    if (!form.cor.trim()) {
+    if (!form.cor?.trim()) {
       newErrors.cor = "Selecione a cor do produto.";
     }
     if (!form.quantidade) {
@@ -59,7 +70,7 @@ export default function EditProducts() {
     } else if (isNaN(form.quantidade) || Number(form.quantidade) <= 0) {
       newErrors.quantidade = "Quantidade deve ser um número maior que zero.";
     }
-    if (!form.marca.trim()) {
+    if (!form.marca?.trim()) {
       newErrors.marca = "Marca é obrigatória.";
     }
     if (form.custoTotal === '' || form.custoTotal === null || form.custoTotal === undefined) {
@@ -67,9 +78,9 @@ export default function EditProducts() {
     } else if (isNaN(form.custoTotal) || Number(form.custoTotal) < 0) {
       newErrors.custoTotal = "Custo total deve ser um número igual ou maior que zero.";
     }
-    if (!form.descricao.trim()) {
+    if (!form.descricao?.trim()) {
       newErrors.descricao = "Descrição é obrigatória.";
-    } else if (form.descricao.length > 300) {
+    } else if (form.descricao?.length > 300) {
       newErrors.descricao = "Descrição deve ter no máximo 300 caracteres.";
     }
     return newErrors;

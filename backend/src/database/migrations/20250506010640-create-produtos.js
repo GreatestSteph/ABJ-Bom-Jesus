@@ -9,7 +9,7 @@ module.exports = {
         autoIncrement: true,
         primaryKey: true,
       },
-      nomeDoProduto: {
+      nome_do_produto: {
         type: Sequelize.STRING,
         allowNull: false,
       },
@@ -33,7 +33,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      custoTotal: {
+      custo_total: {
         type: Sequelize.INTEGER,
         allowNull: false,
       },

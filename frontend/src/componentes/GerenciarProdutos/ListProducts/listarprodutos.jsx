@@ -10,13 +10,12 @@ const styles = {
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     width: '100%',
-    height: '100%',
+    minHeight: '100vh',
     paddingTop: '180px',
     paddingBottom: '180px',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center',
-    maskImage: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.98) 695px, transparent 115%)',
+    alignItems: 'flex-start',
   },     
   aroundListBox: {
     backgroundColor: "white",
@@ -122,22 +121,114 @@ const styles = {
     display: 'flex',
     gap: '8px'
   },
+  paginationContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: '24px 0 12px 0',
+    gap: '8px'
+  },
+  paginationButton: {
+    padding: '6px 14px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    background: 'white',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  paginationButtonActive: {
+    padding: '6px 14px',
+    border: '1px solid rgb(60, 162, 245)',
+    borderRadius: '4px',
+    background: 'rgb(60, 162, 245)',
+    color: 'white',
+    cursor: 'pointer',
+    fontWeight: 'bold'
+  },
+  paginationButtonDisabled: {
+    padding: '6px 14px',
+    border: '1px solid #eee',
+    borderRadius: '4px',
+    background: '#f5f5f5',
+    color: '#aaa',
+    cursor: 'not-allowed',
+    fontWeight: 'bold'
+  },
 };
+
+function Pagination({ currentPage, totalPages, onPageChange }) {
+  const getPageNumbers = () => {
+    const pages = [];
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, '...', totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+      }
+    }
+    return pages;
+  };
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div style={styles.paginationContainer}>
+      <button
+        style={currentPage === 1 ? styles.paginationButtonDisabled : styles.paginationButton}
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        &lt;
+      </button>
+      {getPageNumbers().map((page, idx) =>
+        page === "..." ? (
+          <span key={idx} style={{ padding: '0 6px', color: '#888' }}>...</span>
+        ) : (
+          <button
+            key={page}
+            style={currentPage === page ? styles.paginationButtonActive : styles.paginationButton}
+            onClick={() => onPageChange(page)}
+            disabled={currentPage === page}
+          >
+            {page}
+          </button>
+        )
+      )}
+      <button
+        style={currentPage === totalPages ? styles.paginationButtonDisabled : styles.paginationButton}
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        &gt;
+      </button>
+    </div>
+  );
+}
 
 export default function ProdutosLista() {
   const [produtos, setProdutos] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [produtoToDelete, setProdutoToDelete] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const PRODUTOS_PER_PAGE = 10;
 
   useEffect(() => {
     fetch(`${API_URL}/produtos`)
       .then((res) => res.json())
       .then((data) => {
-        const sortedData = data.sort((a, b) => a.nomeDoProduto.localeCompare(b.nomeDoProduto));
+        const sortedData = data.sort((a, b) => {
+          const nomeA = a.nomeDoProduto || `${a.marca} ${a.cor}`;
+          const nomeB = b.nomeDoProduto || `${b.marca} ${b.cor}`;
+          return nomeA.localeCompare(nomeB);
+        });
         setProdutos(sortedData);
       })
-
       .catch((err) => console.error("Erro ao buscar produtos:", err));
   }, []);
 
@@ -161,9 +252,24 @@ export default function ProdutosLista() {
       });
   };
 
-  const filteredProdutos = produtos.filter(produto =>
-    produto.nomeDoProduto?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredProdutos = produtos.filter(produto => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      produto.nomeDoProduto?.toLowerCase().includes(searchLower) ||
+      produto.descricao?.toLowerCase().includes(searchLower) ||
+      produto.marca?.toLowerCase().includes(searchLower)
+    );
+  });
+
+  const totalPages = Math.ceil(filteredProdutos.length / PRODUTOS_PER_PAGE) || 1;
+  const paginatedProdutos = filteredProdutos.slice(
+    (currentPage - 1) * PRODUTOS_PER_PAGE,
+    currentPage * PRODUTOS_PER_PAGE
   );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   return (
     <main style={styles.fundo}>
@@ -222,14 +328,14 @@ export default function ProdutosLista() {
               </tr>
             </thead>
             <tbody>
-              {filteredProdutos.map((produto) => (
+              {paginatedProdutos.map((produto) => (
                 <tr key={produto.id}>
-                  <td style={styles.td}>{produto.nomeDoProduto}</td>
+                  <td style={styles.td}>{produto.nomeDoProduto || `${produto.marca} ${produto.cor}` || '-'}</td>
                   <td style={styles.td}>{produto.tamanho}</td>
                   <td style={styles.td}>{produto.cor}</td>
                   <td style={styles.td}>{produto.quantidade}</td>
                   <td style={styles.td}>{produto.marca}</td>
-                  <td style={styles.td}>{produto.custoTotal}</td>
+                  <td style={styles.td}>{produto.custoTotal || '-'}</td>
                   <td style={styles.td}>{produto.descricao}</td>
                   <td style={{ ...styles.td, ...styles.actions }}>
                     <Link to={`/registroprodutos/${produto.id}`} className="btn btn-sm btn-primary">Editar</Link>
@@ -241,11 +347,17 @@ export default function ProdutosLista() {
           </table>
         </div>
 
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+
         {showModal && (
           <div style={styles.modal}>
             <div style={styles.modalContent}>
               <h4>Confirmar Exclusão</h4>
-              <p>Tem certeza que deseja excluir o produto {produtoToDelete?.nomeDoProduto}?</p>
+              <p>Tem certeza que deseja excluir o produto {produtoToDelete?.nomeDoProduto || `${produtoToDelete?.marca} ${produtoToDelete?.cor}`}?</p>
               <div style={styles.modalButtons}>
                 <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
                 <button className="btn btn-danger" onClick={handleDelete}>Confirmar</button>
