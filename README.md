@@ -108,7 +108,7 @@ Cada módulo possui sua própria documentação detalhada:
 
 ## ERS
 
-[ERS - Associação Bom Jesus](./ERS%20-%20Associação%20Bom%20Jesus%20.pdf)
+[ERS - Associação Bom Jesus](./ERS%20-%20Associação%20Bom%20Jesus.pdf)
 
 ## Vídeo de Apresentação
 [Vídeo de Apresentação](https://drive.google.com/drive/folders/1m23dauatjJx2CrzCILMxLCcXjv8dFZ_9)
